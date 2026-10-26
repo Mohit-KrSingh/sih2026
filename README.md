@@ -58,3 +58,20 @@ make lint
 - `make seed` - Populate sample institutions, courses, and demo data
 - `make demo` - Reset environment to scripted demo state
 - `make rules-doc` - Generate rule catalogue documentation
+
+---
+
+## Demo Accounts
+
+All demo accounts use password: `Demo@12345`
+
+| Role | Email / Identifier | Associated Institution / Purpose |
+|---|---|---|
+| `aicte_admin` | `aicte_admin@aicte-india.org` | AICTE central system administrator |
+| `aicte_officer` | `aicte_officer@aicte-india.org` | AICTE compliance officer and review queue |
+| `college_admin` (Stage 1: Clean) | `admin@piaet-pune.edu.in` | Pune Institute of Advanced Engg & Tech (`1-10000001`) |
+| `college_admin` (Stage 2: Exceptions) | `admin@mmit-mumbai.ac.in` | Mumbai Metropolitan Institute of Tech (`1-10000002`) |
+| `college_admin` (Stage 3: Draft) | `admin@ngec-nagpur.gov.in` | Nagpur Government Engineering College (`1-10000003`) |
+| `verifier` | `verifier@tcs-verifications.com` | Tata Consultancy Services (Background Verifications) |
+| Student APAAR ID | `111122223333` | Aarav Sharma (active verified record & approved consent) |
+
