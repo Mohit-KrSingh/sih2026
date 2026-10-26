@@ -49,6 +49,18 @@ def get_redis_client() -> redis.Redis:
     )
 
 
+def get_redis() -> Generator[redis.Redis, None, None]:
+    """FastAPI dependency for obtaining a Redis client connection."""
+    client = get_redis_client()
+    try:
+        yield client
+    finally:
+        try:
+            client.close()
+        except Exception:
+            pass
+
+
 def check_redis_connection() -> bool:
     try:
         r = get_redis_client()

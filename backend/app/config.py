@@ -30,6 +30,12 @@ class Settings(BaseSettings):
     # Storage
     STORAGE_DIR: str = "./storage/uploads"
 
+    # Rate Limiting
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_LOGIN_PER_MINUTE: int = 10
+    RATE_LIMIT_OTP_PER_MINUTE: int = 5
+    RATE_LIMIT_VERIFY_PER_MINUTE: int = 20
+
     # Integration Client Types ("mock" | "http")
     APAAR_CLIENT_TYPE: str = "mock"
     AICTE_MASTER_CLIENT_TYPE: str = "mock"
