@@ -5,13 +5,14 @@ from typing import Annotated
 
 import jwt
 import redis
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app import audit
 from app.auth.dependencies import get_current_user, verify_institution_access
 from app.auth.otp import store_and_send_otp, verify_otp
-from app.auth.rate_limiter import RateLimiter
+from app.auth.rate_limiter import RateLimiter, _extract_client_ip
 from app.auth.schemas import (
     LoginRequest,
     MfaEnableRequest,
@@ -64,6 +65,7 @@ otp_rate_limiter = RateLimiter(
 )
 def login(
     payload: LoginRequest,
+    request: Request,
     db: Annotated[Session, Depends(get_db)],
 ) -> TokenResponse:
     """Authenticate with email and password.
@@ -114,6 +116,16 @@ def login(
             )
 
     user.last_login = datetime.now(UTC)
+    audit.record(
+        db=db,
+        action="auth.login",
+        actor_id=str(user.id),
+        actor_role=user.role,
+        entity="user",
+        entity_id=str(user.id),
+        after_json={"email": user.email, "role": user.role},
+        ip=_extract_client_ip(request),
+    )
     db.commit()
     db.refresh(user)
 
@@ -147,6 +159,7 @@ def login(
 )
 def verify_mfa_login(
     payload: MfaVerifyRequest,
+    request: Request,
     db: Annotated[Session, Depends(get_db)],
 ) -> TokenResponse:
     """Complete 2-step login by validating a TOTP code against an MFA pending token."""
@@ -182,6 +195,16 @@ def verify_mfa_login(
         )
 
     user.last_login = datetime.now(UTC)
+    audit.record(
+        db=db,
+        action="auth.login_mfa",
+        actor_id=str(user.id),
+        actor_role=user.role,
+        entity="user",
+        entity_id=str(user.id),
+        after_json={"email": user.email, "role": user.role, "mfa_method": "totp"},
+        ip=_extract_client_ip(request),
+    )
     db.commit()
     db.refresh(user)
 
@@ -227,6 +250,7 @@ def setup_mfa(
 @router.post("/mfa/enable")
 def enable_mfa(
     payload: MfaEnableRequest,
+    request: Request,
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[Session, Depends(get_db)],
 ) -> dict[str, str]:
@@ -238,6 +262,16 @@ def enable_mfa(
         )
 
     current_user.mfa_secret = payload.secret
+    audit.record(
+        db=db,
+        action="auth.mfa_enable",
+        actor_id=str(current_user.id),
+        actor_role=current_user.role,
+        entity="user",
+        entity_id=str(current_user.id),
+        after_json={"mfa_enabled": True},
+        ip=_extract_client_ip(request),
+    )
     db.commit()
 
     return {
