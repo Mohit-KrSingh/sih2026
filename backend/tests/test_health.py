@@ -29,8 +29,9 @@ def test_health_endpoint_structure():
 
 
 def test_health_endpoint_healthy_state():
-    with patch("app.api_v1.health.check_db_connection", return_value=True), patch(
-        "app.api_v1.health.check_redis_connection", return_value=True
+    with (
+        patch("app.api_v1.health.check_db_connection", return_value=True),
+        patch("app.api_v1.health.check_redis_connection", return_value=True),
     ):
         response = client.get("/api/v1/health")
         assert response.status_code == 200
@@ -41,8 +42,9 @@ def test_health_endpoint_healthy_state():
 
 
 def test_health_endpoint_degraded_state():
-    with patch("app.api_v1.health.check_db_connection", return_value=False), patch(
-        "app.api_v1.health.check_redis_connection", return_value=True
+    with (
+        patch("app.api_v1.health.check_db_connection", return_value=False),
+        patch("app.api_v1.health.check_redis_connection", return_value=True),
     ):
         response = client.get("/api/v1/health")
         assert response.status_code == 200

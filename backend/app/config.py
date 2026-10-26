@@ -12,7 +12,9 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str = "postgresql+psycopg://apaar:apaar_password@localhost:5432/apaar_db"
-    TEST_DATABASE_URL: str = "postgresql+psycopg://apaar:apaar_password@localhost:5432/apaar_test_db"
+    TEST_DATABASE_URL: str = (
+        "postgresql+psycopg://apaar:apaar_password@localhost:5432/apaar_test_db"
+    )
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
