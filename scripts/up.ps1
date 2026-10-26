@@ -90,11 +90,12 @@ try {
 
 if (-not $backendRunning) {
     Write-Host "Starting backend API server on port 8000..."
-    $backendEnv = @{
-        "PYTHONPATH" = (Resolve-Path "backend").Path
-    }
-    Start-Process -FilePath (Resolve-Path ".venv\Scripts\python.exe").Path -ArgumentList "-m uvicorn app.main:app --host 0.0.0.0 --port 8000" -Environment $backendEnv -WindowStyle Hidden
-    Start-Sleep -Seconds 2
+    $pyPath = (Resolve-Path ".venv\Scripts\python.exe").Path
+    $backendArgs = @("-m", "uvicorn", "app.main:app", "--app-dir", "backend", "--host", "0.0.0.0", "--port", "8000")
+    $emptyFile = Join-Path (Resolve-Path "data").Path "empty.in"
+    if (-not (Test-Path $emptyFile)) { New-Item -ItemType File -Path $emptyFile | Out-Null }
+    Start-Process -FilePath $pyPath -ArgumentList $backendArgs -RedirectStandardInput $emptyFile -RedirectStandardOutput "data/backend.log" -RedirectStandardError "data/backend_err.log" -WindowStyle Hidden
+    Start-Sleep -Seconds 3
 } else {
     Write-Host "Backend is already running on port 8000."
 }

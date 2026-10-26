@@ -30,6 +30,13 @@ class Settings(BaseSettings):
     # Storage
     STORAGE_DIR: str = "./storage/uploads"
 
+    # Integration Client Types ("mock" | "http")
+    APAAR_CLIENT_TYPE: str = "mock"
+    AICTE_MASTER_CLIENT_TYPE: str = "mock"
+    OTP_SENDER_TYPE: str = "mock"
+    IDENTITY_VERIFIER_TYPE: str = "mock"
+    STORAGE_TYPE: str = "mock"  # "mock" | "local" | "http"
+
     # CORS
     FRONTEND_URL: str = "http://localhost:5173"
 

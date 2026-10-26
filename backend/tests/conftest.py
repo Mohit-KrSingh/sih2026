@@ -3,12 +3,14 @@
 from collections.abc import Generator
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 import app.models  # noqa: F401
 from app.config import get_settings
-from app.db import Base
+from app.db import Base, get_db
+from app.main import app
 
 settings = get_settings()
 
@@ -36,3 +38,16 @@ def db_session(test_engine) -> Generator[Session, None, None]:
     if transaction.is_active:
         transaction.rollback()
     connection.close()
+
+
+@pytest.fixture
+def client(db_session: Session) -> Generator[TestClient, None, None]:
+    """TestClient that uses the isolated transactional db_session."""
+
+    def override_get_db():
+        yield db_session
+
+    app.dependency_overrides[get_db] = override_get_db
+    with TestClient(app) as test_client:
+        yield test_client
+    app.dependency_overrides.clear()
