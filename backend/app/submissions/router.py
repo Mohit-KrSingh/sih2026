@@ -2,6 +2,7 @@
 
 from typing import Annotated
 
+import redis
 from fastapi import (
     APIRouter,
     Depends,
@@ -17,16 +18,22 @@ from fastapi import (
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import (
+    require_college_admin,
     require_college_staff,
     require_college_user,
     verify_institution_access,
 )
-from app.db import get_db
+from app.db import get_db, get_redis
 from app.models import User
 from app.submissions import service
 from app.submissions.schemas import (
     InstitutionFlagsListResponse,
     JustificationResponse,
+    SubmissionGateResponse,
+    SubmissionOtpRequest,
+    SubmissionOtpResponse,
+    SubmissionReceiptResponse,
+    SubmissionSubmitRequest,
     ValidationFlagDetailResponse,
 )
 
@@ -180,3 +187,95 @@ def delete_justification(
         justification_id=justification_id,
         user=current_user,
     )
+
+
+# ---------------------------------------------------------------------------
+# Submission Lifecycle and Submit Gate Endpoints (SPEC.md Section 10 & TASKS.md T23)
+# ---------------------------------------------------------------------------
+
+
+@router.get(
+    "/submissions/gate",
+    response_model=SubmissionGateResponse,
+    summary="Evaluate final submit gate readiness, blockers, and locking status",
+)
+def get_submission_gate(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[User, require_college_user],
+    db: Annotated[Session, Depends(get_db)],
+    academic_year: Annotated[str, Query(description="Academic year")] = "2026-27",
+) -> SubmissionGateResponse:
+    """Evaluate whether institution data satisfies all gate criteria for submission."""
+    return service.check_submission_gate(
+        db=db,
+        institution_id=institution_id,
+        academic_year=academic_year,
+    )
+
+
+@router.post(
+    "/submissions/declaration-otp",
+    response_model=SubmissionOtpResponse,
+    summary="Request a verification OTP for final submission declaration",
+)
+def request_submission_declaration_otp(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    payload: SubmissionOtpRequest,
+    current_user: Annotated[User, require_college_admin],
+    db: Annotated[Session, Depends(get_db)],
+    redis_client: Annotated[redis.Redis, Depends(get_redis)],
+) -> SubmissionOtpResponse:
+    """Send a mock verification OTP for submission declaration to the admin's email."""
+    return service.send_declaration_otp(
+        db=db,
+        redis_client=redis_client,
+        institution_id=institution_id,
+        academic_year=payload.academic_year,
+        user=current_user,
+    )
+
+
+@router.post(
+    "/submissions/submit",
+    response_model=SubmissionReceiptResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Confirm declaration with OTP and lock data for final submission (college_admin only)",
+)
+def submit_institution_data(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    payload: SubmissionSubmitRequest,
+    request: Request,
+    current_user: Annotated[User, require_college_admin],
+    db: Annotated[Session, Depends(get_db)],
+    redis_client: Annotated[redis.Redis, Depends(get_redis)],
+) -> SubmissionReceiptResponse:
+    """Submit and lock annual student data into AICTE Central Repository with receipt."""
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    return service.submit_annual_data(
+        db=db,
+        redis_client=redis_client,
+        institution_id=institution_id,
+        user=current_user,
+        payload=payload,
+        client_ip=client_ip,
+    )
+
+
+@router.get(
+    "/submissions/receipt",
+    response_model=SubmissionReceiptResponse,
+    summary="Get official submission receipt and locked record counts",
+)
+def get_submission_receipt(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[User, require_college_user],
+    db: Annotated[Session, Depends(get_db)],
+    academic_year: Annotated[str, Query(description="Academic year")] = "2026-27",
+) -> SubmissionReceiptResponse:
+    """Retrieve official submission receipt details for an already submitted academic year."""
+    return service.get_submission_receipt(
+        db=db,
+        institution_id=institution_id,
+        academic_year=academic_year,
+    )
+

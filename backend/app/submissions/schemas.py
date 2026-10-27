@@ -110,3 +110,111 @@ class InstitutionFlagsListResponse(BaseModel):
     academic_year: str | None = None
     summary: ValidationFlagsSummary
     items: list[ValidationFlagDetailResponse]
+
+
+class BlockerDetail(BaseModel):
+    """Actionable blocker preventing final data submission with deep links."""
+
+    flag_id: int | None = None
+    rule_code: str
+    level: str  # error | exception | warning
+    message: str
+    fix_hint: str | None = None
+    field: str | None = None
+    student_id: int | None = None
+    student_name: str | None = None
+    apaar_id: str | None = None
+    enrolment_no: str | None = None
+    course_id: int | None = None
+    course_name: str | None = None
+    target_link: str
+    reason: str
+
+
+class SubmissionGateResponse(BaseModel):
+    """Complete submission gate evaluation status for an institution and academic year."""
+
+    institution_id: int
+    institution_name: str
+    aicte_id: str
+    academic_year: str
+    current_status: str  # draft | submitted | submitted_with_exceptions | under_review | etc.
+    is_locked: bool
+    can_submit: bool
+    target_status: str | None = None  # submitted | submitted_with_exceptions
+    gate_reason: str
+    blockers: list[BlockerDetail] = []
+    total_students: int = 0
+    total_courses: int = 0
+    open_errors_count: int = 0
+    unjustified_exceptions_count: int = 0
+    unjustified_warnings_count: int = 0
+    justified_exceptions_count: int = 0
+    justified_warnings_count: int = 0
+    seat_mismatch_detected: bool = False
+    submission_id: int | None = None
+    receipt_no: str | None = None
+    submitted_at: datetime | None = None
+    submitted_by_name: str | None = None
+    declaration_ref: str | None = None
+
+
+class SubmissionOtpRequest(BaseModel):
+    """Payload to request a submission declaration verification OTP."""
+
+    academic_year: str = Field(default="2026-27", max_length=20)
+
+
+class SubmissionOtpResponse(BaseModel):
+    """Response indicating OTP dispatch for declaration confirmation."""
+
+    status: str
+    recipient: str
+    channel: str
+    purpose: str
+    expires_in: int
+    message: str
+
+
+class SubmissionSubmitRequest(BaseModel):
+    """Payload to confirm declaration with OTP and lock data for final submission."""
+
+    academic_year: str = Field(default="2026-27", max_length=20)
+    confirmed_declaration: bool = Field(
+        ...,
+        description="Affirmation that student data is authentic, verified, and complete",
+    )
+    declaration_text: str = Field(
+        default="I confirm this data is correct and complete as authorized by the head.",
+        min_length=10,
+        max_length=500,
+    )
+    otp_code: str = Field(
+        ...,
+        min_length=4,
+        max_length=8,
+        description="6-digit verification code received via registered contact",
+    )
+
+
+class SubmissionReceiptResponse(BaseModel):
+    """Official submission receipt details upon successful locking and submission."""
+
+    institution_id: int
+    institution_name: str
+    aicte_id: str
+    academic_year: str
+    submission_id: int
+    receipt_no: str
+    status: str  # submitted | submitted_with_exceptions
+    submitted_at: datetime
+    submitted_by_email: str
+    submitted_by_name: str | None = None
+    declaration_text: str
+    total_students: int
+    regular_students: int
+    supernumerary_students: int
+    courses_count: int
+    justified_exceptions_count: int
+    is_locked: bool = True
+
