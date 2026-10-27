@@ -68,6 +68,10 @@ export async function apiClient<T>(endpoint: string, options: RequestOptions = {
     ...(headers as Record<string, string>),
   };
 
+  if (customConfig.body instanceof FormData) {
+    delete configHeaders["Content-Type"];
+  }
+
   if (activeToken) {
     configHeaders.Authorization = `Bearer ${activeToken}`;
   }

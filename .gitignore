@@ -39,6 +39,9 @@ yarn-error.log*
 frontend/dist/
 frontend/.vite/
 coverage/
+test-results/
+playwright-report/
+blob-report/
 
 # Database & Runtime storage
 data/

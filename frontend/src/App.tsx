@@ -13,6 +13,8 @@ import { UnauthorizedPage } from "./pages/UnauthorizedPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { CollegeDashboardPlaceholder } from "./pages/CollegeDashboardPlaceholder";
 import { AicteOverviewPlaceholder } from "./pages/AicteOverviewPlaceholder";
+import { AicteApprovalsPage } from "./pages/AicteApprovalsPage";
+import { AicteIntakePage } from "./pages/AicteIntakePage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -215,7 +217,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="College Approvals Queue" section="AICTE Central" taskRef="T11" />
+              <AicteApprovalsPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -225,7 +227,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Course Intake Control" section="AICTE Central" taskRef="T07" />
+              <AicteIntakePage />
             </AppLayout>
           </ProtectedRoute>
         }
