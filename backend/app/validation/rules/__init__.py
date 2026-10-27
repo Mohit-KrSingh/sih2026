@@ -21,10 +21,13 @@ from app.validation.rules import (
     file_empty,
     file_template,
     file_too_large,
+    intake_exceeded,
     mode_category_mismatch,
     name_format,
     name_required,
+    seat_declaration_mismatch,
     seat_type_not_approved,
+    supernumerary_exceeded,
 )
 
 __all__ = [
@@ -52,4 +55,7 @@ __all__ = [
     "dup_enrolno_in_course",
     "dup_active_other_college",
     "dup_same_course_other_college",
+    "intake_exceeded",
+    "supernumerary_exceeded",
+    "seat_declaration_mismatch",
 ]
