@@ -19,6 +19,7 @@ from app.auth.security import decrypt_dob
 from app.integrations.factory import get_apaar_client
 from app.integrations.interfaces import ApaarClient
 from app.models import (
+    AnomalyScore,
     Course,
     CourseIntake,
     SeatDeclaration,
@@ -174,7 +175,7 @@ def persist_validation_flags(
             st = next(s for s in mapping.values() if s.id == flag.row_ref)
             target_course_id = getattr(st, "course_id", None) or course_id
             target_submission_id = getattr(st, "submission_id", None) or submission_id
-        elif flag.rule_code in COURSE_LEVEL_RULES:
+        elif flag.rule_code in COURSE_LEVEL_RULES or flag.rule_code.startswith("ANOM_"):
             target_student_id = None
             target_course_id = flag.row_ref if isinstance(flag.row_ref, int) else course_id
             target_submission_id = submission_id
@@ -644,7 +645,18 @@ def validate_submission(
 
     client = apaar_client or get_apaar_client(db_session)
 
-    # 6. Build comprehensive validation context
+    # 6. Load any pre-computed anomaly scores and build validation context
+    anomaly_scores_by_course: dict[int, AnomalyScore] = {}
+    if db_session is not None:
+        db_anom_records = db_session.scalars(
+            select(AnomalyScore).where(
+                AnomalyScore.institution_id == institution_id,
+                AnomalyScore.academic_year == academic_year,
+            )
+        ).all()
+        for rec in db_anom_records:
+            anomaly_scores_by_course[rec.course_id] = rec
+
     context = ValidationContext(
         rows=all_rows,
         institution_id=institution_id,
@@ -658,6 +670,7 @@ def validate_submission(
             "approved_courses": courses_by_name,
             "course_intakes": intakes_by_course,
             "seat_declarations": declarations_by_course,
+            "anomaly_scores": anomaly_scores_by_course,
         },
     )
 

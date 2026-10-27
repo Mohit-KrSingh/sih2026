@@ -52,8 +52,19 @@ if (-not $pgRunning) {
         & "$pgBin\initdb.exe" -D "data/postgres" -U apaar -A trust -E UTF8 | Out-Null
     }
     Write-Host "Starting PostgreSQL server..."
-    & "$pgBin\pg_ctl.exe" -D "data/postgres" -l "data/postgres/pg_service.log" start
-    Start-Sleep -Seconds 2
+    & "$pgBin\pg_ctl.exe" -D "data/postgres" -l "data/pg_service.log" start
+    $retries = 40
+    while ($retries -gt 0) {
+        Start-Sleep -Seconds 1
+        try {
+            $conn = New-Object System.Net.Sockets.TcpClient
+            $conn.Connect("127.0.0.1", 5432)
+            $conn.Close()
+            break
+        } catch {
+            $retries--
+        }
+    }
 
     # Create databases if they do not exist
     try { & "$pgBin\createdb.exe" -U apaar -h 127.0.0.1 apaar_db 2>$null } catch {}
@@ -124,3 +135,8 @@ if (-not $frontendRunning) {
 Write-Host "Stack started successfully."
 Write-Host "Backend:  http://localhost:8000 (docs: http://localhost:8000/docs)"
 Write-Host "Frontend: http://localhost:5173"
+
+if ($Foreground) {
+    Write-Host "Running in foreground mode (keeping daemon alive)..."
+    while ($true) { Start-Sleep -Seconds 5 }
+}

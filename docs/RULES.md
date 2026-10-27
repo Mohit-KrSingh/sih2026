@@ -29,7 +29,7 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 ### 1.3 Rule Catalogue Statistics
 
 - **Total Rules Defined:** 34
-- **Registered Active Rule Handlers:** 27
+- **Registered Active Rule Handlers:** 34
 - **Rules by Scope:** `anomaly`: 7, `course`: 3, `cross`: 2, `file`: 5, `row`: 17
 - **Rules by Default Level:** `error`: 18, `exception`: 3, `info`: 1, `warning`: 12
 
@@ -68,9 +68,9 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 | `DUP_SAME_COURSE_OTHER_COLLEGE` | `cross` | `exception` | Yes | Same APAAR ID in the same course and year at another college | `None` |
 | `ANOM_DOB_CLUSTER` | `anomaly` | `warning` | No | Many students share one date of birth (default 5 or more). Audience: aicte | `{"threshold_count": 5}` |
 | `ANOM_ENROLMENT_JUMP` | `anomaly` | `warning` | No | Enrolment up more than a threshold (default 30%) against last year. Audience: aicte | `{"threshold_percent": 30.0}` |
-| `ANOM_MODEL_SCORE` | `anomaly` | `warning` | No | IsolationForest score on college-course features flags this as unusual. Audience: aicte | `None` |
+| `ANOM_MODEL_SCORE` | `anomaly` | `warning` | No | IsolationForest score on college-course features flags this as unusual. Audience: aicte | `{"threshold_score": -0.05, "contamination": 0.08}` |
 | `ANOM_NRI_SHARE` | `anomaly` | `warning` | No | NRI/OCI/foreign share unusually high (default over 25%). Audience: aicte | `{"threshold_percent": 25.0}` |
-| `ANOM_SAME_ADMISSION_DAY` | `anomaly` | `info` | No | Large share of students admitted on one day (default over 60%). Audience: aicte | `{"threshold_percent": 60.0}` |
+| `ANOM_SAME_ADMISSION_DAY` | `anomaly` | `info` | No | Large share of students admitted on one day (default over 60%). Audience: aicte | `{"threshold_percent": 60.0, "min_students": 5}` |
 | `ANOM_SEQUENTIAL_APAAR` | `anomaly` | `warning` | No | Long runs of sequential APAAR IDs (default 10 or more). Audience: aicte | `{"threshold_run": 10}` |
 | `ANOM_SUPERNUM_SHARE` | `anomaly` | `warning` | No | Supernumerary share unusually high (default over 15%). Audience: aicte | `{"threshold_percent": 15.0}` |
 
@@ -336,7 +336,7 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 - **Meaning:** Many students share one date of birth (default 5 or more). Audience: aicte
 - **Scope:** `anomaly`
 - **Default Level:** `warning`
-- **Implementation Status:** Scheduled (T27)
+- **Implementation Status:** Active
 - **Default Parameters:** `{"threshold_count": 5}`
 - **Requires Justification on Exception:** No
 
@@ -345,7 +345,7 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 - **Meaning:** Enrolment up more than a threshold (default 30%) against last year. Audience: aicte
 - **Scope:** `anomaly`
 - **Default Level:** `warning`
-- **Implementation Status:** Scheduled (T27)
+- **Implementation Status:** Active
 - **Default Parameters:** `{"threshold_percent": 30.0}`
 - **Requires Justification on Exception:** No
 
@@ -354,8 +354,8 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 - **Meaning:** IsolationForest score on college-course features flags this as unusual. Audience: aicte
 - **Scope:** `anomaly`
 - **Default Level:** `warning`
-- **Implementation Status:** Scheduled (T27)
-- **Default Parameters:** `None`
+- **Implementation Status:** Active
+- **Default Parameters:** `{"threshold_score": -0.05, "contamination": 0.08}`
 - **Requires Justification on Exception:** No
 
 #### `ANOM_NRI_SHARE`
@@ -363,7 +363,7 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 - **Meaning:** NRI/OCI/foreign share unusually high (default over 25%). Audience: aicte
 - **Scope:** `anomaly`
 - **Default Level:** `warning`
-- **Implementation Status:** Scheduled (T27)
+- **Implementation Status:** Active
 - **Default Parameters:** `{"threshold_percent": 25.0}`
 - **Requires Justification on Exception:** No
 
@@ -372,8 +372,8 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 - **Meaning:** Large share of students admitted on one day (default over 60%). Audience: aicte
 - **Scope:** `anomaly`
 - **Default Level:** `info`
-- **Implementation Status:** Scheduled (T27)
-- **Default Parameters:** `{"threshold_percent": 60.0}`
+- **Implementation Status:** Active
+- **Default Parameters:** `{"threshold_percent": 60.0, "min_students": 5}`
 - **Requires Justification on Exception:** No
 
 #### `ANOM_SEQUENTIAL_APAAR`
@@ -381,7 +381,7 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 - **Meaning:** Long runs of sequential APAAR IDs (default 10 or more). Audience: aicte
 - **Scope:** `anomaly`
 - **Default Level:** `warning`
-- **Implementation Status:** Scheduled (T27)
+- **Implementation Status:** Active
 - **Default Parameters:** `{"threshold_run": 10}`
 - **Requires Justification on Exception:** No
 
@@ -390,7 +390,7 @@ Per **SPEC.md Section 9.4**, rules execute following cheap-checks-first order:
 - **Meaning:** Supernumerary share unusually high (default over 15%). Audience: aicte
 - **Scope:** `anomaly`
 - **Default Level:** `warning`
-- **Implementation Status:** Scheduled (T27)
+- **Implementation Status:** Active
 - **Default Parameters:** `{"threshold_percent": 15.0}`
 - **Requires Justification on Exception:** No
 

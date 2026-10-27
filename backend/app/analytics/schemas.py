@@ -1,6 +1,6 @@
-"""Pydantic schemas for analytics, duplicate listings, and SSE event feeds.
+"""Pydantic schemas for analytics, duplicate listings, anomaly scores, and SSE event feeds.
 
-Spec: Section 10, 12 & TASKS.md T24, T28.
+Spec: Section 10, 12 & TASKS.md T24, T27, T28.
 """
 
 from __future__ import annotations
@@ -57,6 +57,34 @@ class DuplicateListResponse(BaseModel):
     total_duplicates: int
     academic_year: str | None = None
     items: list[DuplicateRecordResponse]
+
+
+class AnomalyScoreItem(BaseModel):
+    """Multi-dimensional IsolationForest anomaly score and features for a college-course."""
+
+    id: int
+    institution_id: int
+    institution_name: str | None = None
+    aicte_id: str | None = None
+    course_id: int
+    course_name: str | None = None
+    academic_year: str
+    score: float
+    flagged: bool
+    features: dict[str, Any]
+    summary: str | None = None
+    created_at: datetime | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AnomalyScoreListResponse(BaseModel):
+    """List response for AICTE anomaly detection monitoring."""
+
+    total: int
+    flagged_count: int
+    academic_year: str | None = None
+    items: list[AnomalyScoreItem]
 
 
 class SSEEventPayload(BaseModel):

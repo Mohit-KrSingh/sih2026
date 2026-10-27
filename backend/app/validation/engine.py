@@ -141,8 +141,10 @@ def run_rules(
         if override and not override.enabled:
             continue
 
-        # Merge parameters (default_params overridden by config params)
+        # Merge parameters (default_params overridden by context/config params)
         active_params = dict(rule.default_params)
+        if context.params:
+            active_params.update(context.params)
         if override and override.params:
             active_params.update(override.params)
 

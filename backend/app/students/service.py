@@ -33,7 +33,7 @@ from app.students.schemas import (
     StudentUpdateRequest,
     StudentValidationFlag,
 )
-from app.validation.flags import ValidationLevel
+from app.validation.flags import ValidationAudience, ValidationLevel
 
 
 def _parse_iso_date(date_str: str | None, default_date: date | None = None) -> date:
@@ -380,10 +380,11 @@ def create_student(
         keep_justifications=True,
     )
 
-    # Determine status: if error/exception/warning flags exist -> flagged, else valid (or draft)
+    # Determine status: if student-facing flags exist -> flagged, else valid (or draft)
     active_flags = [
         f for f in val_result
         if f.level in (ValidationLevel.ERROR, ValidationLevel.EXCEPTION, ValidationLevel.WARNING)
+        and f.audience != ValidationAudience.AICTE.value
     ]
     if active_flags:
         student.status = "flagged"
@@ -589,6 +590,7 @@ def update_student(
     active_flags = [
         f for f in val_result
         if f.level in (ValidationLevel.ERROR, ValidationLevel.EXCEPTION, ValidationLevel.WARNING)
+        and f.audience != ValidationAudience.AICTE.value
     ]
     if active_flags:
         student.status = "flagged"

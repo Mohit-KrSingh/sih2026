@@ -41,7 +41,6 @@ from app.validation.codes import (
     FILE_TOO_LARGE,
 )
 from app.validation.flags import ValidationLevel
-from app.validation.service import validate_rows
 
 EXPECTED_COLUMNS: list[str] = [
     "apaar_id",
@@ -413,6 +412,8 @@ def process_bulk_upload(
         student_mapping[st.id] = st
 
     # 5. Run pure validation engine across all rows and persist flags
+    from app.validation.service import validate_rows
+
     val_result = validate_rows(
         rows=normalized_row_dicts,
         institution_id=institution_id,

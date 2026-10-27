@@ -1,8 +1,9 @@
-"""FastAPI router for AICTE analytics, cross-college duplicate monitoring, and live SSE streaming.
+"""FastAPI router for AICTE analytics, duplicate monitoring, anomalies, and SSE.
 
-Spec: Section 10, 12 & TASKS.md T24, T28:
+Spec: Section 10, 12 & TASKS.md T24, T27, T28:
 - Real-time SSE event stream for live dashboard updates.
 - Centralized duplicate enrolments query across all colleges.
+- IsolationForest anomaly detection scores and multi-dimensional deviation monitoring.
 - Historical event inspection for AICTE officers and admins.
 """
 
@@ -13,13 +14,19 @@ from typing import Annotated
 import redis
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import StreamingResponse
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.orm import Session, joinedload
 
-from app.analytics import sse
-from app.analytics.schemas import DuplicateListResponse, SSEEventPayload
+from app.analytics import anomaly_service, sse
+from app.analytics.schemas import (
+    AnomalyScoreItem,
+    AnomalyScoreListResponse,
+    DuplicateListResponse,
+    SSEEventPayload,
+)
 from app.auth.dependencies import require_aicte_user
 from app.db import get_db, get_redis
-from app.models import User
+from app.models import AnomalyScore, User
 from app.students import duplicate_service
 
 router = APIRouter(prefix="/analytics", tags=["AICTE Analytics & Monitoring"])
@@ -57,6 +64,75 @@ def get_duplicate_enrolments(
         total_duplicates=len(records),
         academic_year=academic_year,
         items=records,
+    )
+
+
+@router.get(
+    "/anomalies",
+    response_model=AnomalyScoreListResponse,
+    summary="List machine learning and statistical anomaly scores across institutions (AICTE only)",
+)
+def get_anomaly_scores(
+    current_user: Annotated[User, require_aicte_user],
+    db: Annotated[Session, Depends(get_db)],
+    academic_year: Annotated[str | None, Query(description="Filter by academic year")] = None,
+    flagged_only: Annotated[bool, Query(description="Filter only flagged anomalies")] = False,
+    institution_id: Annotated[int | None, Query(description="Filter by institution ID")] = None,
+    scan_now: Annotated[bool, Query(description="Trigger fresh IsolationForest scan")] = False,
+) -> AnomalyScoreListResponse:
+    """Retrieve IsolationForest anomaly scores and 6-dimensional features for AICTE monitoring.
+
+    Optionally runs fresh on-demand scan when scan_now=True.
+    """
+    if scan_now:
+        year_to_scan = academic_year or "2026-27"
+        anomaly_service.evaluate_and_store_anomalies(db=db, academic_year=year_to_scan)
+
+    stmt = select(AnomalyScore).options(
+        joinedload(AnomalyScore.institution),
+        joinedload(AnomalyScore.course),
+    )
+    if academic_year:
+        stmt = stmt.where(AnomalyScore.academic_year == academic_year)
+    if flagged_only:
+        stmt = stmt.where(AnomalyScore.flagged.is_(True))
+    if institution_id:
+        stmt = stmt.where(AnomalyScore.institution_id == institution_id)
+
+    # Order by most anomalous (lowest decision score) first
+    stmt = stmt.order_by(AnomalyScore.score.asc())
+    records = list(db.scalars(stmt).all())
+
+    items: list[AnomalyScoreItem] = []
+    flagged_cnt = 0
+    for r in records:
+        if r.flagged:
+            flagged_cnt += 1
+        summary_val = None
+        if r.features_json and isinstance(r.features_json, dict):
+            summary_val = r.features_json.get("summary")
+        items.append(
+            AnomalyScoreItem(
+                id=r.id,
+                institution_id=r.institution_id,
+                institution_name=r.institution.name if r.institution else None,
+                aicte_id=r.institution.aicte_id if r.institution else None,
+                course_id=r.course_id,
+                course_name=r.course.name if r.course else None,
+                academic_year=r.academic_year,
+                score=r.score,
+                flagged=r.flagged,
+                features=r.features_json or {},
+                summary=summary_val,
+                created_at=r.created_at,
+            )
+        )
+
+    return AnomalyScoreListResponse(
+        total=len(items),
+        flagged_count=flagged_cnt,
+        academic_year=academic_year,
+        items=items,
     )
 
 

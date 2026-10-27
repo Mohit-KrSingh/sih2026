@@ -19,6 +19,7 @@ import redis
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
+from app.analytics.anomaly_service import evaluate_and_store_anomalies
 from app.analytics.sse import publish_sse_event
 from app.models import (
     Notification,
@@ -398,6 +399,39 @@ def promote_submission_and_run_cross_checks(
 
     db.flush()
 
+    # -------------------------------------------------------------------------
+    # 7. Evaluate and persist multi-dimensional anomaly detection scores
+    # -------------------------------------------------------------------------
+    anomalies_flagged_count = 0
+    try:
+        anomaly_scores = evaluate_and_store_anomalies(db=db, academic_year=academic_year)
+        inst_anomalies = [
+            a for a in anomaly_scores if a.institution_id == institution_id and a.flagged
+        ]
+        anomalies_flagged_count = len(inst_anomalies)
+        if inst_anomalies:
+            publish_sse_event(
+                redis_client=redis_client,
+                event_type="anomaly_detected",
+                data={
+                    "institution_id": institution_id,
+                    "institution_name": inst_name,
+                    "aicte_id": inst_aicte_id,
+                    "academic_year": academic_year,
+                    "flagged_courses_count": len(inst_anomalies),
+                    "anomalies": [
+                        {
+                            "course_id": a.course_id,
+                            "score": a.score,
+                            "summary": (a.features_json or {}).get("summary"),
+                        }
+                        for a in inst_anomalies
+                    ],
+                },
+            )
+    except Exception as exc:
+        logger.warning("Anomaly evaluation on submission promotion skipped: %s", exc)
+
     return {
         "status": submission.status,
         "receipt_no": submission.receipt_no,
@@ -408,4 +442,5 @@ def promote_submission_and_run_cross_checks(
         "notifications_dispatched": notifications_dispatched_count,
         "review_items_created": review_items_created_count,
         "exception_flags_count": len(exception_flags),
+        "anomalies_flagged_count": anomalies_flagged_count,
     }
