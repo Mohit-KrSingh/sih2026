@@ -52,7 +52,7 @@ if (-not $pgRunning) {
         & "$pgBin\initdb.exe" -D "data/postgres" -U apaar -A trust -E UTF8 | Out-Null
     }
     Write-Host "Starting PostgreSQL server..."
-    Start-Process -FilePath "$pgBin\postgres.exe" -ArgumentList "-D data/postgres" -WindowStyle Hidden
+    & "$pgBin\pg_ctl.exe" -D "data/postgres" -l "data/postgres/pg_service.log" start
     Start-Sleep -Seconds 2
 
     # Create databases if they do not exist

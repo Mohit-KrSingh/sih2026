@@ -2,19 +2,25 @@
 
 from app.validation.rules import (
     admission_date_window,
+    admission_year_mismatch,
+    age_out_of_range,
     apaar_dob_mismatch,
     apaar_format,
     apaar_name_mismatch,
     apaar_not_found,
     apaar_required,
+    category_conflict,
     country_required,
+    course_not_approved,
     dob_invalid,
     enum_invalid,
     file_empty,
     file_template,
     file_too_large,
+    mode_category_mismatch,
     name_format,
     name_required,
+    seat_type_not_approved,
 )
 
 __all__ = [
@@ -32,4 +38,10 @@ __all__ = [
     "apaar_not_found",
     "apaar_name_mismatch",
     "apaar_dob_mismatch",
+    "category_conflict",
+    "course_not_approved",
+    "age_out_of_range",
+    "seat_type_not_approved",
+    "mode_category_mismatch",
+    "admission_year_mismatch",
 ]
