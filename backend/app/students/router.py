@@ -12,11 +12,17 @@ from app.auth.dependencies import (
 )
 from app.models import User
 from app.students import seat_declarations as seat_service
+from app.students import service as student_service
 from app.students.schemas import (
     CourseSummaryResponse,
     InstitutionSeatDeclarationResponse,
     SeatDeclarationBatchSaveRequest,
     SeatDeclarationSaveRequest,
+    StudentCreateRequest,
+    StudentListResponse,
+    StudentResponse,
+    StudentSaveResultResponse,
+    StudentUpdateRequest,
 )
 
 router = APIRouter(tags=["Seat Declarations & Student Management"])
@@ -125,3 +131,157 @@ def batch_save_seat_declarations(
         user=current_user,
         client_ip=client_ip,
     )
+
+
+# =========================================================================
+# Single Student Entry & Directory Endpoints (Spec 8.2, 9.4, TASKS.md T20)
+# =========================================================================
+
+
+@router.get(
+    "/institutions/{institution_id}/students",
+    response_model=StudentListResponse,
+    summary="List student records with status, flag level, and search filters",
+)
+def list_students(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    db: Annotated[Session, Depends(get_db)],
+    academic_year: str | None = Query(
+        default="2026-27", description="Filter by academic year"
+    ),
+    course_id: int | None = Query(
+        default=None, description="Filter by course ID"
+    ),
+    status: str | None = Query(
+        default=None, description="Filter by status (draft, valid, flagged, etc.)"
+    ),
+    level: str | None = Query(
+        default=None, description="Filter by flag level (error, exception, warning, info, clean)"
+    ),
+    search: str | None = Query(
+        default=None, description="Search by name, APAAR ID, or enrolment number"
+    ),
+    page: int = Query(default=1, ge=1, description="Page number"),
+    limit: int = Query(default=20, ge=1, le=100, description="Items per page"),
+) -> StudentListResponse:
+    """Retrieve filtered and paginated list of student records for an institution."""
+    return student_service.list_students(
+        db=db,
+        institution_id=institution_id,
+        academic_year=academic_year,
+        course_id=course_id,
+        status_filter=status,
+        level_filter=level,
+        search=search,
+        page=page,
+        limit=limit,
+    )
+
+
+@router.get(
+    "/institutions/{institution_id}/students/{student_id}",
+    response_model=StudentResponse,
+    summary="Get details of a single student record",
+)
+def get_student(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    student_id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> StudentResponse:
+    """Retrieve full details of a student record including decrypted data and active flags."""
+    return student_service.get_student(
+        db=db,
+        institution_id=institution_id,
+        student_id=student_id,
+    )
+
+
+@router.post(
+    "/institutions/{institution_id}/students",
+    response_model=StudentSaveResultResponse,
+    status_code=201,
+    summary="Create student draft record and execute validation ('Check and save')",
+)
+def create_student(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    payload: StudentCreateRequest,
+    request: Request,
+    current_user: Annotated[User, college_staff_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> StudentSaveResultResponse:
+    """Create a single student record as draft and run validation engine immediately.
+
+    Spec 8.2 & 9.4:
+    - Never discard data: saved as draft either way.
+    - Runs cheap checks, APAAR lookups, and duplicate checks immediately.
+    - Persists validation flags with row reference.
+    - Country field persisted only when foreign_national is Yes.
+    """
+    client_ip = request.client.host if request.client else None
+    return student_service.create_student(
+        db=db,
+        institution_id=institution_id,
+        payload=payload,
+        user=current_user,
+        client_ip=client_ip,
+    )
+
+
+@router.put(
+    "/institutions/{institution_id}/students/{student_id}",
+    response_model=StudentSaveResultResponse,
+    summary="Update an existing student draft record and re-validate ('Check and save')",
+)
+def update_student(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    student_id: int,
+    payload: StudentUpdateRequest,
+    request: Request,
+    current_user: Annotated[User, college_staff_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> StudentSaveResultResponse:
+    """Update student draft fields and re-run validation engine.
+
+    Spec 8.2, 9.4, 10:
+    - Locked records cannot be edited directly (403 Forbidden).
+    - Preserves existing justifications on still-applicable flags.
+    - Emits hash-chained audit log entry.
+    """
+    client_ip = request.client.host if request.client else None
+    return student_service.update_student(
+        db=db,
+        institution_id=institution_id,
+        student_id=student_id,
+        payload=payload,
+        user=current_user,
+        client_ip=client_ip,
+    )
+
+
+@router.delete(
+    "/institutions/{institution_id}/students/{student_id}",
+    summary="Delete a student draft record",
+)
+def delete_student(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    student_id: int,
+    request: Request,
+    current_user: Annotated[User, college_staff_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict:
+    """Delete a student draft record.
+
+    Spec 8.2, 10:
+    - Locked records cannot be deleted (403 Forbidden).
+    - Resolves cross-college duplicate flags if applicable.
+    - Emits hash-chained audit log entry.
+    """
+    client_ip = request.client.host if request.client else None
+    return student_service.delete_student(
+        db=db,
+        institution_id=institution_id,
+        student_id=student_id,
+        user=current_user,
+        client_ip=client_ip,
+    )
+

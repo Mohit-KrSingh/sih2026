@@ -11,6 +11,13 @@ from app.students.seat_declarations import (
     get_institution_seat_declarations,
     save_course_seat_declaration,
 )
+from app.students.service import (
+    create_student,
+    delete_student,
+    get_student,
+    list_students,
+    update_student,
+)
 
 __all__ = [
     "notify_duplicate_enrolment",
@@ -20,4 +27,9 @@ __all__ = [
     "get_course_summary",
     "save_course_seat_declaration",
     "batch_save_seat_declarations",
+    "create_student",
+    "delete_student",
+    "get_student",
+    "list_students",
+    "update_student",
 ]

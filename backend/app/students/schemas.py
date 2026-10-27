@@ -107,3 +107,141 @@ class InstitutionSeatDeclarationResponse(BaseModel):
     total_declared: int
     total_enrolled: int
     courses: list[CourseSummaryResponse]
+
+
+# =========================================================================
+# Student Record Schemas (Spec 8.2, 9.4, TASKS.md T20)
+# =========================================================================
+
+
+class StudentValidationFlag(BaseModel):
+    """Validation flag associated with a student record."""
+
+    id: int | None = None
+    rule_code: str
+    level: str  # error | exception | warning | info
+    field: str | None = None
+    message: str
+    fix_hint: str | None = None
+    audience: str = "both"
+    requires_justification: bool = False
+    status: str = "open"  # open | justified | resolved | dismissed
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class StudentCreateRequest(BaseModel):
+    """Payload to create a single student record draft."""
+
+    apaar_id: str = Field(default="", description="12-digit APAAR ID")
+    name: str = Field(default="", description="Student full name")
+    dob: str = Field(default="", description="Date of birth YYYY-MM-DD")
+    gender: str = Field(default="Male", description="Gender (Male, Female, Other)")
+    course_id: int = Field(description="Approved course ID")
+    academic_year: str = Field(default="2026-27", description="Academic year")
+    enrolment_no: str = Field(default="", description="College student enrolment number")
+    admission_date: str = Field(default="", description="Admission date YYYY-MM-DD")
+    admission_mode: str = Field(
+        default="State counselling",
+        description="Admission mode (JEE Main, State, Management, etc.)",
+    )
+    seat_type: str = Field(default="Regular", description="Seat type (Regular or Supernumerary)")
+    reservation_category: str = Field(
+        default="General", description="Reservation category (General, OBC, SC, ST, EWS)"
+    )
+    nri: str = Field(default="No", description="NRI status (Yes or No)")
+    oci: str = Field(default="No", description="OCI status (Yes or No)")
+    foreign_national: str = Field(default="No", description="Foreign national status (Yes or No)")
+    country: str | None = Field(default=None, description="Country for foreign nationals")
+    status: str = Field(default="draft", description="Initial student status")
+
+
+class StudentUpdateRequest(BaseModel):
+    """Payload to update an existing student draft record."""
+
+    apaar_id: str | None = None
+    name: str | None = None
+    dob: str | None = None
+    gender: str | None = None
+    course_id: int | None = None
+    academic_year: str | None = None
+    enrolment_no: str | None = None
+    admission_date: str | None = None
+    admission_mode: str | None = None
+    seat_type: str | None = None
+    reservation_category: str | None = None
+    nri: str | None = None
+    oci: str | None = None
+    foreign_national: str | None = None
+    country: str | None = None
+    status: str | None = None
+
+
+class StudentResponse(BaseModel):
+    """Detailed student record representation with decrypted DOB and active flags."""
+
+    id: int
+    institution_id: int
+    course_id: int
+    course_name: str
+    branch: str
+    academic_year: str
+    apaar_id: str
+    name: str
+    dob: str
+    gender: str
+    enrolment_no: str
+    admission_date: str
+    admission_mode: str
+    seat_type: str
+    reservation_category: str
+    nri: str
+    oci: str
+    foreign_national: str
+    country: str | None = None
+    status: str
+    is_locked: bool
+    submission_id: int | None = None
+    source: str
+    flags: list[StudentValidationFlag] = []
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class StudentSaveResultResponse(BaseModel):
+    """Response returned upon 'Check and save' single student entry."""
+
+    student: StudentResponse
+    flags: list[StudentValidationFlag]
+    is_valid: bool
+    errors_count: int
+    exceptions_count: int
+    warnings_count: int
+    infos_count: int
+
+
+class StudentListStats(BaseModel):
+    """Aggregate statistics for filtered student directory."""
+
+    total: int = 0
+    valid: int = 0
+    flagged: int = 0
+    draft: int = 0
+    submitted: int = 0
+    error_flags_count: int = 0
+    exception_flags_count: int = 0
+    warning_flags_count: int = 0
+
+
+class StudentListResponse(BaseModel):
+    """Paginated collection of student records with filtering metadata and counts."""
+
+    items: list[StudentResponse]
+    total: int
+    page: int
+    limit: int
+    total_pages: int
+    stats: StudentListStats
+

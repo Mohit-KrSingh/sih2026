@@ -16,6 +16,8 @@ import { AicteOverviewPlaceholder } from "./pages/AicteOverviewPlaceholder";
 import { AicteApprovalsPage } from "./pages/AicteApprovalsPage";
 import { AicteIntakePage } from "./pages/AicteIntakePage";
 import { SeatDeclarationsPage } from "./pages/SeatDeclarationsPage";
+import { StudentsListPage } from "./pages/StudentsListPage";
+import { StudentFormPage } from "./pages/StudentFormPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -116,7 +118,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Student Records Directory" section="College Portal" taskRef="T20" />
+              <StudentsListPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -126,7 +128,17 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Add Student Entry" section="College Portal" taskRef="T20" />
+              <StudentFormPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/college/students/:id/edit"
+        element={
+          <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
+            <AppLayout>
+              <StudentFormPage />
             </AppLayout>
           </ProtectedRoute>
         }

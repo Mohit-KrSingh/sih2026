@@ -147,9 +147,13 @@ def persist_validation_flags(
         # Check if row_ref maps to a student
         if flag.row_ref in mapping:
             st = mapping[flag.row_ref]
-            target_student_id = getattr(st, "id", None)
-            target_course_id = getattr(st, "course_id", None) or course_id
-            target_submission_id = getattr(st, "submission_id", None) or submission_id
+            target_student_id = getattr(st, "id", st if isinstance(st, int) else None)
+            target_course_id = (
+                getattr(st, "course_id", None) if not isinstance(st, int) else None
+            ) or course_id
+            target_submission_id = (
+                getattr(st, "submission_id", None) if not isinstance(st, int) else None
+            ) or submission_id
         elif isinstance(flag.row_ref, int) and flag.row_ref in [
             s.id for s in mapping.values() if getattr(s, "id", None)
         ]:
