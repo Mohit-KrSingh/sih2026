@@ -1,1 +1,45 @@
+"""Institutions module: master registry, courses, intake, and corrections."""
 
+from app.institutions.router import router
+from app.institutions.service import (
+    check_institution_can_upload,
+    create_correction_request,
+    create_course,
+    create_upload_session,
+    get_course,
+    get_course_intake,
+    get_course_intakes,
+    get_institution,
+    get_institution_by_aicte_id,
+    get_intake_history,
+    list_courses,
+    list_institutions,
+    resolve_correction_request,
+    sync_master_data,
+    update_approval_status,
+    update_course,
+    update_course_intake,
+    update_institution_info,
+)
+
+__all__ = [
+    "router",
+    "get_institution",
+    "get_institution_by_aicte_id",
+    "list_institutions",
+    "list_courses",
+    "get_course",
+    "get_course_intakes",
+    "get_course_intake",
+    "get_intake_history",
+    "create_course",
+    "update_course",
+    "update_course_intake",
+    "update_approval_status",
+    "update_institution_info",
+    "sync_master_data",
+    "create_correction_request",
+    "resolve_correction_request",
+    "check_institution_can_upload",
+    "create_upload_session",
+]
