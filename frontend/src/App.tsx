@@ -21,6 +21,8 @@ import { StudentFormPage } from "./pages/StudentFormPage";
 import { BulkUploadPage } from "./pages/BulkUploadPage";
 import { ValidationPage } from "./pages/ValidationPage";
 import { SubmitPage } from "./pages/SubmitPage";
+import { AicteReviewPage } from "./pages/AicteReviewPage";
+import { CollegeQueriesPage } from "./pages/CollegeQueriesPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -181,7 +183,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="AICTE Officer Queries" section="College Portal" taskRef="T25" />
+              <CollegeQueriesPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -283,7 +285,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Submission Review Queue" section="AICTE Central" taskRef="T25" />
+              <AicteReviewPage />
             </AppLayout>
           </ProtectedRoute>
         }

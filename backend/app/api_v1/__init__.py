@@ -6,6 +6,8 @@ from app.api_v1.health import router as health_router
 from app.audit.router import router as audit_router
 from app.auth.router import router as auth_router
 from app.institutions.router import router as institutions_router
+from app.review.router import college_queries_router
+from app.review.router import router as review_router
 from app.students.router import router as students_router
 from app.submissions.router import router as submissions_router
 from app.verification.router import router as verification_router
@@ -20,3 +22,5 @@ api_v1_router.include_router(submissions_router)
 api_v1_router.include_router(verification_router)
 api_v1_router.include_router(audit_router)
 api_v1_router.include_router(analytics_router)
+api_v1_router.include_router(review_router)
+api_v1_router.include_router(college_queries_router)
