@@ -47,6 +47,8 @@ blob-report/
 data/
 *.db
 *.sqlite
+*.rdb
+dump.rdb
 storage/uploads/
 tools/
 .tools/

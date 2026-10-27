@@ -15,6 +15,7 @@ import { CollegeDashboardPlaceholder } from "./pages/CollegeDashboardPlaceholder
 import { AicteOverviewPlaceholder } from "./pages/AicteOverviewPlaceholder";
 import { AicteApprovalsPage } from "./pages/AicteApprovalsPage";
 import { AicteIntakePage } from "./pages/AicteIntakePage";
+import { SeatDeclarationsPage } from "./pages/SeatDeclarationsPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -105,7 +106,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Seat Declarations" section="College Portal" taskRef="T19" />
+              <SeatDeclarationsPage />
             </AppLayout>
           </ProtectedRoute>
         }

@@ -12,7 +12,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
 from app.models import Notification, Student, ValidationFlag
-from app.validation.codes import DUP_ACTIVE_OTHER_COLLEGE, DUP_SAME_COURSE_OTHER_COLLEGE
+
+DUP_ACTIVE_OTHER_COLLEGE = "DUP_ACTIVE_OTHER_COLLEGE"
+DUP_SAME_COURSE_OTHER_COLLEGE = "DUP_SAME_COURSE_OTHER_COLLEGE"
 
 
 def query_duplicates_by_apaar_and_year(
