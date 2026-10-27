@@ -8,6 +8,7 @@ SPEC.md Section 6 & TASKS.md T07:
 - Suspended/withdrawn/expired approval blocks uploads (403 Forbidden).
 """
 
+from datetime import UTC, datetime
 from typing import Annotated, Any
 
 import redis
@@ -23,7 +24,7 @@ from fastapi import (
     UploadFile,
     status,
 )
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import (
@@ -1045,4 +1046,81 @@ def get_institution_notifications(
         }
         for n in items
     ]
+
+
+@router.patch(
+    "/{institution_id}/notifications/{notification_id}/read",
+    summary="Mark a specific notification as read",
+)
+def mark_institution_notification_read(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    notification_id: int,
+    current_user: Annotated[
+        User,
+        Depends(
+            require_roles(
+                Role.COLLEGE_ADMIN.value,
+                Role.COLLEGE_STAFF.value,
+                Role.COLLEGE_VIEWER.value,
+            )
+        ),
+    ],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict[str, Any]:
+    """Mark a notification as read by this institution."""
+    from app.models import Notification
+
+    stmt = select(Notification).where(
+        Notification.id == notification_id,
+        Notification.institution_id == institution_id,
+    )
+    notif = db.scalars(stmt).first()
+    if not notif:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Notification not found")
+
+    if not notif.read_at:
+        notif.read_at = datetime.now(UTC)
+        db.commit()
+        db.refresh(notif)
+
+    return {
+        "status": "success",
+        "id": notif.id,
+        "read_at": notif.read_at.isoformat() if notif.read_at else None,
+    }
+
+
+@router.post(
+    "/{institution_id}/notifications/mark-all-read",
+    summary="Mark all notifications as read for this institution",
+)
+def mark_all_institution_notifications_read(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[
+        User,
+        Depends(
+            require_roles(
+                Role.COLLEGE_ADMIN.value,
+                Role.COLLEGE_STAFF.value,
+                Role.COLLEGE_VIEWER.value,
+            )
+        ),
+    ],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict[str, Any]:
+    """Mark all unread notifications as read."""
+    from app.models import Notification
+
+    stmt = (
+        update(Notification)
+        .where(
+            Notification.institution_id == institution_id,
+            Notification.read_at.is_(None),
+        )
+        .values(read_at=datetime.now(UTC))
+    )
+    res = db.execute(stmt)
+    db.commit()
+    return {"status": "success", "marked_read_count": res.rowcount}
+
 

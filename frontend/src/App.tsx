@@ -11,7 +11,7 @@ import { ActivatePage } from "./pages/ActivatePage";
 import { StudentPortalPage } from "./pages/StudentPortalPage";
 import { UnauthorizedPage } from "./pages/UnauthorizedPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
-import { CollegeDashboardPlaceholder } from "./pages/CollegeDashboardPlaceholder";
+import { CollegeDashboardPage } from "./pages/CollegeDashboardPage";
 import { AicteOverviewPage } from "./pages/AicteOverviewPage";
 import { AicteApprovalsPage } from "./pages/AicteApprovalsPage";
 import { AicteIntakePage } from "./pages/AicteIntakePage";
@@ -111,7 +111,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <CollegeDashboardPlaceholder />
+              <CollegeDashboardPage />
             </AppLayout>
           </ProtectedRoute>
         }

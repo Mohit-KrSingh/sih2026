@@ -305,3 +305,41 @@ export async function getIntakeHistory(
 export async function getDevOutbox(): Promise<DevOutboxMessage[]> {
   return api.get<DevOutboxMessage[]>("/api/v1/dev/outbox");
 }
+
+export interface NotificationItem {
+  id: number;
+  institution_id: number;
+  type: string;
+  payload: Record<string, any>;
+  read_at: string | null;
+  created_at: string | null;
+}
+
+export async function getInstitutionNotifications(
+  institutionId: number,
+  limit: number = 50,
+): Promise<NotificationItem[]> {
+  return api.get<NotificationItem[]>(
+    `/api/v1/institutions/${institutionId}/notifications?limit=${limit}`,
+  );
+}
+
+export async function markNotificationRead(
+  institutionId: number,
+  notificationId: number,
+): Promise<{ status: string; id: number; read_at: string | null }> {
+  return api.patch<{ status: string; id: number; read_at: string | null }>(
+    `/api/v1/institutions/${institutionId}/notifications/${notificationId}/read`,
+    {},
+  );
+}
+
+export async function markAllNotificationsRead(
+  institutionId: number,
+): Promise<{ status: string; marked_read_count: number }> {
+  return api.post<{ status: string; marked_read_count: number }>(
+    `/api/v1/institutions/${institutionId}/notifications/mark-all-read`,
+    {},
+  );
+}
+
