@@ -575,6 +575,8 @@ class ChangeRequest(TimestampMixin, Base):
         ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    document_ref: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    decision_note: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Relationships
     student: Mapped["Student"] = relationship("Student", back_populates="change_requests")

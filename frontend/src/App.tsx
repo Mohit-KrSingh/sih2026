@@ -22,7 +22,9 @@ import { BulkUploadPage } from "./pages/BulkUploadPage";
 import { ValidationPage } from "./pages/ValidationPage";
 import { SubmitPage } from "./pages/SubmitPage";
 import { AicteReviewPage } from "./pages/AicteReviewPage";
+import { AicteChangeRequestsPage } from "./pages/AicteChangeRequestsPage";
 import { CollegeQueriesPage } from "./pages/CollegeQueriesPage";
+import { CollegeChangeRequestsPage } from "./pages/CollegeChangeRequestsPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -193,7 +195,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Contact & Head Change Requests" section="College Portal" taskRef="T09" />
+              <CollegeChangeRequestsPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -286,6 +288,16 @@ export function AppRoutes() {
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
               <AicteReviewPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/aicte/change-requests"
+        element={
+          <ProtectedRoute allowedRoles={AICTE_ROLES}>
+            <AppLayout>
+              <AicteChangeRequestsPage />
             </AppLayout>
           </ProtectedRoute>
         }

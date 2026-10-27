@@ -8,6 +8,8 @@ from app.auth.router import router as auth_router
 from app.institutions.router import router as institutions_router
 from app.review.router import college_queries_router
 from app.review.router import router as review_router
+from app.students.change_request_router import aicte_router as aicte_change_requests_router
+from app.students.change_request_router import college_router as college_change_requests_router
 from app.students.router import router as students_router
 from app.submissions.router import router as submissions_router
 from app.verification.router import router as verification_router
@@ -24,3 +26,5 @@ api_v1_router.include_router(audit_router)
 api_v1_router.include_router(analytics_router)
 api_v1_router.include_router(review_router)
 api_v1_router.include_router(college_queries_router)
+api_v1_router.include_router(college_change_requests_router)
+api_v1_router.include_router(aicte_change_requests_router)

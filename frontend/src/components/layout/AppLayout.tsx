@@ -8,8 +8,10 @@ import {
   AlertTriangle,
   Building2,
   CheckCircle2,
+  FileCheck,
   FileCheck2,
   FileText,
+  HelpCircle,
   KeyRound,
   LayoutDashboard,
   Shield,
@@ -35,6 +37,8 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
     { label: "Bulk Upload", path: "/college/upload", icon: <Upload className="w-4 h-4" /> },
     { label: "Validation Flags", path: "/college/validation", icon: <AlertTriangle className="w-4 h-4" /> },
     { label: "Submit Data", path: "/college/submit", icon: <CheckCircle2 className="w-4 h-4" /> },
+    { label: "Queries", path: "/college/queries", icon: <HelpCircle className="w-4 h-4" /> },
+    { label: "Change Requests", path: "/college/change-requests", icon: <FileCheck className="w-4 h-4" /> },
     { label: "Staff", path: "/college/staff", icon: <UserCheck className="w-4 h-4" /> },
     { label: "API Keys", path: "/college/api-keys", icon: <KeyRound className="w-4 h-4" /> },
   ];
@@ -47,6 +51,7 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
     { label: "Duplicates", path: "/aicte/duplicates", icon: <Users className="w-4 h-4" /> },
     { label: "Anomaly Detection", path: "/aicte/anomalies", icon: <Shield className="w-4 h-4" /> },
     { label: "Review Queue", path: "/aicte/review", icon: <FileCheck2 className="w-4 h-4" /> },
+    { label: "Change Requests", path: "/aicte/change-requests", icon: <FileCheck className="w-4 h-4" /> },
     { label: "Reports & Exports", path: "/aicte/reports", icon: <FileText className="w-4 h-4" /> },
     { label: "Audit Log Chain", path: "/aicte/audit", icon: <Shield className="w-4 h-4" /> },
   ];
