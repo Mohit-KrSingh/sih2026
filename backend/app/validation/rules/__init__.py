@@ -2,7 +2,10 @@
 
 from app.validation.rules import (
     admission_date_window,
+    apaar_dob_mismatch,
     apaar_format,
+    apaar_name_mismatch,
+    apaar_not_found,
     apaar_required,
     country_required,
     dob_invalid,
@@ -26,4 +29,7 @@ __all__ = [
     "enum_invalid",
     "country_required",
     "admission_date_window",
+    "apaar_not_found",
+    "apaar_name_mismatch",
+    "apaar_dob_mismatch",
 ]

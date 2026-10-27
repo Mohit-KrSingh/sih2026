@@ -4,6 +4,7 @@ Spec: Section 9.1, 9.2, 9.3, 9.4.
 """
 
 import app.validation.rules  # noqa: F401  # Auto-registers all rule modules
+from app.validation.apaar_lookup import get_apaar_cache
 from app.validation.codes import (
     ADMISSION_DATE_WINDOW,
     ADMISSION_YEAR_MISMATCH,
@@ -81,6 +82,7 @@ __all__ = [
     # Execution
     "run_rules",
     "run_validation",
+    "get_apaar_cache",
     # Rule codes & catalogue
     "FILE_TEMPLATE",
     "FILE_EMPTY",
