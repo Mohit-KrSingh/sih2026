@@ -20,7 +20,7 @@ export interface StudentValidationFlag {
 export interface StudentResponse {
   id: number;
   institution_id: number;
-  course_id: number;
+  course_id: number | null;
   course_name: string;
   branch: string;
   academic_year: string;
@@ -197,3 +197,156 @@ export async function deleteStudent(
     `/api/v1/institutions/${institutionId}/students/${studentId}`
   );
 }
+
+// =========================================================================
+// Bulk Upload Types & Functions (Spec 8.2, 9.4, 13 & TASKS.md T21)
+// =========================================================================
+
+export interface UploadSummary {
+  total_rows: number;
+  valid_rows: number;
+  flagged_rows: number;
+  error_count: number;
+  exception_count: number;
+  warning_count: number;
+  info_count: number;
+  inserted_count: number;
+  updated_count: number;
+}
+
+export interface UploadRowResult {
+  row_number: number;
+  student_id?: number | null;
+  apaar_id: string;
+  name: string;
+  dob: string;
+  gender: string;
+  course: string;
+  branch: string;
+  admission_year: string;
+  enrolment_no: string;
+  admission_date: string;
+  admission_mode: string;
+  seat_type: string;
+  reservation_category: string;
+  nri: string;
+  oci: string;
+  foreign_national: string;
+  country?: string | null;
+  status: string;
+  flags: StudentValidationFlag[];
+}
+
+export interface UploadResultResponse {
+  upload_id: number;
+  filename: string;
+  row_count: number;
+  summary: UploadSummary;
+  rows: UploadRowResult[];
+}
+
+export interface UploadHistoryItem {
+  id: number;
+  institution_id: number;
+  filename: string;
+  row_count: number;
+  status: string;
+  summary_json?: {
+    summary?: UploadSummary;
+    errors?: Array<{
+      row_number: number;
+      field: string;
+      rule_code: string;
+      level: string;
+      message: string;
+      fix_hint: string;
+    }>;
+  } | null;
+  uploaded_by?: number | null;
+  created_at: string;
+}
+
+export interface UploadHistoryResponse {
+  items: UploadHistoryItem[];
+  total: number;
+}
+
+/**
+ * Download canonical student upload CSV template.
+ */
+export async function downloadTemplateCsv(institutionId: number): Promise<string> {
+  const token = localStorage.getItem("apaar_access_token");
+  const base = import.meta.env.VITE_API_BASE_URL || "";
+  const res = await fetch(`${base}/api/v1/institutions/${institutionId}/students/upload/template`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to download template: ${res.statusText}`);
+  }
+  return res.text();
+}
+
+/**
+ * Upload bulk student file (CSV/Excel) and execute validation engine.
+ */
+export async function uploadStudentsFile(
+  institutionId: number,
+  file: File,
+  academicYear: string = "2026-27"
+): Promise<UploadResultResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("academic_year", academicYear);
+
+  return api.post<UploadResultResponse>(
+    `/api/v1/institutions/${institutionId}/students/upload`,
+    formData
+  );
+}
+
+/**
+ * Retrieve bulk student upload history for an institution.
+ */
+export async function getUploadHistory(
+  institutionId: number,
+  limit: number = 20,
+  offset: number = 0
+): Promise<UploadHistoryResponse> {
+  return api.get<UploadHistoryResponse>(
+    `/api/v1/institutions/${institutionId}/students/uploads?limit=${limit}&offset=${offset}`
+  );
+}
+
+/**
+ * Retrieve past upload details and row evaluation flags.
+ */
+export async function getUploadDetails(
+  institutionId: number,
+  uploadId: number
+): Promise<UploadResultResponse> {
+  return api.get<UploadResultResponse>(
+    `/api/v1/institutions/${institutionId}/students/uploads/${uploadId}`
+  );
+}
+
+/**
+ * Download CSV error file for an upload.
+ */
+export async function downloadErrorCsv(
+  institutionId: number,
+  uploadId: number
+): Promise<string> {
+  const token = localStorage.getItem("apaar_access_token");
+  const base = import.meta.env.VITE_API_BASE_URL || "";
+  const res = await fetch(
+    `${base}/api/v1/institutions/${institutionId}/students/uploads/${uploadId}/errors`,
+    {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }
+  );
+  if (!res.ok) {
+    throw new Error(`Failed to download error file: ${res.statusText}`);
+  }
+  return res.text();
+}
+

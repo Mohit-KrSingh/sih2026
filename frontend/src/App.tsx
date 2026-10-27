@@ -18,6 +18,7 @@ import { AicteIntakePage } from "./pages/AicteIntakePage";
 import { SeatDeclarationsPage } from "./pages/SeatDeclarationsPage";
 import { StudentsListPage } from "./pages/StudentsListPage";
 import { StudentFormPage } from "./pages/StudentFormPage";
+import { BulkUploadPage } from "./pages/BulkUploadPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -148,7 +149,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Bulk CSV / Excel Upload" section="College Portal" taskRef="T21" />
+              <BulkUploadPage />
             </AppLayout>
           </ProtectedRoute>
         }

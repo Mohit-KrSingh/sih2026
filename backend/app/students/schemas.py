@@ -182,9 +182,9 @@ class StudentResponse(BaseModel):
 
     id: int
     institution_id: int
-    course_id: int
-    course_name: str
-    branch: str
+    course_id: int | None = None
+    course_name: str = ""
+    branch: str = ""
     academic_year: str
     apaar_id: str
     name: str
@@ -244,4 +244,81 @@ class StudentListResponse(BaseModel):
     limit: int
     total_pages: int
     stats: StudentListStats
+
+
+# =========================================================================
+# Bulk Upload Schemas (Spec 8.2, 9.4, 13 & TASKS.md T21)
+# =========================================================================
+
+
+class UploadSummary(BaseModel):
+    """Aggregate summary statistics for a batch upload."""
+
+    total_rows: int = 0
+    valid_rows: int = 0
+    flagged_rows: int = 0
+    error_count: int = 0
+    exception_count: int = 0
+    warning_count: int = 0
+    info_count: int = 0
+    inserted_count: int = 0
+    updated_count: int = 0
+
+
+class UploadRowResult(BaseModel):
+    """Evaluation result for an individual uploaded student row."""
+
+    row_number: int
+    student_id: int | None = None
+    apaar_id: str
+    name: str
+    dob: str
+    gender: str
+    course: str
+    branch: str
+    admission_year: str
+    enrolment_no: str
+    admission_date: str
+    admission_mode: str
+    seat_type: str
+    reservation_category: str
+    nri: str
+    oci: str
+    foreign_national: str
+    country: str | None = None
+    status: str
+    flags: list[StudentValidationFlag] = []
+
+
+class UploadResultResponse(BaseModel):
+    """Full evaluation result response for a bulk student upload."""
+
+    upload_id: int
+    filename: str
+    row_count: int
+    summary: UploadSummary
+    rows: list[UploadRowResult]
+
+
+class UploadHistoryItem(BaseModel):
+    """Record representation for past batch upload history."""
+
+    id: int
+    institution_id: int
+    filename: str
+    row_count: int
+    status: str
+    summary_json: dict | None = None
+    uploaded_by: int | None = None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UploadHistoryResponse(BaseModel):
+    """Paginated collection of upload history items."""
+
+    items: list[UploadHistoryItem]
+    total: int
+
 

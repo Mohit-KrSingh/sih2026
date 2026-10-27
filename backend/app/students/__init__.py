@@ -18,6 +18,14 @@ from app.students.service import (
     list_students,
     update_student,
 )
+from app.students.upload_service import (
+    generate_error_csv,
+    generate_template_csv,
+    get_upload_details,
+    get_upload_history,
+    parse_uploaded_file,
+    process_bulk_upload,
+)
 
 __all__ = [
     "notify_duplicate_enrolment",
@@ -32,4 +40,10 @@ __all__ = [
     "get_student",
     "list_students",
     "update_student",
+    "generate_template_csv",
+    "parse_uploaded_file",
+    "process_bulk_upload",
+    "get_upload_history",
+    "get_upload_details",
+    "generate_error_csv",
 ]

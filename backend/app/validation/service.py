@@ -346,6 +346,14 @@ def validate_rows(
                     exclude_institution_id=institution_id,
                 )
 
+        extra_ctx: dict[str, Any] = {"db": db_session}
+        if db_session is not None and institution_id is not None:
+            extra_ctx["approved_courses"] = list(
+                db_session.scalars(
+                    select(Course).where(Course.institution_id == institution_id)
+                ).all()
+            )
+
         val_ctx = ValidationContext(
             rows=normalized_rows,
             institution_id=institution_id,
@@ -355,6 +363,7 @@ def validate_rows(
             apaar_client=client,
             db_session=db_session,
             other_college_students=cross_college,
+            extra=extra_ctx,
         )
 
     # 3. Execute engine rules

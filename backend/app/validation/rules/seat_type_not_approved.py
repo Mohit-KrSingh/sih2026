@@ -45,6 +45,21 @@ def _is_supernumerary_allowed(row: Any, context: ValidationContext) -> bool | No
 
     # 4. Extra approved courses
     appr_courses = context.extra.get("approved_courses")
+    if not appr_courses:
+        db = context.db_session or context.extra.get("db")
+        if db is not None and context.institution_id is not None:
+            try:
+                from sqlalchemy import select
+
+                from app.models import Course
+                appr_courses = list(
+                    db.scalars(
+                        select(Course).where(Course.institution_id == context.institution_id)
+                    ).all()
+                )
+            except Exception:
+                pass
+
     if appr_courses:
         row_course = context.get_field_value(row, "course") or context.get_field_value(
             row, "course_name"

@@ -36,9 +36,9 @@ def _get_approved_courses(context: ValidationContext) -> list[Any] | None:
                     return list(courses)
             except Exception:
                 pass
-    if "db" in context.extra and context.institution_id is not None:
+    db = context.db_session or context.extra.get("db")
+    if db is not None and context.institution_id is not None:
         try:
-            db = context.extra["db"]
             return list(
                 db.scalars(
                     select(Course).where(Course.institution_id == context.institution_id)

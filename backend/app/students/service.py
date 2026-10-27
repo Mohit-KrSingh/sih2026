@@ -34,7 +34,6 @@ from app.students.schemas import (
     StudentValidationFlag,
 )
 from app.validation.flags import ValidationLevel
-from app.validation.service import validate_rows
 
 
 def _parse_iso_date(date_str: str | None, default_date: date | None = None) -> date:
@@ -369,6 +368,8 @@ def create_student(
     db.flush()  # assign student.id
 
     # 6. Run validation engine and persist flags
+    from app.validation.service import validate_rows
+
     val_result = validate_rows(
         rows=[student],
         institution_id=institution_id,
@@ -573,6 +574,8 @@ def update_student(
 
     # Re-run validation engine
     student.course = student.course or db.get(Course, student.course_id)
+    from app.validation.service import validate_rows
+
     val_result = validate_rows(
         rows=[student],
         institution_id=institution_id,

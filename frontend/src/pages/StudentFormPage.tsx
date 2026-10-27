@@ -114,7 +114,7 @@ export const StudentFormPage: React.FC = () => {
             setName(student.name);
             setDob(student.dob);
             setGender(student.gender);
-            setCourseId(student.course_id);
+            setCourseId(student.course_id ?? "");
             setAcademicYear(student.academic_year);
             setEnrolmentNo(student.enrolment_no);
             setAdmissionDate(student.admission_date);

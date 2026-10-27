@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, File, Form, Query, Request, Response, UploadFile
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import (
@@ -13,6 +13,7 @@ from app.auth.dependencies import (
 from app.models import User
 from app.students import seat_declarations as seat_service
 from app.students import service as student_service
+from app.students import upload_service
 from app.students.schemas import (
     CourseSummaryResponse,
     InstitutionSeatDeclarationResponse,
@@ -23,6 +24,8 @@ from app.students.schemas import (
     StudentResponse,
     StudentSaveResultResponse,
     StudentUpdateRequest,
+    UploadHistoryResponse,
+    UploadResultResponse,
 )
 
 router = APIRouter(tags=["Seat Declarations & Student Management"])
@@ -178,6 +181,139 @@ def list_students(
     )
 
 
+# =========================================================================
+# Bulk Upload & Evaluation Endpoints (Spec 8.2, 9.4, 13, TASKS.md T21)
+# =========================================================================
+
+
+@router.get(
+    "/institutions/{institution_id}/students/upload/template",
+    summary="Download canonical student bulk upload CSV template",
+)
+def download_student_template(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[User, college_staff_guard],
+) -> Response:
+    """Return canonical CSV template containing required lowercase headers.
+
+    Spec 8.2 & TASKS.md T21:
+    - Headers: apaar_id, name, dob, gender, course, branch, admission_year, enrolment_no,
+      admission_date, admission_mode, seat_type, reservation_category, nri, oci,
+      foreign_national, country.
+    """
+    csv_content = upload_service.generate_template_csv()
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": 'attachment; filename="apaar_student_upload_template.csv"'
+        },
+    )
+
+
+@router.post(
+    "/institutions/{institution_id}/students/upload",
+    response_model=UploadResultResponse,
+    status_code=201,
+    summary="Upload bulk student file (CSV/Excel) and execute validation engine",
+)
+async def upload_students_file(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    request: Request,
+    file: UploadFile = File(...),
+    academic_year: str = Form(default="2026-27"),
+    current_user: Annotated[User, college_staff_guard] = None,  # type: ignore[assignment]
+    db: Session = Depends(get_db),  # type: ignore[assignment]
+) -> UploadResultResponse:
+    """Upload CSV or Excel file of student records.
+
+    Spec 8.2, 9.4, 13 & TASKS.md T21:
+    - Rejection policy: reject only unreadable, empty, or oversized files.
+    - Saves all rows as drafts without silently discarding data.
+    - Re-upload updates matching records (same college, course, year, APAAR ID).
+    - Runs pure validation engine across all rows and persists flags.
+    - Emits hash-chained audit log entry.
+    """
+    client_ip = request.client.host if request.client else None
+    file_bytes = await file.read()
+    filename = file.filename or "uploaded_students.csv"
+
+    return upload_service.process_bulk_upload(
+        db=db,
+        institution_id=institution_id,
+        file_bytes=file_bytes,
+        filename=filename,
+        user=current_user,
+        academic_year_default=academic_year,
+        client_ip=client_ip,
+    )
+
+
+@router.get(
+    "/institutions/{institution_id}/students/uploads",
+    response_model=UploadHistoryResponse,
+    summary="Retrieve bulk student upload history for an institution",
+)
+def get_upload_history(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[User, college_staff_guard],
+    db: Annotated[Session, Depends(get_db)],
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> UploadHistoryResponse:
+    """Retrieve historical bulk uploads with row counts, status, and summary metadata."""
+    return upload_service.get_upload_history(
+        db=db,
+        institution_id=institution_id,
+        limit=limit,
+        offset=offset,
+    )
+
+
+@router.get(
+    "/institutions/{institution_id}/students/uploads/{upload_id}",
+    response_model=UploadResultResponse,
+    summary="Retrieve evaluation details and row flags for a past upload",
+)
+def get_upload_details(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    upload_id: int,
+    current_user: Annotated[User, college_staff_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> UploadResultResponse:
+    """Retrieve full evaluation details, stats, and row-level flags for an upload."""
+    return upload_service.get_upload_details(
+        db=db,
+        institution_id=institution_id,
+        upload_id=upload_id,
+    )
+
+
+@router.get(
+    "/institutions/{institution_id}/students/uploads/{upload_id}/errors",
+    summary="Download error CSV file with fix hints for an upload",
+)
+def download_upload_errors(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    upload_id: int,
+    current_user: Annotated[User, college_staff_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> Response:
+    """Export error CSV containing (row, field, code, level, message, fix hint)."""
+    csv_content = upload_service.generate_error_csv(
+        db=db,
+        institution_id=institution_id,
+        upload_id=upload_id,
+    )
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f'attachment; filename="upload_{upload_id}_errors.csv"'
+        },
+    )
+
+
 @router.get(
     "/institutions/{institution_id}/students/{student_id}",
     response_model=StudentResponse,
@@ -284,4 +420,5 @@ def delete_student(
         user=current_user,
         client_ip=client_ip,
     )
+
 

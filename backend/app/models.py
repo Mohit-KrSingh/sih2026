@@ -346,8 +346,8 @@ class Student(TimestampMixin, Base):
     institution_id: Mapped[int] = mapped_column(
         ForeignKey("institutions.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    course_id: Mapped[int] = mapped_column(
-        ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True
+    course_id: Mapped[int | None] = mapped_column(
+        ForeignKey("courses.id", ondelete="CASCADE"), nullable=True, index=True
     )
     academic_year: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     apaar_id: Mapped[str] = mapped_column(String(12), nullable=False, index=True)
