@@ -20,9 +20,11 @@ from app.validation.registry import BaseRule, register_rule
 def _get_approved_courses(context: ValidationContext) -> list[Any] | None:
     """Retrieve approved course list from context sources or None if not configured."""
     if "approved_courses" in context.extra:
-        return context.extra["approved_courses"]
+        val = context.extra["approved_courses"]
+        return list(val.values()) if isinstance(val, dict) else list(val)
     if context.get_param("approved_courses") is not None:
-        return context.get_param("approved_courses")
+        val = context.get_param("approved_courses")
+        return list(val.values()) if isinstance(val, dict) else list(val)
     if context.course is not None:
         return [context.course]
     if context.aicte_client is not None:

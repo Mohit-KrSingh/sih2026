@@ -62,6 +62,13 @@ from app.validation.registry import (
     register_rule,
     rule_registry,
 )
+from app.validation.service import (
+    persist_validation_flags,
+    student_model_to_row,
+    validate_course,
+    validate_rows,
+    validate_submission,
+)
 
 __all__ = [
     # Data models
@@ -83,6 +90,12 @@ __all__ = [
     "run_rules",
     "run_validation",
     "get_apaar_cache",
+    # Service entry points & persistence (T18)
+    "validate_rows",
+    "validate_course",
+    "validate_submission",
+    "persist_validation_flags",
+    "student_model_to_row",
     # Rule codes & catalogue
     "FILE_TEMPLATE",
     "FILE_EMPTY",

@@ -164,3 +164,25 @@ def run_rules(
 
 # Convenience alias
 run_validation = run_rules
+
+
+def validate_rows(*args: Any, **kwargs: Any) -> Any:
+    """Validate rows entry point (delegates to app.validation.service.validate_rows)."""
+    from app.validation.service import validate_rows as _validate_rows
+
+    return _validate_rows(*args, **kwargs)
+
+
+def validate_course(*args: Any, **kwargs: Any) -> Any:
+    """Validate course entry point (delegates to app.validation.service.validate_course)."""
+    from app.validation.service import validate_course as _validate_course
+
+    return _validate_course(*args, **kwargs)
+
+
+def validate_submission(*args: Any, **kwargs: Any) -> Any:
+    """Validate submission entry point (delegates to app.validation.service.validate_submission)."""
+    from app.validation.service import validate_submission as _validate_submission
+
+    return _validate_submission(*args, **kwargs)
+

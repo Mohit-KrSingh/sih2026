@@ -58,6 +58,8 @@ class ValidationContext:
     rows: list[dict[str, Any]] = field(default_factory=list)
     single_row: dict[str, Any] | None = None
     course: Any | None = None
+    course_id: int | None = None
+    submission_id: int | None = None
     approved_intake: int | None = None
     approved_supernumerary: int | None = None
     institution_id: int | None = None
@@ -100,6 +102,8 @@ class ValidationContext:
             rows=self.rows,
             single_row=self.single_row,
             course=self.course,
+            course_id=self.course_id,
+            submission_id=self.submission_id,
             approved_intake=self.approved_intake,
             approved_supernumerary=self.approved_supernumerary,
             institution_id=self.institution_id,
