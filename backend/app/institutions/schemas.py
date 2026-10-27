@@ -206,3 +206,114 @@ class UploadResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# =========================================================================
+# Activation Schemas (Spec 11, TASKS.md T08)
+# =========================================================================
+
+
+class ActivationInitiateRequest(BaseModel):
+    """Payload to initiate college account activation claim."""
+
+    aicte_id: str = Field(..., min_length=3, max_length=50)
+
+
+class ActivationInitiateResponse(BaseModel):
+    """Response containing masked on-file contact details where OTP was dispatched."""
+
+    aicte_id: str
+    institution_name: str
+    masked_email: str
+    masked_phone: str
+    status: str
+    message: str
+
+
+class ActivationOtpVerifyRequest(BaseModel):
+    """Payload to verify OTP sent to official contact on file."""
+
+    aicte_id: str = Field(..., min_length=3, max_length=50)
+    otp_code: str = Field(..., min_length=4, max_length=8)
+
+
+class ActivationOtpVerifyResponse(BaseModel):
+    """Response returned upon successful OTP verification with short-lived session token."""
+
+    verified: bool
+    activation_token: str
+    aicte_id: str
+    institution_name: str
+    head_name: str
+    message: str
+
+
+class ActivationSubmitRequest(BaseModel):
+    """Payload to submit signatory verification and authorization claim."""
+
+    activation_token: str
+    signatory_name: str = Field(..., min_length=2, max_length=255)
+    signatory_ref: str = Field(..., min_length=2, max_length=255)
+    letter_content_b64: str | None = None
+    letter_filename: str | None = "authorisation_letter.pdf"
+
+
+class ActivationRequestResponse(BaseModel):
+    """Activation claim details for institution and AICTE queues."""
+
+    id: int
+    institution_id: int
+    institution_aicte_id: str
+    institution_name: str
+    signatory_name: str
+    signatory_ref: str
+    letter_ref: str
+    status: str  # pending | approved | rejected
+    decided_by: int | None
+    decided_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ActivationApproveRequest(BaseModel):
+    """Optional payload for AICTE officer to approve activation."""
+
+    admin_email: str | None = None
+    notes: str | None = None
+
+
+class ActivationRejectRequest(BaseModel):
+    """Payload for AICTE officer to reject activation."""
+
+    reason: str = Field(..., min_length=3, max_length=1000)
+
+
+class ActivationDecisionResponse(BaseModel):
+    """Response returned when an AICTE officer decides on an activation claim."""
+
+    request_id: int
+    institution_id: int
+    status: str  # approved | rejected
+    institution_account_status: str
+    admin_user_id: int | None = None
+    admin_email: str | None = None
+    initial_password: str | None = None
+    mfa_enabled: bool = True
+    mfa_secret: str | None = None
+    mfa_uri: str | None = None
+    message: str
+
+
+class ActivationStatusResponse(BaseModel):
+    """Public activation status summary for an institution."""
+
+    aicte_id: str
+    institution_name: str
+    account_status: str
+    approval_status: str
+    has_pending_request: bool
+    latest_request_status: str | None = None
+    latest_request_id: int | None = None
+

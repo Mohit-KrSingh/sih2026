@@ -41,7 +41,7 @@ from app.auth.totp import (
 )
 from app.config import get_settings
 from app.db import get_db, get_redis
-from app.models import User
+from app.models import Institution, User
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 settings = get_settings()
@@ -86,6 +86,15 @@ def login(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User account is deactivated",
         )
+
+    # Spec 11: Non-approved colleges cannot log in
+    if user.institution_id is not None:
+        inst = db.get(Institution, user.institution_id)
+        if inst is None or inst.account_status != "active":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Institution account is not activated or approved by AICTE",
+            )
 
     # Check Multi-Factor Authentication requirement
     if user.mfa_secret:
@@ -186,6 +195,15 @@ def verify_mfa_login(
     user = db.scalar(select(User).where(User.id == user_id))
     if user is None or not user.is_active:
         raise credentials_exception
+
+    # Spec 11: Non-approved colleges cannot log in
+    if user.institution_id is not None:
+        inst = db.get(Institution, user.institution_id)
+        if inst is None or inst.account_status != "active":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Institution account is not activated or approved by AICTE",
+            )
 
     if not user.mfa_secret or not verify_totp(user.mfa_secret, payload.code):
         raise HTTPException(
@@ -374,6 +392,15 @@ def refresh_token(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User account is deactivated",
         )
+
+    # Spec 11: Non-approved colleges cannot log in
+    if user.institution_id is not None:
+        inst = db.get(Institution, user.institution_id)
+        if inst is None or inst.account_status != "active":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Institution account is not activated or approved by AICTE",
+            )
 
     new_access_token = create_access_token(
         user_id=user.id,

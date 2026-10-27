@@ -9,10 +9,18 @@ from sqlalchemy.orm import Session, sessionmaker
 
 import app.models  # noqa: F401
 from app.config import get_settings
-from app.db import Base, get_db
+from app.db import Base, get_db, get_redis_client
 from app.main import app
 
 settings = get_settings()
+
+
+@pytest.fixture
+def redis_conn():
+    """Direct Redis client connection for test verification."""
+    client = get_redis_client()
+    yield client
+    client.close()
 
 
 @pytest.fixture(scope="session")

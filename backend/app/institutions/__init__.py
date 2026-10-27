@@ -2,24 +2,32 @@
 
 from app.institutions.router import router
 from app.institutions.service import (
+    approve_activation_request,
     check_institution_can_upload,
     create_correction_request,
     create_course,
     create_upload_session,
+    get_activation_request,
+    get_activation_status,
     get_course,
     get_course_intake,
     get_course_intakes,
     get_institution,
     get_institution_by_aicte_id,
     get_intake_history,
+    initiate_activation,
+    list_activation_requests,
     list_courses,
     list_institutions,
+    reject_activation_request,
     resolve_correction_request,
+    submit_activation_claim,
     sync_master_data,
     update_approval_status,
     update_course,
     update_course_intake,
     update_institution_info,
+    verify_activation_otp,
 )
 
 __all__ = [
@@ -42,4 +50,12 @@ __all__ = [
     "resolve_correction_request",
     "check_institution_can_upload",
     "create_upload_session",
+    "initiate_activation",
+    "verify_activation_otp",
+    "submit_activation_claim",
+    "list_activation_requests",
+    "get_activation_request",
+    "approve_activation_request",
+    "reject_activation_request",
+    "get_activation_status",
 ]

@@ -1,14 +1,29 @@
-"""Business logic for institutions, courses, intake, and corrections."""
+"""Business logic for institutions, courses, intake, corrections, and activation."""
 
-from datetime import datetime
+import base64
+import secrets
+import uuid
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import jwt
+import redis
 from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.audit import service as audit_service
+from app.auth.otp import store_and_send_otp, verify_otp
+from app.auth.schemas import Role
+from app.auth.security import hash_password
+from app.auth.totp import generate_totp_secret, get_totp_uri
+from app.config import get_settings
 from app.institutions.schemas import (
+    ActivationDecisionResponse,
+    ActivationInitiateResponse,
+    ActivationOtpVerifyResponse,
+    ActivationStatusResponse,
+    ActivationSubmitRequest,
     ApprovalStatusUpdateRequest,
     CorrectionRequestCreate,
     CorrectionRequestResolve,
@@ -19,8 +34,14 @@ from app.institutions.schemas import (
     MasterSyncResponse,
     UploadCreateRequest,
 )
-from app.integrations.factory import get_aicte_master_client
+from app.integrations.factory import (
+    get_aicte_master_client,
+    get_identity_verifier,
+    get_otp_sender,
+    get_storage,
+)
 from app.models import (
+    ActivationRequest,
     CorrectionRequest,
     Course,
     CourseIntake,
@@ -965,3 +986,639 @@ def create_upload_session(
     )
 
     return upload
+
+
+# =========================================================================
+# Activation Management (Spec 11, TASKS.md T08)
+# =========================================================================
+
+ACTIVATION_TOKEN_EXPIRE_MINUTES = 30
+
+
+def mask_email(email: str) -> str:
+    """Mask email address for privacy display (e.g. o***@example.edu)."""
+    if not email or "@" not in email:
+        return "***"
+    username, domain = email.strip().split("@", 1)
+    if len(username) <= 2:
+        masked_user = username[0] + "***"
+    else:
+        masked_user = username[0] + "***" + username[-1]
+    return f"{masked_user}@{domain}"
+
+
+def mask_phone(phone: str) -> str:
+    """Mask phone number for privacy display (e.g. ******3210)."""
+    if not phone:
+        return "****"
+    clean = phone.strip()
+    if len(clean) <= 4:
+        return "****"
+    return "*" * (len(clean) - 4) + clean[-4:]
+
+
+def create_activation_token(institution_id: int, aicte_id: str) -> str:
+    """Create a tamper-proof signed activation session token."""
+    settings = get_settings()
+    now = datetime.now(UTC)
+    payload = {
+        "sub": f"activation:{aicte_id}",
+        "institution_id": institution_id,
+        "aicte_id": aicte_id,
+        "purpose": "college_activation",
+        "type": "activation_session",
+        "exp": now + timedelta(minutes=ACTIVATION_TOKEN_EXPIRE_MINUTES),
+        "iat": now,
+    }
+    return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+
+
+def decode_activation_token(token: str) -> dict[str, Any]:
+    """Decode and validate an activation session token."""
+    settings = get_settings()
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+    except (jwt.PyJWTError, Exception) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired activation session token. Please verify OTP again.",
+        ) from exc
+
+    if (
+        payload.get("type") != "activation_session"
+        or payload.get("purpose") != "college_activation"
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid activation token type",
+        )
+    return payload
+
+
+def initiate_activation(
+    db: Session,
+    redis_client: redis.Redis,
+    aicte_id: str,
+) -> ActivationInitiateResponse:
+    """Initiate college activation claim by AICTE ID.
+
+    Spec 11:
+    1. Enter AICTE institution ID. Unknown ID: rejected immediately.
+    2. OTP goes ONLY to official email and phone already on file with AICTE,
+       never to a typed-in address.
+    3. Rules: approval must be active for the year.
+    """
+    cleaned_id = aicte_id.strip()
+
+    # 1. Look up institution in DB or sync from external AICTE Master Registry
+    inst = db.scalar(select(Institution).where(Institution.aicte_id == cleaned_id))
+    if inst is None:
+        master_client = get_aicte_master_client()
+        master_record = master_client.get_institution(cleaned_id)
+        if not master_record:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Institution ID '{cleaned_id}' not found in official AICTE registry",
+            )
+        # Create not_activated institution record from master registry
+        inst = Institution(
+            aicte_id=master_record.aicte_id,
+            name=master_record.name,
+            state=master_record.state,
+            district=master_record.district,
+            address=master_record.address,
+            official_email=master_record.official_email,
+            official_phone=master_record.official_phone,
+            head_name=master_record.head_name,
+            affiliating_university=master_record.affiliating_university,
+            approval_status=master_record.approval_status,
+            approval_valid_to=master_record.approval_valid_to,
+            account_status="not_activated",
+        )
+        db.add(inst)
+        db.flush()
+
+    # 2. Check if already activated
+    if inst.account_status == "active":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Institution '{inst.name}' is already activated. Please log in.",
+        )
+
+    # 3. Check approval status (SPEC 11: approval must be active for the year)
+    if inst.approval_status != "active":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"Institution approval status is '{inst.approval_status}'. "
+                "Only institutions with active AICTE approval can activate an account."
+            ),
+        )
+
+    # 4. Check if pending activation request exists
+    pending_request = db.scalar(
+        select(ActivationRequest).where(
+            ActivationRequest.institution_id == inst.id,
+            ActivationRequest.status == "pending",
+        )
+    )
+    if pending_request:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"An activation request for '{inst.name}' is already pending review "
+                "by AICTE officers. Please wait for official approval."
+            ),
+        )
+
+    # 5. OTP goes ONLY to official email and phone already on file with AICTE
+    # Caller CANNOT specify recipient address.
+    official_email = inst.official_email
+    official_phone = inst.official_phone
+
+    if not official_email:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="No official email on file for institution",
+        )
+
+    # Dispatch to on-file email
+    store_and_send_otp(
+        db=db,
+        redis_client=redis_client,
+        recipient=official_email,
+        channel="email",
+        purpose="activation",
+        context=f"College account activation claim for AICTE ID {inst.aicte_id}",
+    )
+
+    # Also dispatch to on-file phone if available
+    if official_phone:
+        store_and_send_otp(
+            db=db,
+            redis_client=redis_client,
+            recipient=official_phone,
+            channel="sms",
+            purpose="activation",
+            context=f"College activation OTP for {inst.aicte_id}",
+        )
+
+    return ActivationInitiateResponse(
+        aicte_id=inst.aicte_id,
+        institution_name=inst.name,
+        masked_email=mask_email(official_email),
+        masked_phone=mask_phone(official_phone),
+        status="otp_dispatched",
+        message="One-time verification code sent to official contacts on file with AICTE.",
+    )
+
+
+def verify_activation_otp(
+    db: Session,
+    redis_client: redis.Redis,
+    aicte_id: str,
+    otp_code: str,
+) -> ActivationOtpVerifyResponse:
+    """Verify OTP code sent to official on-file contact and issue activation session token."""
+    cleaned_id = aicte_id.strip()
+    inst = db.scalar(select(Institution).where(Institution.aicte_id == cleaned_id))
+    if inst is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Institution ID '{cleaned_id}' not found",
+        )
+
+    is_valid, msg, remaining = verify_otp(
+        redis_client=redis_client,
+        recipient=inst.official_email,
+        purpose="activation",
+        code=otp_code.strip(),
+    )
+
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"OTP verification failed: {msg}",
+        )
+
+    activation_token = create_activation_token(inst.id, inst.aicte_id)
+
+    return ActivationOtpVerifyResponse(
+        verified=True,
+        activation_token=activation_token,
+        aicte_id=inst.aicte_id,
+        institution_name=inst.name,
+        head_name=inst.head_name,
+        message="OTP verified successfully. Proceed with signatory check and letter upload.",
+    )
+
+
+def submit_activation_claim(
+    db: Session,
+    payload: ActivationSubmitRequest,
+    file_bytes: bytes | None = None,
+    filename: str | None = None,
+    content_type: str | None = None,
+    ip: str = "127.0.0.1",
+) -> ActivationRequest:
+    """Verify signatory identity, store authorisation letter, and submit claim to AICTE queue.
+
+    Spec 11:
+    3. Signatory verified: mock DigiLocker check plus uploaded authorisation letter.
+    4. The request goes into the AICTE approval queue.
+    """
+    token_data = decode_activation_token(payload.activation_token)
+    institution_id = int(token_data["institution_id"])
+    inst = db.get(Institution, institution_id)
+    if not inst:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Institution not found")
+
+    if inst.account_status == "active":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Institution is already activated",
+        )
+
+    if inst.approval_status != "active":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Institution approval status is '{inst.approval_status}'",
+        )
+
+    # Check for existing pending request
+    pending = db.scalar(
+        select(ActivationRequest).where(
+            ActivationRequest.institution_id == inst.id,
+            ActivationRequest.status == "pending",
+        )
+    )
+    if pending:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An activation claim is already pending approval by AICTE",
+        )
+
+    # 1. Signatory identity verification via IdentityVerifier interface
+    identity_verifier = get_identity_verifier()
+    verif_result = identity_verifier.verify_signatory(
+        name=payload.signatory_name,
+        signatory_ref=payload.signatory_ref,
+        institution_aicte_id=inst.aicte_id,
+    )
+    if not verif_result.verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Signatory identity verification failed: {verif_result.details}",
+        )
+
+    # 2. Store authorisation letter document
+    if file_bytes:
+        raw_bytes = file_bytes
+        fn = filename or "authorisation_letter.pdf"
+        ct = content_type or "application/pdf"
+    elif payload.letter_content_b64:
+        try:
+            raw_bytes = base64.b64decode(payload.letter_content_b64)
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid base64 encoding for letter document",
+            ) from exc
+        fn = payload.letter_filename or "authorisation_letter.pdf"
+        ct = "application/pdf"
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Authorisation letter document is required",
+        )
+
+    storage = get_storage()
+    clean_fn = fn.replace(" ", "_")
+    storage_path = f"authorisation_letters/{inst.aicte_id}_{uuid.uuid4().hex[:8]}_{clean_fn}"
+    letter_ref = storage.save(storage_path, raw_bytes, ct)
+
+    # 3. Create pending activation request
+    activation_req = ActivationRequest(
+        institution_id=inst.id,
+        signatory_name=payload.signatory_name.strip(),
+        signatory_ref=verif_result.reference_id or payload.signatory_ref.strip(),
+        letter_ref=letter_ref,
+        status="pending",
+    )
+    db.add(activation_req)
+    inst.account_status = "pending_approval"
+    db.flush()
+
+    # 4. Hash-chained audit log
+    audit_service.record(
+        db=db,
+        action="institution.activation_requested",
+        actor_id=inst.aicte_id,
+        actor_role="anonymous",
+        entity="activation_requests",
+        entity_id=activation_req.id,
+        before_json={"account_status": "not_activated"},
+        after_json={
+            "institution_id": inst.id,
+            "aicte_id": inst.aicte_id,
+            "signatory_name": activation_req.signatory_name,
+            "signatory_ref": activation_req.signatory_ref,
+            "letter_ref": activation_req.letter_ref,
+            "status": "pending",
+            "account_status": "pending_approval",
+        },
+        ip=ip,
+    )
+
+    # 5. Send transactional notification to AICTE queue
+    otp_sender = get_otp_sender(db)
+    otp_sender.send_notification(
+        channel="email",
+        recipient="approvals@aicte-india.org",
+        body=(
+            f"New college activation request #{activation_req.id} submitted for "
+            f"{inst.aicte_id} - {inst.name} by signatory {activation_req.signatory_name}."
+        ),
+    )
+
+    db.commit()
+    db.refresh(activation_req)
+    return activation_req
+
+
+def list_activation_requests(
+    db: Session,
+    status_filter: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> tuple[int, list[ActivationRequest]]:
+    """List activation requests with optional status filtering for AICTE officers."""
+    query = select(ActivationRequest).options(selectinload(ActivationRequest.institution))
+    if status_filter:
+        query = query.where(ActivationRequest.status == status_filter)
+
+    count_query = select(func.count(ActivationRequest.id))
+    if status_filter:
+        count_query = count_query.where(ActivationRequest.status == status_filter)
+
+    total = db.scalar(count_query) or 0
+    items = list(
+        db.scalars(
+            query.order_by(ActivationRequest.created_at.desc())
+            .limit(limit)
+            .offset(offset)
+        ).all()
+    )
+    return total, items
+
+
+def get_activation_request(db: Session, request_id: int) -> ActivationRequest:
+    """Retrieve activation request by ID with institution details."""
+    req = db.scalar(
+        select(ActivationRequest)
+        .options(selectinload(ActivationRequest.institution))
+        .where(ActivationRequest.id == request_id)
+    )
+    if not req:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Activation request {request_id} not found",
+        )
+    return req
+
+
+def approve_activation_request(
+    db: Session,
+    request_id: int,
+    current_user: User,
+    admin_email: str | None = None,
+    notes: str | None = None,
+    ip: str = "127.0.0.1",
+) -> ActivationDecisionResponse:
+    """Approve college activation claim and create primary admin account with MFA.
+
+    Spec 11:
+    4. An officer approves or rejects.
+    5. On approval the primary admin account is created with MFA enabled.
+    """
+    req = get_activation_request(db, request_id)
+    if req.status != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Activation request #{request_id} is already '{req.status}'",
+        )
+
+    inst = req.institution
+    before_req = {"status": req.status}
+    before_inst = {"account_status": inst.account_status}
+
+    # 1. Update activation request
+    req.status = "approved"
+    req.decided_by = current_user.id
+    req.decided_at = datetime.now(UTC)
+
+    # 2. Activate institution account
+    inst.account_status = "active"
+
+    # 3. Create or promote primary admin account (Role.COLLEGE_ADMIN)
+    target_email = (admin_email or inst.official_email).strip().lower()
+    initial_password = f"Admin@{secrets.token_hex(4).upper()}!2026"
+    mfa_secret = generate_totp_secret()
+    mfa_uri = get_totp_uri(secret=mfa_secret, account_email=target_email)
+
+    admin_user = db.scalar(select(User).where(User.email == target_email))
+    if admin_user is None:
+        admin_user = User(
+            email=target_email,
+            password_hash=hash_password(initial_password),
+            role=Role.COLLEGE_ADMIN.value,
+            institution_id=inst.id,
+            mfa_secret=mfa_secret,
+            is_active=True,
+        )
+        db.add(admin_user)
+        db.flush()
+    else:
+        admin_user.role = Role.COLLEGE_ADMIN.value
+        admin_user.institution_id = inst.id
+        admin_user.is_active = True
+        if not admin_user.mfa_secret:
+            admin_user.mfa_secret = mfa_secret
+        admin_user.password_hash = hash_password(initial_password)
+        db.flush()
+
+    # 4. Hash-chained audit logging
+    audit_service.record(
+        db=db,
+        action="institution.activation_approved",
+        actor_id=current_user.id,
+        actor_role=current_user.role,
+        entity="activation_requests",
+        entity_id=req.id,
+        before_json={"request": before_req, "institution": before_inst},
+        after_json={
+            "request_id": req.id,
+            "status": "approved",
+            "decided_by": current_user.id,
+            "institution_id": inst.id,
+            "account_status": "active",
+            "admin_user_id": admin_user.id,
+            "admin_email": admin_user.email,
+            "mfa_enabled": True,
+            "notes": notes,
+        },
+        ip=ip,
+    )
+
+    # 5. Send transactional notification with activation confirmation
+    otp_sender = get_otp_sender(db)
+    otp_sender.send_notification(
+        channel="email",
+        recipient=target_email,
+        body=(
+            f"Congratulations! Your college account for '{inst.name}' has been approved by AICTE. "
+            f"Your primary administrator email is '{target_email}'. "
+            "Please log in and configure your two-factor authentication (MFA)."
+        ),
+    )
+
+    db.commit()
+    db.refresh(req)
+    db.refresh(inst)
+    db.refresh(admin_user)
+
+    return ActivationDecisionResponse(
+        request_id=req.id,
+        institution_id=inst.id,
+        status="approved",
+        institution_account_status="active",
+        admin_user_id=admin_user.id,
+        admin_email=admin_user.email,
+        initial_password=initial_password,
+        mfa_enabled=True,
+        mfa_secret=mfa_secret,
+        mfa_uri=mfa_uri,
+        message=(
+            f"Activation #{req.id} approved. "
+            f"Primary admin created for {admin_user.email}."
+        ),
+    )
+
+
+def reject_activation_request(
+    db: Session,
+    request_id: int,
+    current_user: User,
+    reason: str,
+    ip: str = "127.0.0.1",
+) -> ActivationDecisionResponse:
+    """Reject college activation claim with stated reason."""
+    req = get_activation_request(db, request_id)
+    if req.status != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Activation request #{request_id} is already '{req.status}'",
+        )
+
+    inst = req.institution
+    before_req = {"status": req.status}
+    before_inst = {"account_status": inst.account_status}
+
+    # 1. Update request status
+    req.status = "rejected"
+    req.decided_by = current_user.id
+    req.decided_at = datetime.now(UTC)
+
+    # 2. Reset institution account status
+    inst.account_status = "not_activated"
+
+    # 3. Hash-chained audit logging
+    audit_service.record(
+        db=db,
+        action="institution.activation_rejected",
+        actor_id=current_user.id,
+        actor_role=current_user.role,
+        entity="activation_requests",
+        entity_id=req.id,
+        before_json={"request": before_req, "institution": before_inst},
+        after_json={
+            "request_id": req.id,
+            "status": "rejected",
+            "reason": reason,
+            "decided_by": current_user.id,
+            "institution_id": inst.id,
+            "account_status": "not_activated",
+        },
+        ip=ip,
+    )
+
+    # 4. Dispatch notification
+    otp_sender = get_otp_sender(db)
+    otp_sender.send_notification(
+        channel="email",
+        recipient=inst.official_email,
+        body=(
+            f"Your activation request for '{inst.name}' ({inst.aicte_id}) was rejected by AICTE. "
+            f"Reason: {reason}"
+        ),
+    )
+
+    db.commit()
+    db.refresh(req)
+    db.refresh(inst)
+
+    return ActivationDecisionResponse(
+        request_id=req.id,
+        institution_id=inst.id,
+        status="rejected",
+        institution_account_status="not_activated",
+        admin_user_id=None,
+        admin_email=None,
+        initial_password=None,
+        mfa_enabled=False,
+        mfa_secret=None,
+        mfa_uri=None,
+        message=f"Activation request #{req.id} rejected.",
+    )
+
+
+def get_activation_status(db: Session, aicte_id: str) -> ActivationStatusResponse:
+    """Public query to check current activation state of an institution."""
+    cleaned_id = aicte_id.strip()
+    inst = db.scalar(select(Institution).where(Institution.aicte_id == cleaned_id))
+    if not inst:
+        master_client = get_aicte_master_client()
+        master_record = master_client.get_institution(cleaned_id)
+        if not master_record:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Institution ID '{cleaned_id}' not found in official AICTE registry",
+            )
+        return ActivationStatusResponse(
+            aicte_id=master_record.aicte_id,
+            institution_name=master_record.name,
+            account_status="not_activated",
+            approval_status=master_record.approval_status,
+            has_pending_request=False,
+            latest_request_status=None,
+            latest_request_id=None,
+        )
+
+    latest_req = db.scalar(
+        select(ActivationRequest)
+        .where(ActivationRequest.institution_id == inst.id)
+        .order_by(ActivationRequest.created_at.desc())
+    )
+
+    has_pending = latest_req is not None and latest_req.status == "pending"
+
+    return ActivationStatusResponse(
+        aicte_id=inst.aicte_id,
+        institution_name=inst.name,
+        account_status=inst.account_status,
+        approval_status=inst.approval_status,
+        has_pending_request=has_pending,
+        latest_request_status=latest_req.status if latest_req else None,
+        latest_request_id=latest_req.id if latest_req else None,
+    )
+

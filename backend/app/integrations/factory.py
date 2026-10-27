@@ -70,11 +70,14 @@ def get_identity_verifier() -> IdentityVerifier:
     raise ValueError(f"Unknown IDENTITY_VERIFIER_TYPE: {client_type}")
 
 
+_mock_storage_instance = MockStorage()
+
+
 def get_storage() -> Storage:
     """Resolve Storage based on STORAGE_TYPE config."""
     client_type = get_settings().STORAGE_TYPE.lower()
     if client_type == "mock":
-        return MockStorage()
+        return _mock_storage_instance
     if client_type == "local":
         return LocalStorage(get_settings().STORAGE_DIR)
     if client_type == "http":
