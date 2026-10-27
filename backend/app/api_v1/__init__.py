@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.analytics.router import router as analytics_router
 from app.api_v1.dev import router as dev_router
 from app.api_v1.health import router as health_router
 from app.audit.router import router as audit_router
@@ -18,3 +19,4 @@ api_v1_router.include_router(students_router)
 api_v1_router.include_router(submissions_router)
 api_v1_router.include_router(verification_router)
 api_v1_router.include_router(audit_router)
+api_v1_router.include_router(analytics_router)

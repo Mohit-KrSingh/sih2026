@@ -992,39 +992,23 @@ def submit_annual_data(
     submission.declaration_ref = payload.declaration_text
     db.flush()
 
-    # 5. Lock student records and update submission linkage
-    students = db.scalars(
-        select(Student).where(
-            Student.institution_id == institution_id,
-            Student.academic_year == payload.academic_year,
-        )
-    ).all()
+    # 5. Lock student records, promote to Central Repository, run cross-checks,
+    # dispatch notifications, create review items, and publish SSE events
+    from app.submissions.promotion_service import promote_submission_and_run_cross_checks
 
-    regular_count = 0
-    super_count = 0
-    for s in students:
-        s.is_locked = True
-        s.submission_id = submission.id
-        if s.status not in ["withdrawn", "transferred"]:
-            s.status = "submitted"
-            if s.seat_type == "Regular":
-                regular_count += 1
-            elif s.seat_type == "Supernumerary":
-                super_count += 1
+    promo_result = promote_submission_and_run_cross_checks(
+        db=db,
+        submission=submission,
+        user=user,
+        redis_client=redis_client,
+        client_ip=client_ip,
+    )
 
-    # 6. Lock seat declarations
-    decls = db.scalars(
-        select(SeatDeclaration)
-        .join(Course, SeatDeclaration.course_id == Course.id)
-        .where(
-            Course.institution_id == institution_id,
-            SeatDeclaration.academic_year == payload.academic_year,
-        )
-    ).all()
-    for d in decls:
-        d.status = "locked"
+    regular_count = promo_result["regular_students"]
+    super_count = promo_result["supernumerary_students"]
+    final_status = promo_result["status"]
 
-    # 7. Write tamper-evident hash-chained audit log
+    # 6. Write tamper-evident hash-chained audit log
     audit_service.record(
         db=db,
         actor_id=user.id,
@@ -1034,13 +1018,16 @@ def submit_annual_data(
         entity_id=str(submission.id),
         before_json={"status": "draft"},
         after_json={
-            "status": target_state,
+            "status": final_status,
             "receipt_no": receipt_no,
             "total_students": gate.total_students,
             "regular_students": regular_count,
             "supernumerary_students": super_count,
             "justified_exceptions": gate.justified_exceptions_count,
             "declaration_text": payload.declaration_text,
+            "duplicates_detected": promo_result["duplicates_detected"],
+            "notifications_dispatched": promo_result["notifications_dispatched"],
+            "review_items_created": promo_result["review_items_created"],
         },
         ip=client_ip,
     )
@@ -1054,7 +1041,7 @@ def submit_annual_data(
         academic_year=payload.academic_year,
         submission_id=submission.id,
         receipt_no=receipt_no,
-        status=target_state,
+        status=final_status,
         submitted_at=submitted_at,
         submitted_by_email=user.email,
         submitted_by_name=user.email,

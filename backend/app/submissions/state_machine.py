@@ -71,6 +71,7 @@ class SubmissionStateMachine:
         SubmissionState.SUBMITTED: {
             SubmissionState.ACCEPTED,
             SubmissionState.UNDER_REVIEW,
+            SubmissionState.SUBMITTED_WITH_EXCEPTIONS,
         },
         SubmissionState.UNDER_REVIEW: {
             SubmissionState.ACCEPTED,

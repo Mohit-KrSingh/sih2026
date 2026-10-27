@@ -23,6 +23,7 @@ from fastapi import (
     UploadFile,
     status,
 )
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import (
@@ -997,3 +998,51 @@ def submit_student_data_gate(
         "submitted_by": current_user.email,
         "message": "Authorized: college_admin has submit permission",
     }
+
+
+# =========================================================================
+# Institutional Notifications (Spec 7, TASKS.md T16, T24)
+# =========================================================================
+
+
+@router.get(
+    "/{institution_id}/notifications",
+    summary="Get system notifications for this institution",
+)
+def get_institution_notifications(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[
+        User,
+        Depends(
+            require_roles(
+                Role.COLLEGE_ADMIN.value,
+                Role.COLLEGE_STAFF.value,
+                Role.COLLEGE_VIEWER.value,
+            )
+        ),
+    ],
+    db: Annotated[Session, Depends(get_db)],
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+) -> list[dict[str, Any]]:
+    """Retrieve all notifications sent to this institution."""
+    from app.models import Notification
+
+    stmt = (
+        select(Notification)
+        .where(Notification.institution_id == institution_id)
+        .order_by(Notification.id.desc())
+        .limit(limit)
+    )
+    items = db.scalars(stmt).all()
+    return [
+        {
+            "id": n.id,
+            "institution_id": n.institution_id,
+            "type": n.type,
+            "payload": n.payload_json,
+            "read_at": n.read_at.isoformat() if n.read_at else None,
+            "created_at": n.created_at.isoformat() if n.created_at else None,
+        }
+        for n in items
+    ]
+
