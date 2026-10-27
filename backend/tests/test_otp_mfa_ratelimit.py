@@ -124,9 +124,7 @@ def test_otp_generation_storage_and_ttl(db_session: Session, redis_conn):
 
     # Verify message in dev_outbox
     outbox_msg = db_session.scalar(
-        select(DevOutbox)
-        .where(DevOutbox.recipient == recipient)
-        .order_by(DevOutbox.id.desc())
+        select(DevOutbox).where(DevOutbox.recipient == recipient).order_by(DevOutbox.id.desc())
     )
     assert outbox_msg is not None
     assert data["code"] in outbox_msg.body

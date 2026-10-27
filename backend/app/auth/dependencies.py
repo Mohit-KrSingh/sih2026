@@ -100,14 +100,10 @@ def require_roles(*allowed_roles: str) -> Callable[[User], User]:
 # Named role dependencies
 require_authenticated = Depends(get_current_user)
 require_aicte_admin = Depends(require_roles(Role.AICTE_ADMIN.value))
-require_aicte_officer = Depends(
-    require_roles(Role.AICTE_ADMIN.value, Role.AICTE_OFFICER.value)
-)
+require_aicte_officer = Depends(require_roles(Role.AICTE_ADMIN.value, Role.AICTE_OFFICER.value))
 require_aicte_role = require_aicte_officer
 require_college_admin = Depends(require_roles(Role.COLLEGE_ADMIN.value))
-require_college_staff = Depends(
-    require_roles(Role.COLLEGE_ADMIN.value, Role.COLLEGE_STAFF.value)
-)
+require_college_staff = Depends(require_roles(Role.COLLEGE_ADMIN.value, Role.COLLEGE_STAFF.value))
 require_college_viewer = Depends(
     require_roles(
         Role.COLLEGE_ADMIN.value,

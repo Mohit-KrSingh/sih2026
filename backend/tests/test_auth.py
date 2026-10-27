@@ -42,7 +42,6 @@ def _create_test_institution(db: Session, aicte_id: str = "TEST-INST-01") -> Ins
     return inst
 
 
-
 def test_argon2_hashing_and_verification():
     """Test Argon2 password hashing and verification behavior."""
     password = "SuperSecretPassword123!"
@@ -232,7 +231,6 @@ def test_auth_refresh_token_endpoint(client: TestClient, db_session: Session):
 
 
 def test_auth_me_endpoint(client: TestClient, db_session: Session):
-
     """Test GET /api/v1/auth/me profile endpoint."""
     email = f"me_test_{int(time.time())}@example.com"
     user = User(

@@ -115,9 +115,7 @@ def run_rules(
         rules_to_run = [
             r
             for r in rules_to_run
-            if (
-                r.scope.value if isinstance(r.scope, ValidationScope) else str(r.scope).lower()
-            )
+            if (r.scope.value if isinstance(r.scope, ValidationScope) else str(r.scope).lower())
             == target_scope
         ]
 

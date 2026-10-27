@@ -44,7 +44,6 @@ def _create_test_institution(db: Session, aicte_id: str, name: str) -> Instituti
     return inst
 
 
-
 def _has_auth_dependency(dependant) -> bool:
     """Recursively inspect a FastAPI Dependant for authentication or role dependencies."""
     auth_callables = {
@@ -213,7 +212,6 @@ def test_idor_college_a_cannot_access_college_b_data(client: TestClient, db_sess
         headers={"Authorization": f"Bearer {token_verifier}"},
     )
     assert resp_verifier.status_code == 403
-
 
 
 def test_role_dependency_helpers():

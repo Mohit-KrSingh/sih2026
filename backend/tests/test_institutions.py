@@ -165,16 +165,12 @@ def test_read_institution_and_courses_scoping(client: TestClient, db_session: Se
     assert data_a["items"][0]["id"] == inst_a.id
 
     # 3. College A accesses its own institution detail
-    resp_detail = client.get(
-        f"/api/v1/institutions/{inst_a.id}", headers=_auth_header(user_a)
-    )
+    resp_detail = client.get(f"/api/v1/institutions/{inst_a.id}", headers=_auth_header(user_a))
     assert resp_detail.status_code == 200
     assert resp_detail.json()["aicte_id"] == "1-T070001"
 
     # 4. College A tries to view College B detail -> 403 Forbidden (IDOR)
-    resp_idor = client.get(
-        f"/api/v1/institutions/{inst_b.id}", headers=_auth_header(user_a)
-    )
+    resp_idor = client.get(f"/api/v1/institutions/{inst_b.id}", headers=_auth_header(user_a))
     assert resp_idor.status_code == 403
 
     # 5. College A views its courses
@@ -204,9 +200,7 @@ def test_read_institution_and_courses_scoping(client: TestClient, db_session: Se
 # =========================================================================
 
 
-def test_college_gets_403_on_mutating_aicte_owned_data(
-    client: TestClient, db_session: Session
-):
+def test_college_gets_403_on_mutating_aicte_owned_data(client: TestClient, db_session: Session):
     """Hard Rule 1: Colleges never edit AICTE-owned data (approved intake, approved courses,
 
     approval status, official contacts). They can only raise a correction request.
@@ -214,12 +208,8 @@ def test_college_gets_403_on_mutating_aicte_owned_data(
     """
     inst = _create_institution(db_session, "1-T070003", "Strict College")
     course, _ = _create_course(db_session, inst.id, "B.Tech Civil")
-    college_admin = _create_user(
-        db_session, "admin@strict.edu", "college_admin", inst.id
-    )
-    college_staff = _create_user(
-        db_session, "staff@strict.edu", "college_staff", inst.id
-    )
+    college_admin = _create_user(db_session, "admin@strict.edu", "college_admin", inst.id)
+    college_staff = _create_user(db_session, "staff@strict.edu", "college_staff", inst.id)
 
     for caller in [college_admin, college_staff]:
         headers = _auth_header(caller)
@@ -413,9 +403,7 @@ def test_master_sync_endpoint(client: TestClient, db_session: Session):
     assert data["synced_intakes"] >= 2
 
     # Verify institution exists in DB
-    inst = db_session.scalar(
-        select(Institution).where(Institution.aicte_id == "1-10000001")
-    )
+    inst = db_session.scalar(select(Institution).where(Institution.aicte_id == "1-10000001"))
     assert inst is not None
     assert "Pune" in inst.name
 
@@ -430,9 +418,7 @@ def test_master_sync_endpoint(client: TestClient, db_session: Session):
 
     # Verify audit log recorded
     audit_entry = db_session.scalar(
-        select(AuditLog)
-        .where(AuditLog.action == "institution.sync")
-        .order_by(AuditLog.id.desc())
+        select(AuditLog).where(AuditLog.action == "institution.sync").order_by(AuditLog.id.desc())
     )
     assert audit_entry is not None
 
@@ -446,9 +432,7 @@ def test_correction_requests_workflow(client: TestClient, db_session: Session):
     """Acceptance criterion: Correction requests: college creates, AICTE resolves."""
     inst = _create_institution(db_session, "1-T070005", "Correction Test College")
     course, _ = _create_course(db_session, inst.id, "B.Tech EE", intake=60)
-    college_admin = _create_user(
-        db_session, "admin@correct.edu", "college_admin", inst.id
-    )
+    college_admin = _create_user(db_session, "admin@correct.edu", "college_admin", inst.id)
     officer = _create_user(db_session, "resolver@aicte.gov", "aicte_officer")
 
     # 1. College creates a correction request to update contact email
@@ -508,8 +492,7 @@ def test_correction_requests_workflow(client: TestClient, db_session: Session):
 
     # 6. Verify notification and audit log created
     audit_resolve = db_session.scalar(
-        select(AuditLog)
-        .where(
+        select(AuditLog).where(
             AuditLog.action == "correction_request.resolve",
             AuditLog.entity_id == str(req_id),
         )
@@ -517,8 +500,7 @@ def test_correction_requests_workflow(client: TestClient, db_session: Session):
     assert audit_resolve is not None
 
     notif = db_session.scalar(
-        select(Notification)
-        .where(
+        select(Notification).where(
             Notification.institution_id == inst.id,
             Notification.type == "correction_request_resolved",
         )
@@ -545,9 +527,7 @@ def test_suspended_approval_blocks_uploads(client: TestClient, db_session: Sessi
     inst = _create_institution(
         db_session, "1-T070006", "Approval Gate College", approval_status="active"
     )
-    staff = _create_user(
-        db_session, "staff@approval.edu", "college_staff", inst.id
-    )
+    staff = _create_user(db_session, "staff@approval.edu", "college_staff", inst.id)
     officer = _create_user(db_session, "status_officer@aicte.gov", "aicte_officer")
 
     # 1. When status is 'active', upload session is successfully created

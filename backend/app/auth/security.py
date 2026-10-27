@@ -145,4 +145,3 @@ def decode_password_reset_token(token: str) -> dict[str, Any]:
     if payload.get("type") != "password_reset":
         raise jwt.InvalidTokenError("Invalid token type: expected password_reset")
     return payload
-

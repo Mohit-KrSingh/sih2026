@@ -80,9 +80,7 @@ def _create_user(
 # =========================================================================
 
 
-def test_college_admin_can_create_and_manage_staff(
-    client: TestClient, db_session: Session
-):
+def test_college_admin_can_create_and_manage_staff(client: TestClient, db_session: Session):
     """College admin creates staff with limited roles, lists, updates, and deactivates."""
     inst = _create_institution(db_session, "1-STAFF-01", "Institute of Technology")
     admin_user, admin_token = _create_user(
@@ -180,9 +178,7 @@ def test_college_admin_can_create_and_manage_staff(
     assert deactivated_staff.is_active is False
 
 
-def test_staff_create_duplicate_email_rejected(
-    client: TestClient, db_session: Session
-):
+def test_staff_create_duplicate_email_rejected(client: TestClient, db_session: Session):
     """Attempting to create staff with already taken email returns 409 Conflict."""
     inst = _create_institution(db_session, "1-STAFF-02", "College Duplicate Test")
     _, admin_token = _create_user(
@@ -215,9 +211,7 @@ def test_staff_create_duplicate_email_rejected(
     assert "already exists" in resp2.json()["detail"]
 
 
-def test_admin_cannot_deactivate_or_delete_self(
-    client: TestClient, db_session: Session
-):
+def test_admin_cannot_deactivate_or_delete_self(client: TestClient, db_session: Session):
     """Admin cannot deactivate or delete their own account."""
     inst = _create_institution(db_session, "1-STAFF-03", "College Self Lockout Test")
     admin_user, admin_token = _create_user(
@@ -370,9 +364,7 @@ def test_staff_cannot_submit_data_gate(client: TestClient, db_session: Session):
 # =========================================================================
 
 
-def test_college_a_admin_cannot_manage_college_b_staff(
-    client: TestClient, db_session: Session
-):
+def test_college_a_admin_cannot_manage_college_b_staff(client: TestClient, db_session: Session):
     """College A admin cannot create or view staff under College B (403 Forbidden)."""
     inst_a = _create_institution(db_session, "1-IDOR-A", "College A")
     inst_b = _create_institution(db_session, "1-IDOR-B", "College B")
@@ -491,9 +483,7 @@ def test_contact_change_request_workflow(client: TestClient, db_session: Session
 # =========================================================================
 
 
-def test_password_reset_only_via_otp_to_on_file_contact(
-    client: TestClient, db_session: Session
-):
+def test_password_reset_only_via_otp_to_on_file_contact(client: TestClient, db_session: Session):
     """Password reset sends OTP strictly to official on-file contact, never to typed-in address.
 
     Spec 11: 'Password reset only via OTP to the official contacts on file.'

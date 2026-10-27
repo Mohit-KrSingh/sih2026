@@ -400,5 +400,3 @@ class ContactChangeRequestCreate(BaseModel):
         max_length=1000,
         description="Justification/reason for contact change",
     )
-
-

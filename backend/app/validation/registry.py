@@ -146,9 +146,7 @@ class RuleRegistry:
         return [
             r
             for r in self._rules.values()
-            if (
-                r.scope.value if isinstance(r.scope, ValidationScope) else str(r.scope).lower()
-            )
+            if (r.scope.value if isinstance(r.scope, ValidationScope) else str(r.scope).lower())
             == scope_val
         ]
 

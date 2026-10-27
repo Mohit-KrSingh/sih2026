@@ -197,4 +197,3 @@ class PasswordResetConfirmResponse(BaseModel):
 
     status: str = "success"
     message: str
-

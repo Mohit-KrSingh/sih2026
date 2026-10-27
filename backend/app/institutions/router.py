@@ -78,9 +78,7 @@ settings = get_settings()
 # Role requirements
 aicte_officer_guard = Depends(require_roles(Role.AICTE_ADMIN.value, Role.AICTE_OFFICER.value))
 college_admin_guard = Depends(require_roles(Role.COLLEGE_ADMIN.value))
-college_staff_guard = Depends(
-    require_roles(Role.COLLEGE_ADMIN.value, Role.COLLEGE_STAFF.value)
-)
+college_staff_guard = Depends(require_roles(Role.COLLEGE_ADMIN.value, Role.COLLEGE_STAFF.value))
 
 # Rate limiter for OTP operations
 activation_otp_limiter = RateLimiter(
@@ -474,9 +472,7 @@ def list_institutions(
         if current_user.institution_id is None:
             return InstitutionListResponse(total=0, items=[])
         inst = service.get_institution(db, current_user.institution_id)
-        return InstitutionListResponse(
-            total=1, items=[InstitutionResponse.model_validate(inst)]
-        )
+        return InstitutionListResponse(total=1, items=[InstitutionResponse.model_validate(inst)])
 
     # AICTE roles see all institutions
     total, items = service.list_institutions(
@@ -776,8 +772,7 @@ def get_correction_request_detail(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=(
-                f"Correction request {request_id} does not "
-                f"belong to institution {institution_id}"
+                f"Correction request {request_id} does not belong to institution {institution_id}"
             ),
         )
     return CorrectionRequestResponse.model_validate(req)
@@ -1002,4 +997,3 @@ def submit_student_data_gate(
         "submitted_by": current_user.email,
         "message": "Authorized: college_admin has submit permission",
     }
-

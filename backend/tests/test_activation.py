@@ -147,9 +147,7 @@ def test_otp_never_sent_to_typed_in_address(client: TestClient, db_session: Sess
 
     # Verify dev_outbox has record for official on-file email, NOT attacker
     outbox_entry = db_session.scalar(
-        select(DevOutbox)
-        .where(DevOutbox.recipient == official_email)
-        .order_by(DevOutbox.id.desc())
+        select(DevOutbox).where(DevOutbox.recipient == official_email).order_by(DevOutbox.id.desc())
     )
     assert outbox_entry is not None
     assert "activation claim" in outbox_entry.body.lower()
@@ -271,9 +269,7 @@ def test_mock_signatory_verification_rejected(client: TestClient, db_session: Se
     assert "signatory" in resp_fail.json()["detail"].lower()
 
 
-def test_activation_claim_submission_and_audit(
-    client: TestClient, db_session: Session, redis_conn
-):
+def test_activation_claim_submission_and_audit(client: TestClient, db_session: Session, redis_conn):
     """Test 7: Submit activation claim, verify storage, and verify audit log."""
     ts = int(time.time() * 1000)
     inst = _create_test_institution(db_session, f"ACT-SUBM-{ts}", f"Submit College {ts}")
@@ -333,9 +329,7 @@ def test_activation_claim_submission_and_audit(
     assert storage.get(claim_data["letter_ref"]) == letter_bytes
 
 
-def test_multipart_authorization_letter_upload(
-    client: TestClient, db_session: Session, redis_conn
-):
+def test_multipart_authorization_letter_upload(client: TestClient, db_session: Session, redis_conn):
     """Test 8: Submit activation claim using multipart form-data file upload."""
     ts = int(time.time() * 1000)
     inst = _create_test_institution(db_session, f"ACT-MULTI-{ts}", f"Multipart College {ts}")

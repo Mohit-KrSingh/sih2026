@@ -102,9 +102,7 @@ def list_institutions(
     total = db.scalar(count_query) or 0
 
     institutions = list(
-        db.scalars(
-            query.order_by(Institution.name.asc()).limit(limit).offset(offset)
-        ).all()
+        db.scalars(query.order_by(Institution.name.asc()).limit(limit).offset(offset)).all()
     )
     return total, institutions
 
@@ -146,9 +144,7 @@ def get_course_intakes(
     return list(db.scalars(query.order_by(CourseIntake.academic_year.desc())).all())
 
 
-def get_course_intake(
-    db: Session, course_id: int, academic_year: str
-) -> CourseIntake | None:
+def get_course_intake(db: Session, course_id: int, academic_year: str) -> CourseIntake | None:
     """Retrieve approved intake record for a course in a specific academic year."""
     return db.scalar(
         select(CourseIntake).where(
@@ -167,9 +163,7 @@ def get_intake_history(
         query = query.where(CourseIntakeHistory.academic_year == academic_year)
     return list(
         db.scalars(
-            query.order_by(
-                CourseIntakeHistory.created_at.desc(), CourseIntakeHistory.id.desc()
-            )
+            query.order_by(CourseIntakeHistory.created_at.desc(), CourseIntakeHistory.id.desc())
         ).all()
     )
 
@@ -499,9 +493,7 @@ def update_institution_info(
         "address": inst.address,
         "affiliating_university": inst.affiliating_university,
         "approval_status": inst.approval_status,
-        "approval_valid_to": inst.approval_valid_to.isoformat()
-        if inst.approval_valid_to
-        else None,
+        "approval_valid_to": inst.approval_valid_to.isoformat() if inst.approval_valid_to else None,
     }
 
     if payload.official_email is not None:
@@ -529,9 +521,7 @@ def update_institution_info(
         "address": inst.address,
         "affiliating_university": inst.affiliating_university,
         "approval_status": inst.approval_status,
-        "approval_valid_to": inst.approval_valid_to.isoformat()
-        if inst.approval_valid_to
-        else None,
+        "approval_valid_to": inst.approval_valid_to.isoformat() if inst.approval_valid_to else None,
     }
 
     audit_service.record(
@@ -782,9 +772,7 @@ def list_correction_requests(
 
     requests = list(
         db.scalars(
-            query.order_by(CorrectionRequest.created_at.desc())
-            .limit(limit)
-            .offset(offset)
+            query.order_by(CorrectionRequest.created_at.desc()).limit(limit).offset(offset)
         ).all()
     )
     return total, requests
@@ -1367,9 +1355,7 @@ def list_activation_requests(
     total = db.scalar(count_query) or 0
     items = list(
         db.scalars(
-            query.order_by(ActivationRequest.created_at.desc())
-            .limit(limit)
-            .offset(offset)
+            query.order_by(ActivationRequest.created_at.desc()).limit(limit).offset(offset)
         ).all()
     )
     return total, items
@@ -1501,10 +1487,7 @@ def approve_activation_request(
         mfa_enabled=True,
         mfa_secret=mfa_secret,
         mfa_uri=mfa_uri,
-        message=(
-            f"Activation #{req.id} approved. "
-            f"Primary admin created for {admin_user.email}."
-        ),
+        message=(f"Activation #{req.id} approved. Primary admin created for {admin_user.email}."),
     )
 
 
@@ -1723,9 +1706,7 @@ def list_staff(
     total = db.scalar(count_query) or 0
 
     staff_members = list(
-        db.scalars(
-            query.order_by(User.created_at.desc()).limit(limit).offset(offset)
-        ).all()
+        db.scalars(query.order_by(User.created_at.desc()).limit(limit).offset(offset)).all()
     )
     return total, staff_members
 
@@ -1777,13 +1758,16 @@ def update_staff(
             )
         # Prevent self role downgrade if sole admin
         if user_id == current_user.id and payload.role != Role.COLLEGE_ADMIN.value:
-            admin_count = db.scalar(
-                select(func.count()).where(
-                    User.institution_id == institution_id,
-                    User.role == Role.COLLEGE_ADMIN.value,
-                    User.is_active.is_(True),
+            admin_count = (
+                db.scalar(
+                    select(func.count()).where(
+                        User.institution_id == institution_id,
+                        User.role == Role.COLLEGE_ADMIN.value,
+                        User.is_active.is_(True),
+                    )
                 )
-            ) or 0
+                or 0
+            )
             if admin_count <= 1:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -1929,5 +1913,3 @@ def create_contact_change_request(
         user=current_user,
         ip=ip,
     )
-
-

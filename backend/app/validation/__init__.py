@@ -3,6 +3,7 @@
 Spec: Section 9.1, 9.2, 9.3, 9.4.
 """
 
+import app.validation.rules  # noqa: F401  # Auto-registers all rule modules
 from app.validation.codes import (
     ADMISSION_DATE_WINDOW,
     ADMISSION_YEAR_MISMATCH,

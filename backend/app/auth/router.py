@@ -659,8 +659,6 @@ def confirm_password_reset(
     return PasswordResetConfirmResponse(
         status="success",
         message=(
-            "Password has been successfully updated. "
-            "You may now log in with your new password."
+            "Password has been successfully updated. You may now log in with your new password."
         ),
     )
-

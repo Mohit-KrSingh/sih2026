@@ -369,8 +369,7 @@ def test_login_creates_audit_record(client: TestClient, db_session: Session):
     user = _create_user(db_session, email=email, role="aicte_admin")
 
     initial_count = db_session.scalar(
-        select(AuditLog)
-        .where(AuditLog.action == "auth.login", AuditLog.actor_id == str(user.id))
+        select(AuditLog).where(AuditLog.action == "auth.login", AuditLog.actor_id == str(user.id))
     )
     assert initial_count is None
 
@@ -383,8 +382,7 @@ def test_login_creates_audit_record(client: TestClient, db_session: Session):
 
     # Query audit log for recorded login entry
     login_entry = db_session.scalar(
-        select(AuditLog)
-        .where(AuditLog.action == "auth.login", AuditLog.actor_id == str(user.id))
+        select(AuditLog).where(AuditLog.action == "auth.login", AuditLog.actor_id == str(user.id))
     )
     assert login_entry is not None
     assert login_entry.actor_role == "aicte_admin"

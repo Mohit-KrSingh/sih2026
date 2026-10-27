@@ -14,5 +14,3 @@ api_v1_router.include_router(auth_router)
 api_v1_router.include_router(institutions_router)
 api_v1_router.include_router(verification_router)
 api_v1_router.include_router(audit_router)
-
-

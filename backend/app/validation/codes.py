@@ -158,8 +158,7 @@ RULE_CATALOGUE: dict[str, dict[str, Any]] = {
         "scope": ValidationScope.ROW,
         "default_level": ValidationLevel.WARNING,
         "meaning": (
-            "NRI/OCI/foreign student not admitted through the NRI/OCI/foreign quota, "
-            "or the reverse"
+            "NRI/OCI/foreign student not admitted through the NRI/OCI/foreign quota, or the reverse"
         ),
     },
     ADMISSION_YEAR_MISMATCH: {
@@ -171,8 +170,7 @@ RULE_CATALOGUE: dict[str, dict[str, Any]] = {
         "scope": ValidationScope.FILE,
         "default_level": ValidationLevel.ERROR,
         "meaning": (
-            "Same APAAR ID appears twice in the upload or the college's records "
-            "for that year"
+            "Same APAAR ID appears twice in the upload or the college's records for that year"
         ),
     },
     DUP_ENROLNO_IN_COURSE: {
