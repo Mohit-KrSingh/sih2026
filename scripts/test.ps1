@@ -2,9 +2,7 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "=== Running Backend Tests (pytest) ==="
-$backendEnv = @{
-    "PYTHONPATH" = (Resolve-Path "backend").Path
-}
+$env:PYTHONPATH = (Resolve-Path "backend").Path
 $py = Resolve-Path ".venv\Scripts\python.exe"
 & $py -m pytest backend/tests
 if ($LASTEXITCODE -ne 0) {

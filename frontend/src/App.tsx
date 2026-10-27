@@ -19,6 +19,7 @@ import { SeatDeclarationsPage } from "./pages/SeatDeclarationsPage";
 import { StudentsListPage } from "./pages/StudentsListPage";
 import { StudentFormPage } from "./pages/StudentFormPage";
 import { BulkUploadPage } from "./pages/BulkUploadPage";
+import { ValidationPage } from "./pages/ValidationPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -159,7 +160,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Validation Flags & Justifications" section="College Portal" taskRef="T24" />
+              <ValidationPage />
             </AppLayout>
           </ProtectedRoute>
         }

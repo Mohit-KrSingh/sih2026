@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.auth.security import decrypt_dob
@@ -117,6 +117,19 @@ def persist_validation_flags(
         stmt = stmt.where(ValidationFlag.submission_id == submission_id)
     elif course_id is not None:
         stmt = stmt.where(ValidationFlag.course_id == course_id)
+    elif institution_id is not None:
+        stmt = (
+            stmt.outerjoin(Student, ValidationFlag.student_id == Student.id)
+            .outerjoin(Course, ValidationFlag.course_id == Course.id)
+            .outerjoin(Submission, ValidationFlag.submission_id == Submission.id)
+            .where(
+                or_(
+                    Student.institution_id == institution_id,
+                    Course.institution_id == institution_id,
+                    Submission.institution_id == institution_id,
+                )
+            )
+        )
     elif mapping:
         s_ids = [s.id for s in mapping.values() if getattr(s, "id", None) is not None]
         if s_ids:
