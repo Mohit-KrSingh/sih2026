@@ -138,3 +138,63 @@ class OtpVerifyRequest(BaseModel):
 class OtpVerifyResponse(BaseModel):
     status: str
     message: str
+
+
+# =========================================================================
+# Password Reset Schemas (Spec 11, TASKS.md T09)
+# =========================================================================
+
+
+class PasswordResetRequest(BaseModel):
+    """Payload to initiate password reset via OTP to on-file contact."""
+
+    email: str = Field(..., min_length=3, description="User's login email address")
+
+
+class PasswordResetRequestResponse(BaseModel):
+    """Response returned upon password reset OTP dispatch."""
+
+    status: str = "success"
+    message: str
+    masked_recipient: str
+    channel: str = "email"
+
+
+class PasswordResetVerifyRequest(BaseModel):
+    """Payload to verify password reset OTP and obtain password reset token."""
+
+    email: str = Field(..., min_length=3, description="User's login email address")
+    otp_code: str = Field(
+        ...,
+        min_length=4,
+        max_length=8,
+        description="OTP code received on on-file contact",
+    )
+
+
+class PasswordResetVerifyResponse(BaseModel):
+    """Response returned upon successful OTP verification with reset token."""
+
+    status: str = "success"
+    message: str
+    reset_token: str
+    expires_in: int = 900  # 15 minutes
+
+
+class PasswordResetConfirmRequest(BaseModel):
+    """Payload to set new password using verified reset token."""
+
+    reset_token: str = Field(..., description="Valid password reset JWT token")
+    new_password: str = Field(
+        ...,
+        min_length=8,
+        description="New account password (min 8 characters)",
+    )
+
+
+class PasswordResetConfirmResponse(BaseModel):
+    """Response returned upon successful password update."""
+
+    status: str = "success"
+    message: str
+

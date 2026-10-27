@@ -25,6 +25,7 @@ from app.institutions.schemas import (
     ActivationStatusResponse,
     ActivationSubmitRequest,
     ApprovalStatusUpdateRequest,
+    ContactChangeRequestCreate,
     CorrectionRequestCreate,
     CorrectionRequestResolve,
     CourseCreateRequest,
@@ -32,6 +33,8 @@ from app.institutions.schemas import (
     CourseUpdateRequest,
     InstitutionUpdateRequest,
     MasterSyncResponse,
+    StaffCreateRequest,
+    StaffUpdateRequest,
     UploadCreateRequest,
 )
 from app.integrations.factory import (
@@ -1621,4 +1624,310 @@ def get_activation_status(db: Session, aicte_id: str) -> ActivationStatusRespons
         latest_request_status=latest_req.status if latest_req else None,
         latest_request_id=latest_req.id if latest_req else None,
     )
+
+
+# =========================================================================
+# Staff Management (Spec 5, 6, 11, TASKS.md T09)
+# =========================================================================
+
+
+def create_staff(
+    db: Session,
+    institution_id: int,
+    payload: StaffCreateRequest,
+    current_user: User,
+    ip: str | None = None,
+) -> User:
+    """College admin creates a new staff user with limited roles.
+
+    Spec 5 & 11:
+    - college_admin creates staff with roles (college_staff, college_viewer, college_admin).
+    - staff cannot manage staff (role limit).
+    """
+    inst = get_institution(db, institution_id)
+    if inst.account_status != "active":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot add staff: Institution account is not active",
+        )
+
+    clean_email = payload.email.lower().strip()
+
+    # Email uniqueness check
+    existing = db.scalar(select(User).where(User.email == clean_email))
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"User with email '{clean_email}' already exists",
+        )
+
+    # Role validation: only college roles allowed
+    if payload.role not in Role.college_roles():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"Invalid staff role '{payload.role}'. "
+                f"Must be one of: {', '.join(Role.college_roles())}"
+            ),
+        )
+
+    new_user = User(
+        email=clean_email,
+        password_hash=hash_password(payload.password),
+        role=payload.role,
+        institution_id=institution_id,
+        is_active=True,
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    audit_service.record(
+        db=db,
+        action="staff.create",
+        actor_id=current_user.id,
+        actor_role=current_user.role,
+        entity="users",
+        entity_id=new_user.id,
+        before_json=None,
+        after_json={
+            "email": new_user.email,
+            "role": new_user.role,
+            "institution_id": institution_id,
+            "is_active": new_user.is_active,
+        },
+        ip=ip,
+    )
+
+    return new_user
+
+
+def list_staff(
+    db: Session,
+    institution_id: int,
+    role: str | None = None,
+    is_active: bool | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> tuple[int, list[User]]:
+    """List staff members of an institution with optional filtering and pagination."""
+    get_institution(db, institution_id)
+    query = select(User).where(User.institution_id == institution_id)
+
+    if role:
+        query = query.where(User.role == role)
+    if is_active is not None:
+        query = query.where(User.is_active == is_active)
+
+    count_query = select(func.count()).select_from(query.subquery())
+    total = db.scalar(count_query) or 0
+
+    staff_members = list(
+        db.scalars(
+            query.order_by(User.created_at.desc()).limit(limit).offset(offset)
+        ).all()
+    )
+    return total, staff_members
+
+
+def get_staff(
+    db: Session,
+    institution_id: int,
+    user_id: int,
+) -> User:
+    """Retrieve a single staff member of an institution."""
+    user = db.scalar(
+        select(User).where(
+            User.id == user_id,
+            User.institution_id == institution_id,
+        )
+    )
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Staff user with ID {user_id} not found in institution {institution_id}",
+        )
+    return user
+
+
+def update_staff(
+    db: Session,
+    institution_id: int,
+    user_id: int,
+    payload: StaffUpdateRequest,
+    current_user: User,
+    ip: str | None = None,
+) -> User:
+    """Update a staff member's role, status, or password."""
+    user = get_staff(db, institution_id, user_id)
+
+    # Self-deactivation prevention
+    if payload.is_active is False and current_user.id == user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot deactivate your own account",
+        )
+
+    # Role validation
+    if payload.role is not None:
+        if payload.role not in Role.college_roles():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid staff role '{payload.role}'",
+            )
+        # Prevent self role downgrade if sole admin
+        if user_id == current_user.id and payload.role != Role.COLLEGE_ADMIN.value:
+            admin_count = db.scalar(
+                select(func.count()).where(
+                    User.institution_id == institution_id,
+                    User.role == Role.COLLEGE_ADMIN.value,
+                    User.is_active.is_(True),
+                )
+            ) or 0
+            if admin_count <= 1:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=(
+                        "Cannot downgrade role: institution must have "
+                        "at least one active college_admin"
+                    ),
+                )
+
+    before_state = {
+        "role": user.role,
+        "is_active": user.is_active,
+    }
+
+    if payload.role is not None:
+        user.role = payload.role
+    if payload.is_active is not None:
+        user.is_active = payload.is_active
+    if payload.password is not None:
+        user.password_hash = hash_password(payload.password)
+
+    db.commit()
+    db.refresh(user)
+
+    after_state = {
+        "role": user.role,
+        "is_active": user.is_active,
+    }
+
+    audit_service.record(
+        db=db,
+        action="staff.update",
+        actor_id=current_user.id,
+        actor_role=current_user.role,
+        entity="users",
+        entity_id=user.id,
+        before_json=before_state,
+        after_json=after_state,
+        ip=ip,
+    )
+
+    return user
+
+
+def delete_staff(
+    db: Session,
+    institution_id: int,
+    user_id: int,
+    current_user: User,
+    ip: str | None = None,
+) -> None:
+    """Deactivate a staff member from an institution."""
+    user = get_staff(db, institution_id, user_id)
+
+    if current_user.id == user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete or deactivate your own account",
+        )
+
+    before_state = {
+        "role": user.role,
+        "is_active": user.is_active,
+    }
+
+    user.is_active = False
+    db.commit()
+
+    audit_service.record(
+        db=db,
+        action="staff.deactivate",
+        actor_id=current_user.id,
+        actor_role=current_user.role,
+        entity="users",
+        entity_id=user.id,
+        before_json=before_state,
+        after_json={"role": user.role, "is_active": False},
+        ip=ip,
+    )
+
+
+# =========================================================================
+# Contact or Head Change Requests (Spec 6, 11)
+# =========================================================================
+
+
+def create_contact_change_request(
+    db: Session,
+    institution_id: int,
+    payload: ContactChangeRequestCreate,
+    current_user: User,
+    ip: str | None = None,
+) -> CorrectionRequest:
+    """Create a formal contact or head change request to AICTE.
+
+    Spec 6 & 11:
+    - Official email, phone, head of institution: AICTE-owned.
+    - College requests a change, AICTE approves. Never self-service.
+    """
+    inst = get_institution(db, institution_id)
+
+    data: dict[str, Any] = {"reason": payload.reason}
+    has_contact = False
+
+    if payload.official_email:
+        data["official_email"] = payload.official_email
+        has_contact = True
+    if payload.official_phone:
+        data["official_phone"] = payload.official_phone
+        has_contact = True
+    if payload.head_name:
+        data["head_name"] = payload.head_name
+        has_contact = True
+    if payload.address:
+        data["address"] = payload.address
+        has_contact = True
+
+    if not has_contact:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "At least one field to change (official_email, official_phone, "
+                "head_name, address) must be provided"
+            ),
+        )
+
+    data["current_values"] = {
+        "official_email": inst.official_email,
+        "official_phone": inst.official_phone,
+        "head_name": inst.head_name,
+        "address": inst.address,
+    }
+
+    req_create = CorrectionRequestCreate(
+        kind="contact_change",
+        payload_json=data,
+    )
+
+    return create_correction_request(
+        db=db,
+        institution_id=institution_id,
+        payload=req_create,
+        user=current_user,
+        ip=ip,
+    )
+
 

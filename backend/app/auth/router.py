@@ -22,14 +22,23 @@ from app.auth.schemas import (
     OtpSendResponse,
     OtpVerifyRequest,
     OtpVerifyResponse,
+    PasswordResetConfirmRequest,
+    PasswordResetConfirmResponse,
+    PasswordResetRequest,
+    PasswordResetRequestResponse,
+    PasswordResetVerifyRequest,
+    PasswordResetVerifyResponse,
     RefreshTokenRequest,
     TokenResponse,
     UserResponse,
 )
 from app.auth.security import (
     create_access_token,
+    create_password_reset_token,
     create_refresh_token,
+    decode_password_reset_token,
     decode_token,
+    hash_password,
     verify_password,
 )
 from app.auth.totp import (
@@ -41,6 +50,7 @@ from app.auth.totp import (
 )
 from app.config import get_settings
 from app.db import get_db, get_redis
+from app.institutions.service import mask_email
 from app.models import Institution, User
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -449,3 +459,208 @@ def check_institution_permission(
         "user_id": current_user.id,
         "role": current_user.role,
     }
+
+
+# =========================================================================
+# Password Reset Endpoints (Spec 11, TASKS.md T09)
+# =========================================================================
+
+password_reset_req_limiter = RateLimiter(
+    times=settings.RATE_LIMIT_OTP_PER_MINUTE,
+    seconds=60,
+    label="pwd_reset_req",
+)
+password_reset_verify_limiter = RateLimiter(
+    times=10,
+    seconds=60,
+    label="pwd_reset_verify",
+)
+password_reset_confirm_limiter = RateLimiter(
+    times=10,
+    seconds=60,
+    label="pwd_reset_confirm",
+)
+
+
+@router.post(
+    "/password-reset/request",
+    response_model=PasswordResetRequestResponse,
+    dependencies=[Depends(password_reset_req_limiter)],
+    summary="Request password reset OTP dispatched strictly to on-file contact",
+)
+def request_password_reset(
+    payload: PasswordResetRequest,
+    db: Annotated[Session, Depends(get_db)],
+    redis_client: Annotated[redis.Redis, Depends(get_redis)],
+) -> PasswordResetRequestResponse:
+    """Initiate password reset flow.
+
+    Spec 11:
+    - Password reset ONLY via OTP to the official contacts on file.
+    - OTP is NEVER sent to a typed-in address.
+    - For college users, OTP is dispatched strictly to the institution's official_email.
+    - For AICTE users without an institution, OTP is dispatched to user.email on file.
+    """
+    clean_email = payload.email.lower().strip()
+    user = db.scalar(select(User).where(User.email == clean_email))
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with email '{clean_email}' not found",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is deactivated",
+        )
+
+    if user.institution_id is not None:
+        inst = db.get(Institution, user.institution_id)
+        if inst is None or inst.account_status != "active":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Institution account is not activated or approved by AICTE",
+            )
+        official_recipient = inst.official_email
+        context = f"Password reset OTP for user {clean_email} under institution {inst.aicte_id}"
+    else:
+        official_recipient = user.email
+        context = f"Password reset OTP for administrative user {clean_email}"
+
+    store_and_send_otp(
+        db=db,
+        redis_client=redis_client,
+        recipient=official_recipient,
+        channel="email",
+        purpose="password_reset",
+        context=context,
+    )
+
+    return PasswordResetRequestResponse(
+        status="success",
+        message="One-time verification code has been dispatched to official on-file contact.",
+        masked_recipient=mask_email(official_recipient),
+        channel="email",
+    )
+
+
+@router.post(
+    "/password-reset/verify",
+    response_model=PasswordResetVerifyResponse,
+    dependencies=[Depends(password_reset_verify_limiter)],
+    summary="Verify password reset OTP and obtain password reset token",
+)
+def verify_password_reset(
+    payload: PasswordResetVerifyRequest,
+    db: Annotated[Session, Depends(get_db)],
+    redis_client: Annotated[redis.Redis, Depends(get_redis)],
+) -> PasswordResetVerifyResponse:
+    """Verify OTP sent to on-file contact and issue short-lived password reset token."""
+    clean_email = payload.email.lower().strip()
+    user = db.scalar(select(User).where(User.email == clean_email))
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with email '{clean_email}' not found",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is deactivated",
+        )
+
+    if user.institution_id is not None:
+        inst = db.get(Institution, user.institution_id)
+        if inst is None or inst.account_status != "active":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Institution account is not activated",
+            )
+        official_recipient = inst.official_email
+    else:
+        official_recipient = user.email
+
+    is_valid, msg, remaining = verify_otp(
+        redis_client=redis_client,
+        recipient=official_recipient,
+        purpose="password_reset",
+        code=payload.otp_code.strip(),
+    )
+
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=msg,
+        )
+
+    reset_token = create_password_reset_token(user_id=user.id, email=user.email)
+    return PasswordResetVerifyResponse(
+        status="success",
+        message="OTP verified successfully. You may now reset your password.",
+        reset_token=reset_token,
+        expires_in=900,
+    )
+
+
+@router.post(
+    "/password-reset/confirm",
+    response_model=PasswordResetConfirmResponse,
+    dependencies=[Depends(password_reset_confirm_limiter)],
+    summary="Confirm new password using verified reset token",
+)
+def confirm_password_reset(
+    payload: PasswordResetConfirmRequest,
+    request: Request,
+    db: Annotated[Session, Depends(get_db)],
+) -> PasswordResetConfirmResponse:
+    """Update user password using verified reset token and audit log the change."""
+    try:
+        token_data = decode_password_reset_token(payload.reset_token)
+    except (jwt.PyJWTError, Exception):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired password reset token. Please request a new OTP.",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from None
+
+    user_id = int(token_data["sub"])
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User account not found",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is deactivated",
+        )
+
+    user.password_hash = hash_password(payload.new_password)
+    db.commit()
+    db.refresh(user)
+
+    client_ip = request.client.host if request.client else None
+    audit.record(
+        db=db,
+        action="auth.password_reset",
+        actor_id=user.id,
+        actor_role=user.role,
+        entity="users",
+        entity_id=user.id,
+        before_json={"email": user.email},
+        after_json={"email": user.email, "status": "password_reset_success"},
+        ip=client_ip,
+    )
+
+    return PasswordResetConfirmResponse(
+        status="success",
+        message=(
+            "Password has been successfully updated. "
+            "You may now log in with your new password."
+        ),
+    )
+

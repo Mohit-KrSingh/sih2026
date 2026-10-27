@@ -107,3 +107,42 @@ def decode_token(token: str) -> dict[str, Any]:
         algorithms=[settings.JWT_ALGORITHM],
         options={"require": ["exp", "iat", "sub", "type"]},
     )
+
+
+def create_password_reset_token(
+    user_id: int,
+    email: str,
+    expires_delta: timedelta | None = None,
+) -> str:
+    """Create a signed JWT password reset token."""
+    settings = get_settings()
+    now = datetime.now(UTC)
+    if expires_delta:
+        expire = now + expires_delta
+    else:
+        expire = now + timedelta(minutes=15)
+
+    payload: dict[str, Any] = {
+        "sub": str(user_id),
+        "email": email,
+        "type": "password_reset",
+        "iat": int(now.timestamp()),
+        "exp": int(expire.timestamp()),
+        "jti": str(uuid.uuid4()),
+    }
+    return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+
+
+def decode_password_reset_token(token: str) -> dict[str, Any]:
+    """Decode and validate a password reset JWT token."""
+    settings = get_settings()
+    payload = jwt.decode(
+        token,
+        settings.JWT_SECRET,
+        algorithms=[settings.JWT_ALGORITHM],
+        options={"require": ["exp", "iat", "sub", "type"]},
+    )
+    if payload.get("type") != "password_reset":
+        raise jwt.InvalidTokenError("Invalid token type: expected password_reset")
+    return payload
+

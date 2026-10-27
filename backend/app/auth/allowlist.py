@@ -20,6 +20,9 @@ PUBLIC_ALLOWLIST: set[tuple[str, str]] = {
     ("/api/v1/auth/mfa/verify", "POST"),
     ("/api/v1/auth/otp/send", "POST"),
     ("/api/v1/auth/otp/verify", "POST"),
+    ("/api/v1/auth/password-reset/request", "POST"),
+    ("/api/v1/auth/password-reset/verify", "POST"),
+    ("/api/v1/auth/password-reset/confirm", "POST"),
     # Public verification lookup endpoints
     ("/api/v1/verification/verify", "GET"),
     ("/api/v1/verification/records/{verification_id}", "GET"),

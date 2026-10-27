@@ -43,6 +43,10 @@ try {
 }
 
 if (-not $pgRunning) {
+    if (Test-Path "data/postgres/postmaster.pid") {
+        Write-Host "Cleaning stale postmaster.pid..."
+        Remove-Item "data/postgres/postmaster.pid" -Force -ErrorAction SilentlyContinue
+    }
     if (-not (Test-Path "data/postgres")) {
         Write-Host "Initializing PostgreSQL cluster..."
         & "$pgBin\initdb.exe" -D "data/postgres" -U apaar -A trust -E UTF8 | Out-Null

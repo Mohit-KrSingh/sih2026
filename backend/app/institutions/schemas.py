@@ -317,3 +317,88 @@ class ActivationStatusResponse(BaseModel):
     latest_request_status: str | None = None
     latest_request_id: int | None = None
 
+
+# =========================================================================
+# Staff Management Schemas (Spec 5, 6, 11, TASKS.md T09)
+# =========================================================================
+
+
+class StaffCreateRequest(BaseModel):
+    """Payload for college_admin to create staff accounts with limited roles."""
+
+    email: str = Field(..., min_length=3, max_length=255, description="Staff user email address")
+    password: str = Field(
+        ...,
+        min_length=8,
+        description="Initial account password (min 8 characters)",
+    )
+    role: str = Field(
+        default="college_staff",
+        description="Role assignment: college_staff, college_viewer, or college_admin",
+    )
+
+
+class StaffUpdateRequest(BaseModel):
+    """Payload to update staff account role, active status, or password."""
+
+    role: str | None = Field(default=None, description="Updated role")
+    is_active: bool | None = Field(default=None, description="Active status toggle")
+    password: str | None = Field(default=None, min_length=8, description="New password")
+
+
+class StaffResponse(BaseModel):
+    """Staff account representation."""
+
+    id: int
+    email: str
+    role: str
+    institution_id: int
+    is_active: bool
+    last_login: datetime | None = None
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class StaffListResponse(BaseModel):
+    """Paginated list of staff members for an institution."""
+
+    total: int
+    items: list[StaffResponse]
+
+
+class ContactChangeRequestCreate(BaseModel):
+    """Payload to request changes to AICTE-owned official institution contacts or head."""
+
+    official_email: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=255,
+        description="Proposed new official email",
+    )
+    official_phone: str | None = Field(
+        default=None,
+        min_length=7,
+        max_length=50,
+        description="Proposed new official phone",
+    )
+    head_name: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=255,
+        description="Proposed new head of institution",
+    )
+    address: str | None = Field(
+        default=None,
+        min_length=5,
+        description="Proposed new official address",
+    )
+    reason: str = Field(
+        ...,
+        min_length=3,
+        max_length=1000,
+        description="Justification/reason for contact change",
+    )
+
+

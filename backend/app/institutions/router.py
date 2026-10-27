@@ -8,7 +8,7 @@ SPEC.md Section 6 & TASKS.md T07:
 - Suspended/withdrawn/expired approval blocks uploads (403 Forbidden).
 """
 
-from typing import Annotated
+from typing import Annotated, Any
 
 import redis
 from fastapi import (
@@ -47,6 +47,7 @@ from app.institutions.schemas import (
     ActivationStatusResponse,
     ActivationSubmitRequest,
     ApprovalStatusUpdateRequest,
+    ContactChangeRequestCreate,
     CorrectionRequestCreate,
     CorrectionRequestResolve,
     CorrectionRequestResponse,
@@ -61,6 +62,10 @@ from app.institutions.schemas import (
     InstitutionUpdateRequest,
     MasterSyncRequest,
     MasterSyncResponse,
+    StaffCreateRequest,
+    StaffListResponse,
+    StaffResponse,
+    StaffUpdateRequest,
     UploadCreateRequest,
     UploadResponse,
 )
@@ -72,6 +77,7 @@ settings = get_settings()
 
 # Role requirements
 aicte_officer_guard = Depends(require_roles(Role.AICTE_ADMIN.value, Role.AICTE_OFFICER.value))
+college_admin_guard = Depends(require_roles(Role.COLLEGE_ADMIN.value))
 college_staff_guard = Depends(
     require_roles(Role.COLLEGE_ADMIN.value, Role.COLLEGE_STAFF.value)
 )
@@ -802,3 +808,198 @@ def create_upload_session(
         user=current_user,
     )
     return UploadResponse.model_validate(upload)
+
+
+# =========================================================================
+# Staff Management Endpoints (Spec 5, 6, 11, TASKS.md T09)
+# =========================================================================
+
+
+@router.post(
+    "/{institution_id}/staff",
+    response_model=StaffResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create staff account with role under institution (College Admin only)",
+)
+def create_institution_staff(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    payload: StaffCreateRequest,
+    request: Request,
+    current_user: Annotated[User, college_admin_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> StaffResponse:
+    """College admin provisions a staff user account with limited roles.
+
+    Role limits (Spec 5 & 11):
+    - Only college_admin can manage staff.
+    - Staff members cannot manage staff (403 Forbidden).
+    """
+    client_ip = request.client.host if request.client else None
+    staff_user = service.create_staff(
+        db=db,
+        institution_id=institution_id,
+        payload=payload,
+        current_user=current_user,
+        ip=client_ip,
+    )
+    return StaffResponse.model_validate(staff_user)
+
+
+@router.get(
+    "/{institution_id}/staff",
+    response_model=StaffListResponse,
+    summary="List staff accounts under institution (College Admin only)",
+)
+def list_institution_staff(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[User, college_admin_guard],
+    db: Annotated[Session, Depends(get_db)],
+    role: str | None = Query(default=None, description="Filter by role"),
+    is_active: bool | None = Query(default=None, description="Filter by active status"),
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> StaffListResponse:
+    """List staff accounts under this college. College staff cannot view or manage staff."""
+    total, staff_members = service.list_staff(
+        db=db,
+        institution_id=institution_id,
+        role=role,
+        is_active=is_active,
+        limit=limit,
+        offset=offset,
+    )
+    return StaffListResponse(
+        total=total,
+        items=[StaffResponse.model_validate(u) for u in staff_members],
+    )
+
+
+@router.get(
+    "/{institution_id}/staff/{user_id}",
+    response_model=StaffResponse,
+    summary="Get single staff account details (College Admin only)",
+)
+def get_institution_staff(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    user_id: int,
+    current_user: Annotated[User, college_admin_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> StaffResponse:
+    """Retrieve details of a single staff member."""
+    user = service.get_staff(db=db, institution_id=institution_id, user_id=user_id)
+    return StaffResponse.model_validate(user)
+
+
+@router.patch(
+    "/{institution_id}/staff/{user_id}",
+    response_model=StaffResponse,
+    summary="Update staff role, status, or password (College Admin only)",
+)
+def update_institution_staff(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    user_id: int,
+    payload: StaffUpdateRequest,
+    request: Request,
+    current_user: Annotated[User, college_admin_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> StaffResponse:
+    """Update staff account attributes. College staff cannot manage staff."""
+    client_ip = request.client.host if request.client else None
+    updated_user = service.update_staff(
+        db=db,
+        institution_id=institution_id,
+        user_id=user_id,
+        payload=payload,
+        current_user=current_user,
+        ip=client_ip,
+    )
+    return StaffResponse.model_validate(updated_user)
+
+
+@router.delete(
+    "/{institution_id}/staff/{user_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Deactivate staff account (College Admin only)",
+)
+def delete_institution_staff(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    user_id: int,
+    request: Request,
+    current_user: Annotated[User, college_admin_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict[str, str]:
+    """Deactivate a staff account."""
+    client_ip = request.client.host if request.client else None
+    service.delete_staff(
+        db=db,
+        institution_id=institution_id,
+        user_id=user_id,
+        current_user=current_user,
+        ip=client_ip,
+    )
+    return {"status": "success", "message": f"Staff user {user_id} deactivated"}
+
+
+# =========================================================================
+# Contact or Head Change Requests (Spec 6, 11)
+# =========================================================================
+
+
+@router.post(
+    "/{institution_id}/contact-change-requests",
+    response_model=CorrectionRequestResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Request contact or head change to AICTE (College Admin only)",
+)
+def request_contact_change(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    payload: ContactChangeRequestCreate,
+    request: Request,
+    current_user: Annotated[User, college_admin_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> CorrectionRequestResponse:
+    """Raise a contact or head change request to AICTE.
+
+    Spec 6 & 11:
+    - Colleges never edit AICTE-owned official contacts directly (403 Forbidden).
+    - Requests go to AICTE review queue for official approval.
+    """
+    client_ip = request.client.host if request.client else None
+    req = service.create_contact_change_request(
+        db=db,
+        institution_id=institution_id,
+        payload=payload,
+        current_user=current_user,
+        ip=client_ip,
+    )
+    return CorrectionRequestResponse.model_validate(req)
+
+
+# =========================================================================
+# Final Submit Gate (Spec 5, 10, TASKS.md T09)
+# =========================================================================
+
+
+@router.post(
+    "/{institution_id}/submit",
+    status_code=status.HTTP_200_OK,
+    summary="Final submit gate check for student data (College Admin only)",
+)
+def submit_student_data_gate(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[User, college_admin_guard],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict[str, Any]:
+    """Submit gate enforcement (Spec 5 & 10):
+
+    - Only college_admin can submit data.
+    - College staff and viewers are strictly rejected with HTTP 403 Forbidden.
+    """
+    return {
+        "status": "authorized",
+        "institution_id": institution_id,
+        "role": current_user.role,
+        "submitted_by": current_user.email,
+        "message": "Authorized: college_admin has submit permission",
+    }
+
