@@ -12,6 +12,7 @@ from app.students.change_request_router import aicte_router as aicte_change_requ
 from app.students.change_request_router import college_router as college_change_requests_router
 from app.students.router import router as students_router
 from app.submissions.router import router as submissions_router
+from app.validation.router import router as rules_router
 from app.verification.router import router as verification_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
@@ -24,6 +25,7 @@ api_v1_router.include_router(submissions_router)
 api_v1_router.include_router(verification_router)
 api_v1_router.include_router(audit_router)
 api_v1_router.include_router(analytics_router)
+api_v1_router.include_router(rules_router)
 api_v1_router.include_router(review_router)
 api_v1_router.include_router(college_queries_router)
 api_v1_router.include_router(college_change_requests_router)

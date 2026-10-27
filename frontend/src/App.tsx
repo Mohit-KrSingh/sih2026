@@ -12,9 +12,15 @@ import { StudentPortalPage } from "./pages/StudentPortalPage";
 import { UnauthorizedPage } from "./pages/UnauthorizedPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { CollegeDashboardPlaceholder } from "./pages/CollegeDashboardPlaceholder";
-import { AicteOverviewPlaceholder } from "./pages/AicteOverviewPlaceholder";
+import { AicteOverviewPage } from "./pages/AicteOverviewPage";
 import { AicteApprovalsPage } from "./pages/AicteApprovalsPage";
 import { AicteIntakePage } from "./pages/AicteIntakePage";
+import { AicteCompliancePage } from "./pages/AicteCompliancePage";
+import { AicteDuplicatesPage } from "./pages/AicteDuplicatesPage";
+import { AicteAnomaliesPage } from "./pages/AicteAnomaliesPage";
+import { AicteDrilldownPage } from "./pages/AicteDrilldownPage";
+import { AicteRulesPage } from "./pages/AicteRulesPage";
+import { AicteAuditPage } from "./pages/AicteAuditPage";
 import { SeatDeclarationsPage } from "./pages/SeatDeclarationsPage";
 import { StudentsListPage } from "./pages/StudentsListPage";
 import { StudentFormPage } from "./pages/StudentFormPage";
@@ -227,7 +233,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <AicteOverviewPlaceholder />
+              <AicteOverviewPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -257,7 +263,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Over-Intake Compliance Monitor" section="AICTE Central" taskRef="T28" />
+              <AicteCompliancePage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -267,7 +273,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Cross-College Duplicate Enrolments" section="AICTE Central" taskRef="T27" />
+              <AicteDuplicatesPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -277,7 +283,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="ML Anomaly Detection" section="AICTE Central" taskRef="T29" />
+              <AicteAnomaliesPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -307,7 +313,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Data Explorer & Filters" section="AICTE Central" taskRef="T30" />
+              <AicteDrilldownPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -327,7 +333,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Hash-Chained Audit Trail" section="AICTE Central" taskRef="T06" />
+              <AicteAuditPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -347,7 +353,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Validation Rule Configuration" section="AICTE Central" taskRef="T12" />
+              <AicteRulesPage />
             </AppLayout>
           </ProtectedRoute>
         }
