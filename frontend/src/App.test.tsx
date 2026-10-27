@@ -1,13 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
-describe("App", () => {
+describe("App & Public Foundation", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    localStorage.clear();
   });
 
-  it("renders header and demo mode footer", async () => {
+  it("renders header, navigation, four entry cards, and demo mode footer", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -24,9 +25,21 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(screen.getByText("APAAR")).toBeInTheDocument();
-    expect(screen.getByText(/Demo mode: APAAR registry is simulated/i)).toBeInTheDocument();
+    // Header brand
+    expect(screen.getAllByText("APAAR").length).toBeGreaterThan(0);
 
+    // SPEC.md Section 1 & 19: Four entry cards on home page
+    expect(screen.getAllByText("Activate College").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("College Login").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("AICTE Login").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Verify Record").length).toBeGreaterThan(0);
+
+    // Footer demo mode notice (SPEC.md hard rule 10)
+    expect(
+      screen.getByText(/Demo mode: APAAR registry is simulated/i)
+    ).toBeInTheDocument();
+
+    // Health status check
     await waitFor(() => {
       expect(screen.getByTestId("overall-status")).toHaveTextContent("healthy");
       expect(screen.getByTestId("db-status")).toHaveTextContent("connected");
