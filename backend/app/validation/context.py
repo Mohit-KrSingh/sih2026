@@ -65,9 +65,11 @@ class ValidationContext:
     declared_seats: dict[str, int] | None = None
     history_students: list[Any] = field(default_factory=list)
     all_college_students: list[Any] = field(default_factory=list)
+    other_college_students: list[Any] = field(default_factory=list)
     file_metadata: dict[str, Any] = field(default_factory=dict)
     apaar_client: Any | None = None
     aicte_client: Any | None = None
+    db_session: Session | None = None
     rule_configs: dict[str, RuleConfigOverride] = field(default_factory=dict)
     params: dict[str, Any] = field(default_factory=dict)
     apaar_cache: dict[str, Any] = field(default_factory=dict)
@@ -105,9 +107,11 @@ class ValidationContext:
             declared_seats=self.declared_seats,
             history_students=self.history_students,
             all_college_students=self.all_college_students,
+            other_college_students=self.other_college_students,
             file_metadata=self.file_metadata,
             apaar_client=self.apaar_client,
             aicte_client=self.aicte_client,
+            db_session=self.db_session,
             rule_configs=self.rule_configs,
             params=params,
             apaar_cache=self.apaar_cache,

@@ -88,7 +88,10 @@ def run_rules(
     - Skips disabled rules.
     - Returns a ValidationResult (subclass of list[Flag]).
     """
-    # 1. Resolve active overrides
+    # 1. Resolve active overrides and ensure db_session in context if supplied
+    if db_session is not None and context.db_session is None:
+        context.db_session = db_session
+
     active_overrides = _normalize_overrides(
         overrides=overrides,
         db_session=db_session,
