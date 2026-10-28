@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getComplianceList } from "../api/analytics";
+import { downloadReportFile } from "../api/reports";
 import type { ComplianceViolation } from "../types/analytics";
 import { NoticeModal } from "../components/action/NoticeModal";
 import { Button } from "../components/ui/Button";
@@ -8,6 +9,7 @@ import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import {
   AlertOctagon,
   Calendar,
+  Download,
   Filter,
   RefreshCw,
   Search,
@@ -28,6 +30,21 @@ export function AicteCompliancePage() {
     aicteId: string;
     overshoot: number;
   } | null>(null);
+  const [downloading, setDownloading] = useState<string | null>(null);
+
+  const handleExport = async (format: "csv" | "xlsx" | "pdf") => {
+    setDownloading(format);
+    try {
+      await downloadReportFile("seat-utilisation", format, {
+        academic_year: academicYear,
+        state: stateFilter || undefined,
+      });
+    } catch (err: any) {
+      alert(err?.message || "Failed to download report");
+    } finally {
+      setDownloading(null);
+    }
+  };
 
   async function loadData() {
     setLoading(true);
@@ -104,6 +121,36 @@ export function AicteCompliancePage() {
           >
             Refresh
           </Button>
+
+          <div className="flex items-center gap-1 border-l border-slate-200 pl-3">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={downloading !== null}
+              onClick={() => handleExport("csv")}
+              leftIcon={<Download className="w-3 h-3" />}
+            >
+              CSV
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={downloading !== null}
+              onClick={() => handleExport("xlsx")}
+              leftIcon={<Download className="w-3 h-3 text-emerald-600" />}
+            >
+              Excel
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={downloading !== null}
+              onClick={() => handleExport("pdf")}
+              leftIcon={<Download className="w-3 h-3 text-blue-600" />}
+            >
+              PDF
+            </Button>
+          </div>
         </div>
       </div>
 

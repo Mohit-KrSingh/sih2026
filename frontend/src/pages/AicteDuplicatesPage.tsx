@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getDuplicates } from "../api/analytics";
+import { downloadReportFile } from "../api/reports";
 import type { DuplicateRecord } from "../types/analytics";
 import { NoticeModal } from "../components/action/NoticeModal";
 import { FlagBadge } from "../components/ui/Badge";
@@ -7,6 +8,7 @@ import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import {
   Calendar,
+  Download,
   Filter,
   RefreshCw,
   Search,
@@ -30,6 +32,20 @@ export function AicteDuplicatesPage() {
     studentName: string;
     apaarId: string;
   } | null>(null);
+  const [downloading, setDownloading] = useState<string | null>(null);
+
+  const handleExport = async (format: "csv" | "xlsx" | "pdf") => {
+    setDownloading(format);
+    try {
+      await downloadReportFile("duplicate-enrolments", format, {
+        academic_year: academicYear,
+      });
+    } catch (err: any) {
+      alert(err?.message || "Failed to download duplicate enrolments report");
+    } finally {
+      setDownloading(null);
+    }
+  };
 
   async function loadData() {
     setLoading(true);
@@ -107,6 +123,36 @@ export function AicteDuplicatesPage() {
           >
             Refresh
           </Button>
+
+          <div className="flex items-center gap-1 border-l border-slate-200 pl-3">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={downloading !== null}
+              onClick={() => handleExport("csv")}
+              leftIcon={<Download className="w-3 h-3" />}
+            >
+              CSV
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={downloading !== null}
+              onClick={() => handleExport("xlsx")}
+              leftIcon={<Download className="w-3 h-3 text-emerald-600" />}
+            >
+              Excel
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={downloading !== null}
+              onClick={() => handleExport("pdf")}
+              leftIcon={<Download className="w-3 h-3 text-blue-600" />}
+            >
+              PDF
+            </Button>
+          </div>
         </div>
       </div>
 

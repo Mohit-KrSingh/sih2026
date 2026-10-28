@@ -31,6 +31,10 @@ import {
   markAllNotificationsRead,
   type NotificationItem,
 } from "../api/institutions";
+import {
+  downloadCollegeAccreditation,
+  downloadCollegeSubmission,
+} from "../api/reports";
 import { Button } from "../components/ui/Button";
 import { FlagBadge, RoleBadge } from "../components/ui/Badge";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
@@ -53,6 +57,7 @@ import {
   Check,
   CheckCircle2,
   Copy,
+  Download,
   ExternalLink,
   FileCheck,
   FileText,
@@ -91,6 +96,29 @@ export function CollegeDashboardPage() {
   const [selectedNotifFilter, setSelectedNotifFilter] = useState<"all" | "unread">("all");
   const [copiedReceipt, setCopiedReceipt] = useState<boolean>(false);
   const [markingReadId, setMarkingReadId] = useState<number | null>(null);
+  const [downloadingReport, setDownloadingReport] = useState<string | null>(null);
+
+  const handleDownloadSubmission = async (fmt: "pdf" | "xlsx" | "csv" = "pdf") => {
+    setDownloadingReport(`sub_${fmt}`);
+    try {
+      await downloadCollegeSubmission(institutionId, fmt, academicYear);
+    } catch (err: any) {
+      alert(err?.message || "Failed to download submission report");
+    } finally {
+      setDownloadingReport(null);
+    }
+  };
+
+  const handleDownloadAccreditation = async () => {
+    setDownloadingReport("accreditation");
+    try {
+      await downloadCollegeAccreditation(institutionId, "pdf", academicYear);
+    } catch (err: any) {
+      alert(err?.message || "Failed to download accreditation snapshot");
+    } finally {
+      setDownloadingReport(null);
+    }
+  };
 
   // Load all dashboard components in parallel
   const loadDashboardData = useCallback(
@@ -475,7 +503,25 @@ export function CollegeDashboardPage() {
             )}
           </div>
 
-          <div className="shrink-0 flex items-center gap-3">
+          <div className="shrink-0 flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => handleDownloadSubmission("pdf")}
+              disabled={downloadingReport !== null}
+              leftIcon={<Download className="w-3.5 h-3.5 text-blue-600" />}
+            >
+              {downloadingReport === "sub_pdf" ? "Downloading..." : "Submission PDF"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleDownloadAccreditation}
+              disabled={downloadingReport !== null}
+              leftIcon={<Download className="w-3.5 h-3.5 text-indigo-600" />}
+            >
+              {downloadingReport === "accreditation" ? "Downloading..." : "Accreditation PDF"}
+            </Button>
             {isLocked ? (
               <Link to="/college/submit">
                 <Button size="sm" variant="outline" leftIcon={<FileCheck className="w-4 h-4 text-emerald-600" />}>
@@ -485,7 +531,7 @@ export function CollegeDashboardPage() {
             ) : (
               <Link to="/college/submit">
                 <Button
-                  size="md"
+                  size="sm"
                   variant={gateData?.can_submit ? "primary" : "secondary"}
                   rightIcon={<ArrowRight className="w-4 h-4" />}
                 >

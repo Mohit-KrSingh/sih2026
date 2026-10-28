@@ -31,6 +31,7 @@ import { AicteReviewPage } from "./pages/AicteReviewPage";
 import { AicteChangeRequestsPage } from "./pages/AicteChangeRequestsPage";
 import { CollegeQueriesPage } from "./pages/CollegeQueriesPage";
 import { CollegeChangeRequestsPage } from "./pages/CollegeChangeRequestsPage";
+import { AicteReportsPage } from "./pages/AicteReportsPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -323,7 +324,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="National Reports & Exports" section="AICTE Central" taskRef="T31" />
+              <AicteReportsPage />
             </AppLayout>
           </ProtectedRoute>
         }

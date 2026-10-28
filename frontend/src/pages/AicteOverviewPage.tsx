@@ -521,6 +521,17 @@ export function AicteOverviewPage() {
           </Link>
 
           <Link
+            to="/aicte/reports"
+            className="p-3.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/40 transition group"
+          >
+            <p className="font-bold text-slate-900 flex items-center justify-between">
+              Reports & Exports
+              <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100" />
+            </p>
+            <p className="text-slate-600 mt-1">Export statutory CSV, Excel (XLSX), and PDF reports</p>
+          </Link>
+
+          <Link
             to="/aicte/rules"
             className="p-3.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/40 transition group"
           >
