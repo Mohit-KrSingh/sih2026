@@ -226,6 +226,7 @@ The backend exposes a secure REST API under `/api/v1` adhering to deny-by-defaul
 
 ## 8. Documentation Index
 
+- [docs/PS_COVERAGE.md](docs/PS_COVERAGE.md) - Problem Statement Coverage Audit proving all 10 SIH requirements and 10 Hard Rules with automated tests and demo steps.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Complete system architecture, component topology, sequence diagrams, IsolationForest ML anomaly model, and DPDP privacy specifications.
 - [docs/RULES.md](docs/RULES.md) - Comprehensive validation rule catalogue detailing all 34 pure functions, execution scopes, default severity levels, and configurable parameters.
 - [demo/DEMO.md](demo/DEMO.md) - Step-by-step evaluator click guide covering all 6 mandatory judging scenarios (over-intake, duplicates, anomalies, live stream, student consent, and tamper detection).
