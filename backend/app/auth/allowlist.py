@@ -28,6 +28,10 @@ PUBLIC_ALLOWLIST: set[tuple[str, str]] = {
     ("/api/v1/verification/records/{verification_id}", "GET"),
     ("/api/v1/verification/records/{verification_id}/qr", "GET"),
     ("/api/v1/verification/public-key", "GET"),
+    # Public verifier onboarding & student consent portal endpoints (Spec 14, TASKS.md T33)
+    ("/api/v1/verification/verifiers/register", "POST"),
+    ("/api/v1/verification/student/otp/send", "POST"),
+    ("/api/v1/verification/student/otp/verify", "POST"),
     # Public college activation endpoints (Spec 11, TASKS.md T08)
     ("/api/v1/institutions/activation/initiate", "POST"),
     ("/api/v1/institutions/activation/verify-otp", "POST"),
