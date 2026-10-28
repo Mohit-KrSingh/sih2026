@@ -365,6 +365,21 @@ def promote_submission_and_run_cross_checks(
         submission.status = SubmissionState.SUBMITTED.value
 
     # -------------------------------------------------------------------------
+    # 4b. Issue verified records on clean submission (SPEC.md Section 14, TASKS.md T32)
+    # -------------------------------------------------------------------------
+    verified_records_issued = 0
+    if not exception_flags:
+        from app.verification.service import issue_verified_records_for_submission
+
+        issued_records = issue_verified_records_for_submission(
+            db=db,
+            submission=submission,
+            actor=user,
+            client_ip=client_ip,
+        )
+        verified_records_issued = len(issued_records)
+
+    # -------------------------------------------------------------------------
     # 5. Publish SSE event for successful submission promotion
     # -------------------------------------------------------------------------
     inst_name = (
@@ -441,6 +456,7 @@ def promote_submission_and_run_cross_checks(
         "duplicates_detected": duplicates_detected_count,
         "notifications_dispatched": notifications_dispatched_count,
         "review_items_created": review_items_created_count,
+        "verified_records_issued": verified_records_issued,
         "exception_flags_count": len(exception_flags),
         "anomalies_flagged_count": anomalies_flagged_count,
     }

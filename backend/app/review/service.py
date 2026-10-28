@@ -348,6 +348,47 @@ def decide_review_item(
             else:
                 submission.status = SubmissionState.ACCEPTED.value
 
+            from app.verification.service import issue_verified_records_for_submission
+
+            issue_verified_records_for_submission(
+                db=db,
+                submission=submission,
+                actor=user,
+                client_ip=client_ip,
+            )
+        else:
+            # Issue verified record for student(s) whose flags were accepted
+            from app.verification.service import issue_verified_record
+
+            if flag_ids:
+                accepted_flags = list(
+                    db.scalars(
+                        select(ValidationFlag)
+                        .options(joinedload(ValidationFlag.student))
+                        .where(ValidationFlag.id.in_(flag_ids))
+                    ).all()
+                )
+                processed_students: set[int] = set()
+                for fl in accepted_flags:
+                    if fl.student and fl.student.id not in processed_students:
+                        other_open = db.scalar(
+                            select(ValidationFlag.id)
+                            .where(
+                                ValidationFlag.student_id == fl.student.id,
+                                ValidationFlag.status == "open",
+                            )
+                            .limit(1)
+                        )
+                        if not other_open:
+                            issue_verified_record(
+                                db=db,
+                                student=fl.student,
+                                status_override="verified_with_exception",
+                                actor=user,
+                                client_ip=client_ip,
+                            )
+                            processed_students.add(fl.student.id)
+
         # Notification to college
         notif = Notification(
             institution_id=institution.id,

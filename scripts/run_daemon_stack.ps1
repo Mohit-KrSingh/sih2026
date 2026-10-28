@@ -15,7 +15,7 @@ if (Test-Path "data/postgres/postmaster.pid") {
 }
 
 Write-Host "Starting PostgreSQL..."
-$pgProc = Start-Process -FilePath "$pgBin\postgres.exe" -ArgumentList "-D data/postgres" -PassThru -NoNewWindow
+& "$pgBin\pg_ctl.exe" -D "data/postgres" -l "data/pg_service.log" start
 Start-Sleep -Seconds 3
 
 Write-Host "Starting Redis..."
@@ -35,12 +35,13 @@ Write-Host "Daemon stack started. Monitoring child processes..."
 
 while ($true) {
     Start-Sleep -Seconds 15
-    if ($pgProc.HasExited) {
-        Write-Host "PostgreSQL exited, restarting..."
+    $pgStatus = & "$pgBin\pg_ctl.exe" -D "data/postgres" status 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "PostgreSQL not running, starting..."
         if (Test-Path "data/postgres/postmaster.pid") {
             Remove-Item "data/postgres/postmaster.pid" -Force -ErrorAction SilentlyContinue
         }
-        $pgProc = Start-Process -FilePath "$pgBin\postgres.exe" -ArgumentList "-D data/postgres" -PassThru -NoNewWindow
+        & "$pgBin\pg_ctl.exe" -D "data/postgres" -l "data/pg_service.log" start
     }
     if ($redisProc.HasExited) {
         Write-Host "Redis exited, restarting..."

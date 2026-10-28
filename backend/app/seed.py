@@ -493,15 +493,45 @@ def seed_2025_26_history(
         vr = session.scalar(
             select(VerifiedRecord).where(VerifiedRecord.student_id == demo_student.id)
         )
-        if not vr:
-            vr = VerifiedRecord(
-                student_id=demo_student.id,
-                verification_id="VR-2025-111122223333",
-                signature="MOCK-ED25519-SIG-111122223333",
-                issued_at=datetime(2025, 11, 1, 10, 0, tzinfo=UTC),
-                status="active",
+        if not vr or (vr and vr.signature.startswith("MOCK")):
+            from app.verification.signing import build_canonical_payload, sign_payload
+
+            inst_name = (
+                demo_student.institution.name
+                if demo_student.institution
+                else "Pune Institute of Advanced Engineering & Technology"
             )
-            session.add(vr)
+            course_name = (
+                demo_student.course.name
+                if demo_student.course
+                else "B.Tech in Computer Engineering"
+            )
+            seed_issued_at = datetime(2025, 11, 1, 10, 0, tzinfo=UTC)
+            seed_vid = "VR-2025-111122223333"
+            seed_payload = build_canonical_payload(
+                verification_id=seed_vid,
+                apaar_id=demo_student.apaar_id,
+                institution=inst_name,
+                course=course_name,
+                years=demo_student.academic_year,
+                status=demo_student.status,
+                issued_at=seed_issued_at,
+            )
+            seed_sig = sign_payload(seed_payload)
+            if not vr:
+                vr = VerifiedRecord(
+                    student_id=demo_student.id,
+                    verification_id=seed_vid,
+                    signature=seed_sig,
+                    issued_at=seed_issued_at,
+                    status="active",
+                )
+                session.add(vr)
+            else:
+                vr.verification_id = seed_vid
+                vr.signature = seed_sig
+                vr.issued_at = seed_issued_at
+                vr.status = "active"
 
         verifier_org = session.scalar(
             select(Verifier).where(Verifier.contact == "verifier@tcs-verifications.com")
