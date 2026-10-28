@@ -14,7 +14,7 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   pendingMfa: PendingMfaState | null;
-  login: (credentials: LoginCredentials) => Promise<{ mfaRequired: boolean }>;
+  login: (credentials: LoginCredentials) => Promise<{ mfaRequired: boolean; user?: User }>;
   verifyMfa: (code: string) => Promise<void>;
   cancelMfa: () => void;
   logout: () => void;
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refreshUser]);
 
   const login = useCallback(
-    async (credentials: LoginCredentials): Promise<{ mfaRequired: boolean }> => {
+    async (credentials: LoginCredentials): Promise<{ mfaRequired: boolean; user?: User }> => {
       const resp = await loginApi(credentials);
 
       if (resp.mfa_required && resp.mfa_token) {
@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setPendingMfa(null);
       setToken(resp.access_token);
       setUser(resp.user);
-      return { mfaRequired: false };
+      return { mfaRequired: false, user: resp.user };
     },
     []
   );

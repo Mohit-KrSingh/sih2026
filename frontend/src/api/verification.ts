@@ -31,6 +31,99 @@ export interface PublicKeyResponse {
   description: string;
 }
 
+export interface VerifierProfile {
+  id: number;
+  org_name: string;
+  org_type: "employer" | "regulator" | "institution" | string;
+  contact: string;
+  status: "pending" | "approved" | "revoked";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConsentRequestItem {
+  id: number;
+  verifier_id: number;
+  verifier_name: string;
+  verifier_type: string;
+  apaar_id: string;
+  status: "pending" | "approved" | "denied" | "expired" | "used";
+  purpose: string;
+  scope_fields: string[];
+  requested_at: string;
+  decided_at?: string | null;
+  expires_at: string;
+  is_expired: boolean;
+  is_used: boolean;
+}
+
+export interface ConsentRequestListResponse {
+  items: ConsentRequestItem[];
+  total: number;
+}
+
+export interface ConsentedStudentRecord {
+  institution: string;
+  course: string;
+  years: string;
+  status: string;
+  verification_id: string;
+  verified_by: string;
+  verified: boolean;
+  purpose: string;
+  accessed_at: string;
+  consent_request_id: number;
+  verifier_name: string;
+  message: string;
+}
+
+export interface StudentOtpSendResponse {
+  status: string;
+  apaar_id: string;
+  channel: string;
+  expires_in: number;
+  message: string;
+}
+
+export interface StudentTokenResponse {
+  access_token: string;
+  token_type: string;
+  apaar_id: string;
+  student_name?: string | null;
+  expires_in_hours: number;
+}
+
+export interface StudentAcademicRecord {
+  institution_id: number;
+  institution_name: string;
+  institution_aicte_id: string;
+  course_id?: number | null;
+  course_name: string;
+  academic_year: string;
+  status: string;
+  verification_id?: string | null;
+  issued_at?: string | null;
+}
+
+export interface StudentRecordsListResponse {
+  apaar_id: string;
+  records: StudentAcademicRecord[];
+  total: number;
+}
+
+export interface DevOutboxMessage {
+  id: number;
+  channel: string;
+  recipient: string;
+  body: string;
+  context?: string | null;
+  created_at: string;
+}
+
+// ============================================================================
+// Public Verification & Proof Lookups (T32)
+// ============================================================================
+
 export async function verifyCredential(vid: string): Promise<VerificationResult> {
   return api.get<VerificationResult>(
     `/api/v1/verification/verify?vid=${encodeURIComponent(vid.trim())}`
@@ -59,4 +152,85 @@ export async function revokeVerificationRecord(
   return api.post(`/api/v1/verification/records/${encodeURIComponent(vid.trim())}/revoke`, {
     reason,
   });
+}
+
+// ============================================================================
+// Verifier Portal APIs (T33 / T34)
+// ============================================================================
+
+export async function getMyVerifierProfile(): Promise<VerifierProfile> {
+  return api.get<VerifierProfile>("/api/v1/verification/verifiers/me");
+}
+
+export async function createConsentRequest(
+  apaar_id: string,
+  purpose: string = "Pre-employment or academic background verification"
+): Promise<ConsentRequestItem> {
+  return api.post<ConsentRequestItem>("/api/v1/verification/consent-requests", {
+    apaar_id: apaar_id.trim(),
+    purpose: purpose.trim(),
+  });
+}
+
+export async function getVerifierConsentRequests(status?: string): Promise<ConsentRequestListResponse> {
+  const query = status ? `?status=${encodeURIComponent(status)}` : "";
+  return api.get<ConsentRequestListResponse>(`/api/v1/verification/consent-requests${query}`);
+}
+
+export async function getConsentRequestDetails(requestId: number): Promise<ConsentRequestItem> {
+  return api.get<ConsentRequestItem>(`/api/v1/verification/consent-requests/${requestId}`);
+}
+
+export async function getConsentedRecord(requestId: number): Promise<ConsentedStudentRecord> {
+  return api.get<ConsentedStudentRecord>(`/api/v1/verification/consent-requests/${requestId}/record`);
+}
+
+// ============================================================================
+// Student Consent Portal APIs (T33 / T34)
+// ============================================================================
+
+export async function sendStudentOtp(apaarId: string): Promise<StudentOtpSendResponse> {
+  return api.post<StudentOtpSendResponse>("/api/v1/verification/student/otp/send", {
+    apaar_id: apaarId.trim(),
+  });
+}
+
+export async function verifyStudentOtp(apaarId: string, otp: string): Promise<StudentTokenResponse> {
+  return api.post<StudentTokenResponse>("/api/v1/verification/student/otp/verify", {
+    apaar_id: apaarId.trim(),
+    otp: otp.trim(),
+  });
+}
+
+export async function getStudentAcademicRecords(studentToken: string): Promise<StudentRecordsListResponse> {
+  return api.get<StudentRecordsListResponse>("/api/v1/verification/student/records", {
+    token: studentToken,
+  });
+}
+
+export async function getStudentConsentRequests(studentToken: string): Promise<ConsentRequestListResponse> {
+  return api.get<ConsentRequestListResponse>("/api/v1/verification/student/consent-requests", {
+    token: studentToken,
+  });
+}
+
+export async function decideStudentConsent(
+  studentToken: string,
+  requestId: number,
+  decision: "approved" | "denied"
+): Promise<ConsentRequestItem> {
+  return api.post<ConsentRequestItem>(
+    `/api/v1/verification/student/consent-requests/${requestId}/decide`,
+    { decision },
+    { token: studentToken }
+  );
+}
+
+// ============================================================================
+// Dev Outbox Inspection Helper (Demo Mode)
+// ============================================================================
+
+export async function getDevOutbox(recipient?: string): Promise<DevOutboxMessage[]> {
+  const query = recipient ? `?recipient=${encodeURIComponent(recipient.trim())}` : "";
+  return api.get<DevOutboxMessage[]>(`/api/v1/dev/outbox${query}`);
 }

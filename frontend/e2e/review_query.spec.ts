@@ -1,4 +1,6 @@
 import { test, expect } from "@playwright/test";
+import { execSync } from "child_process";
+import path from "path";
 
 test.describe("T25: AICTE Review Queue and College Query Round-Trip End-to-End", () => {
   const officerEmail = "aicte_officer@aicte-india.org";
@@ -8,6 +10,16 @@ test.describe("T25: AICTE Review Queue and College Query Round-Trip End-to-End",
   const collegeResponse =
     "High Court interim bench order attached confirming sanction of 8 seats under supernumerary quota.";
   const acceptNote = "Clarification verified against court records and accepted.";
+
+  test.beforeEach(async () => {
+    try {
+      const rootDir = path.resolve(process.cwd(), "..");
+      const resetCmd = `"${path.join(rootDir, ".venv/Scripts/python.exe")}" -c "import sys; sys.path.insert(0, 'backend'); from app.db import get_redis; r = next(get_redis()); keys = r.keys('ratelimit:*'); (r.delete(*keys) if keys else None)"`;
+      execSync(resetCmd, { cwd: rootDir });
+    } catch (e) {
+      console.warn("Rate limit reset warning:", e);
+    }
+  });
 
   test("completes the full review query round trip: raise query -> college responds -> officer accepts", async ({
     page,

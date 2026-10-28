@@ -27,7 +27,11 @@ export function CollegeLoginPage() {
     try {
       const res = await login({ email, password });
       if (!res.mfaRequired) {
-        navigate(destination, { replace: true });
+        let target = destination;
+        if (destination === "/college/dashboard" && res.user?.role === "verifier") {
+          target = "/verifier/search";
+        }
+        navigate(target, { replace: true });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to sign in. Please verify your credentials.");
@@ -101,19 +105,16 @@ export function CollegeLoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-1/2"
-                onClick={() => {
-                  cancelMfa();
-                  setMfaCode("");
-                  setError(null);
-                }}
+                className="w-1/3"
+                onClick={cancelMfa}
+                disabled={isLoading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 variant="primary"
-                className="w-1/2"
+                className="w-2/3"
                 isLoading={isLoading}
                 loadingText="Verifying..."
               >
@@ -122,16 +123,16 @@ export function CollegeLoginPage() {
             </div>
           </form>
         ) : (
-          /* Credentials Step */
-          <form onSubmit={handleCredentialsSubmit} className="space-y-4" data-testid="college-login-form">
+          /* Credentials Form */
+          <form onSubmit={handleCredentialsSubmit} className="space-y-4">
             <Input
               label="Official Institutional Email"
               type="email"
-              placeholder="admin@institution.edu.in"
+              placeholder="admin@college.edu.in"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              autoComplete="username"
+              autoComplete="email"
             />
 
             <Input
@@ -144,12 +145,20 @@ export function CollegeLoginPage() {
               autoComplete="current-password"
             />
 
+            <div className="flex items-center justify-between text-xs pt-1">
+              <span className="text-slate-500">MFA prompt required for admin accounts</span>
+              <a href="#reset" className="text-blue-700 hover:underline">
+                Forgot password?
+              </a>
+            </div>
+
             <Button
               type="submit"
               variant="primary"
               className="w-full"
               isLoading={isLoading}
               loadingText="Signing in..."
+              leftIcon={<KeyRound className="w-4 h-4" />}
             >
               Sign in as college
             </Button>
@@ -157,15 +166,12 @@ export function CollegeLoginPage() {
         )}
       </div>
 
-      {/* Demo Credentials Helper */}
+      {/* Demo Accounts Helper */}
       {!pendingMfa && (
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 text-xs">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-slate-700 flex items-center gap-1.5">
-              <KeyRound className="w-3.5 h-3.5 text-blue-600" />
-              Demo College Accounts
-            </span>
-            <span className="text-slate-400 font-mono text-[11px]">Password: Demo@12345</span>
+            <span className="font-semibold text-slate-700">SIH 2026 Evaluation Demo Accounts:</span>
+            <span className="font-mono text-slate-500">Password: Demo@12345</span>
           </div>
 
           <div className="space-y-1.5">
@@ -208,6 +214,20 @@ export function CollegeLoginPage() {
               </div>
               <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
                 Draft Stage
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => quickFill("verifier@tcs-verifications.com")}
+              className="w-full text-left p-2 rounded bg-white hover:bg-indigo-50 border border-indigo-200 transition text-slate-800 flex justify-between items-center"
+            >
+              <div>
+                <p className="font-medium text-indigo-900">Tata Consultancy Services (Verifier)</p>
+                <p className="text-[11px] text-slate-500 font-mono">verifier@tcs-verifications.com</p>
+              </div>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 font-medium">
+                Verifier Portal
               </span>
             </button>
           </div>

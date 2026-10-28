@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Badge } from "../components/ui/Badge";
-import { AlertTriangle, CheckCircle2, Lock, QrCode, Search, ShieldAlert, ShieldCheck, XCircle } from "lucide-react";
+import { useAuth } from "../auth/AuthContext";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  ExternalLink,
+  Lock,
+  QrCode,
+  Search,
+  ShieldAlert,
+  ShieldCheck,
+  UserCheck,
+  XCircle,
+} from "lucide-react";
 import { getVerificationQrUrl, verifyCredential, type VerificationResult } from "../api/verification";
 
 export function VerifyPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const initialVid = searchParams.get("vid") || "";
 
   const [verificationId, setVerificationId] = useState(initialVid);
@@ -15,18 +29,32 @@ export function VerifyPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [apaarNotice, setApaarNotice] = useState<string | null>(null);
+
+  const isApaarPattern = (id: string) => /^\d{12}$/.test(id.trim());
 
   const executeVerification = async (vidToSearch: string) => {
     const clean = vidToSearch.trim();
     if (!clean) return;
-    setIsSearching(true);
+
+    setSearchedId(clean);
     setSearchError(null);
+
+    // If a 12-digit APAAR ID is supplied directly without a VID
+    if (isApaarPattern(clean)) {
+      setResult(null);
+      setApaarNotice(clean);
+      return;
+    }
+
+    setApaarNotice(null);
+    setIsSearching(true);
+
     try {
       const res = await verifyCredential(clean);
       setResult(res);
-      setSearchedId(clean);
     } catch {
-      // In offline / unit test environment without backend server:
+      // Offline / unit test fallback for test fixture IDs
       if (clean.includes("VID-2026-PIAET") || clean.includes("VR-2025") || clean.includes("TEST")) {
         setResult({
           verified: true,
@@ -40,7 +68,6 @@ export function VerifyPage() {
           issued_at: new Date().toISOString(),
           signature_preview: "8f3a9e2d14cb803f295bc104fa287901048e91cb39f0412dbb821a7c83f145...",
         });
-        setSearchedId(clean);
       } else {
         setSearchError("Unable to verify credential at this time. Please check your connection.");
         setResult(null);
@@ -54,6 +81,7 @@ export function VerifyPage() {
     if (initialVid) {
       executeVerification(initialVid);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialVid]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -79,6 +107,30 @@ export function VerifyPage() {
         </p>
       </div>
 
+      {/* Verifier shortcut if authenticated */}
+      {isAuthenticated && user?.role === "verifier" && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-blue-900">
+            <UserCheck className="w-4 h-4 text-blue-700 shrink-0" />
+            <span>
+              Signed in as <strong>{user.email}</strong> (Authorised Verifying Organisation)
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link to="/verifier/search">
+              <Button size="sm" variant="primary" className="text-xs">
+                Verifier Search & Consent
+              </Button>
+            </Link>
+            <Link to="/verifier/history">
+              <Button size="sm" variant="outline" className="text-xs">
+                Consent History
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Verification ID Input Form */}
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
         <form onSubmit={handleSearch} className="space-y-4">
@@ -86,10 +138,10 @@ export function VerifyPage() {
             <div className="flex-1 w-full">
               <Input
                 label="Verification Identifier (VID) or APAAR ID"
-                placeholder="e.g. VID-2026-PIAET-0042 or VR-2026-XXXXXXXXXXXX"
+                placeholder="e.g. VID-2026-PIAET-0042 or 111122223333"
                 value={verificationId}
                 onChange={(e) => setVerificationId(e.target.value)}
-                hint="Provided on academic transcripts, degree certificates, or QR link"
+                hint="Provided on academic transcripts, degree certificates, QR links, or 12-digit student APAAR"
                 required
               />
             </div>
@@ -106,7 +158,7 @@ export function VerifyPage() {
           </div>
         </form>
 
-        <div className="flex items-center gap-2 pt-2 text-xs text-slate-500">
+        <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-slate-500">
           <span className="font-semibold text-slate-700">Quick Demo Verification:</span>
           <button
             type="button"
@@ -129,6 +181,17 @@ export function VerifyPage() {
           >
             VR-2025-111122223333 (Seed)
           </button>
+          <span className="text-slate-300">|</span>
+          <button
+            type="button"
+            onClick={() => {
+              setVerificationId("111122223333");
+              executeVerification("111122223333");
+            }}
+            className="text-amber-800 underline hover:text-amber-950 font-mono"
+          >
+            111122223333 (APAAR)
+          </button>
         </div>
 
         {searchError && (
@@ -138,6 +201,68 @@ export function VerifyPage() {
           </div>
         )}
       </div>
+
+      {/* APAAR ID Detected Notice (Consent Protocol Requirement) */}
+      {apaarNotice && (
+        <div className="bg-amber-50 border-2 border-amber-400 rounded-xl p-6 shadow-sm space-y-4">
+          <div className="flex items-center gap-3 border-b border-amber-200 pb-3">
+            <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+              <UserCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-wider text-amber-800">
+                DPDP Consent Protocol Required
+              </span>
+              <h3 className="text-base font-bold text-slate-900">
+                12-Digit Student APAAR ID Entered ({apaarNotice})
+              </h3>
+            </div>
+          </div>
+
+          <p className="text-sm text-slate-700 leading-relaxed">
+            In compliance with India&apos;s <strong>Digital Personal Data Protection (DPDP) Act</strong> and
+            SPEC.md Section 14, student academic records keyed by APAAR ID cannot be disclosed
+            publicly without explicit, time-bound student consent.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+            <div className="p-3 bg-white border border-amber-200 rounded-lg space-y-2">
+              <p className="font-semibold text-slate-900">For Authorized Verifiers (Employers / Regulators):</p>
+              <p className="text-slate-600">
+                Sign in to dispatch an OTP-backed consent request to the student with a 24-hour statutory TTL.
+              </p>
+              <Button
+                size="sm"
+                variant="primary"
+                className="w-full text-xs mt-2"
+                onClick={() => {
+                  if (isAuthenticated && user?.role === "verifier") {
+                    navigate(`/verifier/search?apaar_id=${apaarNotice}`);
+                  } else {
+                    navigate("/login/college", { state: { from: { pathname: `/verifier/search?apaar_id=${apaarNotice}` } } });
+                  }
+                }}
+              >
+                {isAuthenticated && user?.role === "verifier"
+                  ? "Initiate Consent Request"
+                  : "Sign in as Verifier"}
+              </Button>
+            </div>
+
+            <div className="p-3 bg-white border border-amber-200 rounded-lg space-y-2">
+              <p className="font-semibold text-slate-900">For Students:</p>
+              <p className="text-slate-600">
+                Access your student portal using your APAAR ID and OTP to view and approve pending verification requests.
+              </p>
+              <Link to="/student" className="block mt-2">
+                <Button size="sm" variant="outline" className="w-full text-xs justify-between">
+                  Open Student Portal <ExternalLink className="w-3.5 h-3.5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Result Display: Valid Active Credential */}
       {result && result.verified && result.status === "active" && (

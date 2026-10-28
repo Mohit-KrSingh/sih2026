@@ -60,7 +60,12 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
     { label: "Audit Log Chain", path: "/aicte/audit", icon: <Shield className="w-4 h-4" /> },
   ];
 
-  const navItems = isAicte ? aicteNav : isCollege ? collegeNav : [];
+  const verifierNav: NavItem[] = [
+    { label: "Search & Request Consent", path: "/verifier/search", icon: <Search className="w-4 h-4" /> },
+    { label: "Consent History", path: "/verifier/history", icon: <FileCheck className="w-4 h-4" /> },
+  ];
+
+  const navItems = isAicte ? aicteNav : isCollege ? collegeNav : user?.role === "verifier" ? verifierNav : [];
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
@@ -84,12 +89,17 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
                     Institution ID: <span className="font-mono font-medium">{user.institution_id}</span>
                   </p>
                 )}
+                {user.role === "verifier" && (
+                  <p className="text-xs text-slate-500">
+                    Authorized Stakeholder Organisation &bull; Consent-Gated Verification
+                  </p>
+                )}
               </div>
             </div>
 
             {/* Quick role indicator */}
             <div className="text-xs text-slate-500 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               <span>Session active &bull; RBAC verified</span>
             </div>
           </div>
@@ -104,13 +114,13 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
                     <Link
                       key={item.path}
                       to={item.path}
-                      className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-md whitespace-nowrap transition ${
+                      className={`px-3 py-2 text-xs font-medium rounded-lg flex items-center space-x-2 whitespace-nowrap transition ${
                         active
-                          ? "bg-blue-50 text-blue-700 font-semibold border-b-2 border-blue-600 rounded-b-none"
+                          ? "bg-blue-50 text-blue-800 font-bold border-b-2 border-blue-600 shadow-sm"
                           : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                       }`}
                     >
-                      {item.icon}
+                      <span>{item.icon}</span>
                       <span>{item.label}</span>
                     </Link>
                   );
@@ -121,10 +131,8 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
         </div>
       )}
 
-      {/* Main app content */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {children}
-      </main>
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">{children}</main>
 
       <Footer />
     </div>

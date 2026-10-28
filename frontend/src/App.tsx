@@ -32,6 +32,8 @@ import { AicteChangeRequestsPage } from "./pages/AicteChangeRequestsPage";
 import { CollegeQueriesPage } from "./pages/CollegeQueriesPage";
 import { CollegeChangeRequestsPage } from "./pages/CollegeChangeRequestsPage";
 import { AicteReportsPage } from "./pages/AicteReportsPage";
+import { VerifierSearchPage } from "./pages/VerifierSearchPage";
+import { VerifierHistoryPage } from "./pages/VerifierHistoryPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -366,7 +368,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={VERIFIER_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Stakeholder Credential Verification" section="Verifier Portal" taskRef="T32" />
+              <VerifierSearchPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -376,7 +378,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={VERIFIER_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Verification & Consent History" section="Verifier Portal" taskRef="T32" />
+              <VerifierHistoryPage />
             </AppLayout>
           </ProtectedRoute>
         }
