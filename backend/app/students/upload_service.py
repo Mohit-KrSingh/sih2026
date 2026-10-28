@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import csv
 import io
-from datetime import date
+from datetime import UTC, date, datetime
 from typing import Any
 
 import pandas as pd
@@ -205,38 +205,24 @@ def parse_uploaded_file(file_bytes: bytes, filename: str) -> pd.DataFrame:
     return df
 
 
-def process_bulk_upload(
+def _process_parsed_records(
     db: Session,
     institution_id: int,
-    file_bytes: bytes,
+    raw_records: list[dict[str, Any]],
     filename: str,
-    user: User,
+    source: str = "csv",
+    actor_id: int | None = None,
+    actor_role: str = "college_staff",
     academic_year_default: str = "2026-27",
     client_ip: str | None = None,
 ) -> UploadResultResponse:
-    """Process a bulk student file upload.
+    """Core evaluation engine processing parsed records (CSV or JSON API).
 
-    Spec 8.2, 9.4, 13:
-    1. Verify institution approval status (active only).
-    2. Parse with pandas; reject only unreadable files.
-    3. Save/update all rows as drafts; re-upload updates matching records.
-    4. Run validation engine across all rows; persist flags.
-    5. Save Upload history record and write hash-chained audit log.
-    6. Return summary counts, per-row badges, and flags.
+    Spec 8.2, 9.4, 13, 17 & Hard Rule 4:
+    - Re-upload updates matching records (same college, course, year, APAAR ID).
+    - Runs unified validation engine across all rows and persists flags.
+    - Saves Upload history record and writes hash-chained audit log.
     """
-    # 1. Enforce active institution approval check
-    institution = db.get(Institution, institution_id)
-    if not institution:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Institution #{institution_id} not found",
-        )
-    check_institution_can_upload(institution)
-
-    # 2. Parse file with pandas and check file-level rules
-    df = parse_uploaded_file(file_bytes, filename)
-    raw_records = df.to_dict(orient="records")
-
     # 3. Fetch institution's approved courses
     approved_courses = list(
         db.scalars(
@@ -245,8 +231,12 @@ def process_bulk_upload(
     )
 
     # Course lookup helpers
-    def match_course(c_name: str, c_branch: str) -> Course | None:
-        norm_name = c_name.strip().lower()
+    def match_course(c_name: str, c_branch: str, c_id: int | None = None) -> Course | None:
+        if c_id is not None:
+            for ac in approved_courses:
+                if ac.id == c_id:
+                    return ac
+        norm_name = c_name.strip().lower() if c_name else ""
         norm_branch = c_branch.strip().lower() if c_branch else ""
         for ac in approved_courses:
             ac_name = ac.name.strip().lower()
@@ -277,6 +267,12 @@ def process_bulk_upload(
     updated_count = 0
     batch_seen_keys: set[tuple[int | None, str, str]] = set()
 
+    def _to_bool_str(val: Any) -> str:
+        if isinstance(val, bool):
+            return "Yes" if val else "No"
+        s = str(val).strip().lower()
+        return "Yes" if s in {"yes", "true", "1", "y"} else "No"
+
     for idx, raw in enumerate(raw_records, start=1):
         apaar_raw = str(raw.get("apaar_id", "")).strip()
         name_raw = str(raw.get("name", "")).strip()
@@ -284,19 +280,27 @@ def process_bulk_upload(
         gender_raw = str(raw.get("gender", "")).strip()
         course_raw = str(raw.get("course", "")).strip()
         branch_raw = str(raw.get("branch", "")).strip()
+
+        c_id_raw = raw.get("course_id")
+        try:
+            c_str = str(c_id_raw).strip() if c_id_raw is not None else ""
+            course_id_hint = int(c_str) if c_str else None
+        except (ValueError, TypeError):
+            course_id_hint = None
+
         year_raw = str(raw.get("admission_year", "")).strip() or academic_year_default
         enrol_raw = str(raw.get("enrolment_no", "")).strip()
         adm_date_raw = str(raw.get("admission_date", "")).strip()
         mode_raw = str(raw.get("admission_mode", "")).strip()
         seat_raw = str(raw.get("seat_type", "")).strip()
         cat_raw = str(raw.get("reservation_category", "")).strip()
-        nri_raw = str(raw.get("nri", "")).strip()
-        oci_raw = str(raw.get("oci", "")).strip()
-        fn_raw = str(raw.get("foreign_national", "")).strip()
+        nri_raw = _to_bool_str(raw.get("nri", "No"))
+        oci_raw = _to_bool_str(raw.get("oci", "No"))
+        fn_raw = _to_bool_str(raw.get("foreign_national", "No"))
         country_raw = str(raw.get("country", "")).strip()
 
         # Match course
-        matched = match_course(course_raw, branch_raw)
+        matched = match_course(course_raw, branch_raw, course_id_hint)
         course_id = matched.id if matched else None
 
         # Foreign national country check
@@ -336,11 +340,11 @@ def process_bulk_upload(
             existing_student.admission_mode = mode_raw
             existing_student.seat_type = seat_raw
             existing_student.reservation_category = cat_raw
-            existing_student.nri = "Yes" if nri_raw.lower() == "yes" else "No"
-            existing_student.oci = "Yes" if oci_raw.lower() == "yes" else "No"
-            existing_student.foreign_national = "Yes" if is_foreign else "No"
+            existing_student.nri = nri_raw
+            existing_student.oci = oci_raw
+            existing_student.foreign_national = fn_raw
             existing_student.fn_country = fn_country
-            existing_student.source = "csv"
+            existing_student.source = source
             existing_student.status = "draft"
             if matched:
                 existing_student.course = matched
@@ -361,13 +365,13 @@ def process_bulk_upload(
                 admission_mode=mode_raw,
                 seat_type=seat_raw,
                 reservation_category=cat_raw,
-                nri="Yes" if nri_raw.lower() == "yes" else "No",
-                oci="Yes" if oci_raw.lower() == "yes" else "No",
-                foreign_national="Yes" if is_foreign else "No",
+                nri=nri_raw,
+                oci=oci_raw,
+                foreign_national=fn_raw,
                 fn_country=fn_country,
                 status="draft",
                 is_locked=False,
-                source="csv",
+                source=source,
             )
             if matched:
                 student_obj.course = matched
@@ -393,9 +397,9 @@ def process_bulk_upload(
             "admission_mode": mode_raw,
             "seat_type": seat_raw,
             "reservation_category": cat_raw,
-            "nri": "Yes" if nri_raw.lower() == "yes" else "No",
-            "oci": "Yes" if oci_raw.lower() == "yes" else "No",
-            "foreign_national": "Yes" if is_foreign else "No",
+            "nri": nri_raw,
+            "oci": oci_raw,
+            "foreign_national": fn_raw,
             "country": fn_country or "",
             "institution_id": institution_id,
         }
@@ -517,7 +521,7 @@ def process_bulk_upload(
         )
 
     summary = UploadSummary(
-        total_rows=len(df),
+        total_rows=len(raw_records),
         valid_rows=valid_rows_count,
         flagged_rows=flagged_rows_count,
         error_count=total_errors,
@@ -540,28 +544,30 @@ def process_bulk_upload(
     upload_record = Upload(
         institution_id=institution_id,
         filename=filename,
-        row_count=len(df),
+        row_count=len(raw_records),
         status="completed",
         summary_json=summary_payload,
-        uploaded_by=user.id,
+        uploaded_by=actor_id if source == "csv" else None,
     )
     db.add(upload_record)
     db.flush()
 
     # 8. Record state change in hash-chained audit log
+    action_name = "student.api_push" if source == "api" else "student.bulk_upload"
     audit_service.record(
         db=db,
-        actor_id=user.id,
-        actor_role=user.role,
-        action="student.bulk_upload",
+        actor_id=actor_id,
+        actor_role=actor_role,
+        action=action_name,
         entity="upload",
         entity_id=upload_record.id,
         before_json=None,
         after_json={
             "upload_id": upload_record.id,
             "filename": filename,
-            "row_count": len(df),
+            "row_count": len(raw_records),
             "summary": summary_dict,
+            "source": source,
         },
         ip=client_ip,
     )
@@ -571,9 +577,107 @@ def process_bulk_upload(
     return UploadResultResponse(
         upload_id=upload_record.id,
         filename=filename,
-        row_count=len(df),
+        row_count=len(raw_records),
         summary=summary,
         rows=row_results,
+    )
+
+
+def process_bulk_upload(
+    db: Session,
+    institution_id: int,
+    file_bytes: bytes,
+    filename: str,
+    user: User,
+    academic_year_default: str = "2026-27",
+    client_ip: str | None = None,
+) -> UploadResultResponse:
+    """Process a bulk student file upload (CSV / Excel).
+
+    Spec 8.2, 9.4, 13:
+    1. Verify institution approval status (active only).
+    2. Parse with pandas; reject only unreadable files.
+    3. Save/update all rows as drafts; re-upload updates matching records.
+    4. Run validation engine across all rows; persist flags.
+    5. Save Upload history record and write hash-chained audit log.
+    6. Return summary counts, per-row badges, and flags.
+    """
+    institution = db.get(Institution, institution_id)
+    if not institution:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Institution #{institution_id} not found",
+        )
+    check_institution_can_upload(institution)
+
+    df = parse_uploaded_file(file_bytes, filename)
+    raw_records = df.to_dict(orient="records")
+
+    return _process_parsed_records(
+        db=db,
+        institution_id=institution_id,
+        raw_records=raw_records,
+        filename=filename,
+        source="csv",
+        actor_id=user.id,
+        actor_role=user.role,
+        academic_year_default=academic_year_default,
+        client_ip=client_ip,
+    )
+
+
+def process_json_bulk_upload(
+    db: Session,
+    institution_id: int,
+    records: list[dict[str, Any]],
+    academic_year_default: str = "2026-27",
+    api_key_name: str = "ERP Integration",
+    api_key_id: int | None = None,
+    client_ip: str | None = None,
+) -> UploadResultResponse:
+    """Process bulk student records pushed via JSON Integration API.
+
+    Spec 8.2, 9.4, 17 & TASKS.md T36:
+    1. Verify institution approval status (active only).
+    2. Validate batch size (1 to 10,000 rows).
+    3. Save/update all records as drafts (source="api").
+    4. Run unified validation engine across all rows and persist flags.
+    5. Save Upload history record and write hash-chained audit log.
+    6. Return UploadResultResponse.
+    """
+    institution = db.get(Institution, institution_id)
+    if not institution:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Institution #{institution_id} not found",
+        )
+    check_institution_can_upload(institution)
+
+    if not records:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Payload contains no student records. At least 1 record is required.",
+        )
+
+    if len(records) > 10000:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Batch contains {len(records):,} records, exceeding the 10,000 maximum limit.",
+        )
+
+    ts_str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+    filename = f"erp_batch_{academic_year_default}_{ts_str}.json"
+
+    return _process_parsed_records(
+        db=db,
+        institution_id=institution_id,
+        raw_records=records,
+        filename=filename,
+        source="api",
+        actor_id=api_key_id,
+        actor_role="api_key",
+        academic_year_default=academic_year_default,
+        client_ip=client_ip,
     )
 
 

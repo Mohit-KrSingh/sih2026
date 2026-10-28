@@ -4,7 +4,7 @@ from collections.abc import Callable
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from app.auth.schemas import Role
 from app.auth.security import decode_token
 from app.db import get_db
-from app.models import User
+from app.models import ApiKey, Institution, User
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/login",
@@ -179,3 +179,59 @@ def get_institution_scope(
         status_code=status.HTTP_403_FORBIDDEN,
         detail="Access denied: No institution scope available",
     )
+
+
+# =========================================================================
+# Integration API Key Authentication Dependencies (Spec 17, TASKS.md T36)
+# =========================================================================
+
+
+def get_api_key_header(
+    x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
+    authorization: Annotated[str | None, Header(alias="Authorization")] = None,
+) -> str:
+    """Extract raw API key from X-API-Key or Authorization header."""
+    if x_api_key and x_api_key.strip():
+        return x_api_key.strip()
+    if authorization:
+        parts = authorization.strip().split()
+        if len(parts) == 2 and parts[0].lower() in {"bearer", "apikey", "key"}:
+            return parts[1].strip()
+        if len(parts) == 1 and parts[0].startswith("apaar_"):
+            return parts[0].strip()
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Missing API key. Provide via 'X-API-Key' header or 'Authorization: Bearer <key>'.",
+        headers={"WWW-Authenticate": "ApiKey"},
+    )
+
+
+def verify_api_key(
+    raw_key: Annotated[str, Depends(get_api_key_header)],
+    db: Annotated[Session, Depends(get_db)],
+) -> tuple[Institution, ApiKey]:
+    """Authenticate request using institutional integration API key."""
+    from app.auth.api_keys import authenticate_api_key
+
+    return authenticate_api_key(db, raw_key)
+
+
+def require_api_key_scope(
+    scope: str,
+) -> Callable[[tuple[Institution, ApiKey]], tuple[Institution, ApiKey]]:
+    """Dependency factory checking that the authenticated API key contains the required scope."""
+
+    def scope_checker(
+        auth: Annotated[tuple[Institution, ApiKey], Depends(verify_api_key)],
+    ) -> tuple[Institution, ApiKey]:
+        institution, api_key = auth
+        scopes = api_key.scopes or []
+        if "*" not in scopes and scope not in scopes:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"API key lacks required scope '{scope}' (granted scopes: {scopes})",
+            )
+        return auth
+
+    return scope_checker
+

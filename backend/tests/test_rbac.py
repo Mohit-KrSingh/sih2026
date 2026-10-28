@@ -16,6 +16,7 @@ from app.auth.dependencies import (
     require_college_admin,
     require_college_staff,
     require_college_user,
+    verify_api_key,
     verify_institution_access,
 )
 from app.auth.schemas import Role
@@ -51,14 +52,17 @@ def _has_auth_dependency(dependant) -> bool:
         oauth2_scheme,
         verify_institution_access,
         get_institution_scope,
+        verify_api_key,
     }
 
     if dependant.call in auth_callables:
         return True
 
-    # Check if the callable is a closure created by require_roles
+    # Check if the callable is a closure created by require_roles or require_api_key_scope
     qualname = getattr(dependant.call, "__qualname__", "")
     if "require_roles.<locals>.role_checker" in qualname:
+        return True
+    if "require_api_key_scope.<locals>.scope_checker" in qualname:
         return True
 
     for sub_dep in dependant.dependencies:

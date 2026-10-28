@@ -34,6 +34,7 @@ import { CollegeChangeRequestsPage } from "./pages/CollegeChangeRequestsPage";
 import { AicteReportsPage } from "./pages/AicteReportsPage";
 import { VerifierSearchPage } from "./pages/VerifierSearchPage";
 import { VerifierHistoryPage } from "./pages/VerifierHistoryPage";
+import { ApiKeyManagementPage } from "./pages/ApiKeyManagementPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -224,7 +225,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="ERP Integration API Keys" section="College Portal" taskRef="T36" />
+              <ApiKeyManagementPage />
             </AppLayout>
           </ProtectedRoute>
         }
