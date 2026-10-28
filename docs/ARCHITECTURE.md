@@ -164,3 +164,101 @@ Every flagged anomaly generates an actionable plain-English explanation highligh
 - *"Cluster of 8 students sharing the exact date of birth 2005-08-15 (threshold: 5)."*
 - *"Sequential run of 12 APAAR IDs detected (990000000101 to 990000000112), exceeding threshold of 10."*
 - *"IsolationForest anomaly model flagged unusual multi-dimensional course profile (score: -0.142; Enrolment growth +100.0%, sequential run of 12 APAAR IDs)."*
+
+---
+
+## 4. Digital Personal Data Protection (DPDP) Privacy Architecture
+
+The APAAR Student Data Management and Verification System is architected in strict adherence to India's **Digital Personal Data Protection Act (DPDP), 2023** and SPEC.md Sections 2 and 16. The platform balances regulatory technical education oversight with data privacy, autonomy, and security for students.
+
+```mermaid
+flowchart LR
+    subgraph DataPrincipal["Data Principal (Student)"]
+        S1["APAAR Identity"]
+        S2["Student Consent Portal (/student)"]
+        S3["Approve / Deny (24h TTL)"]
+    end
+
+    subgraph DataFiduciary["Data Fiduciary (AICTE)"]
+        F1["Strict Data Minimisation (16 Fields)"]
+        F2["Fernet DOB Encryption at Rest"]
+        F3["APAAR Log Masking (********1234)"]
+        F4["Append-Only SHA-256 Hash Chain"]
+    end
+
+    subgraph Verifier["Data Processor / Verifier"]
+        V1["Registered Organisation"]
+        V2["Explicit Purpose Capture"]
+        V3["Minimal Consented Read (Zero DOB/PII)"]
+        V4["Single-Use Token Consumption"]
+    end
+
+    DataPrincipal -->|"Grants Time-Bound Consent"| DataFiduciary
+    Verifier -->|"Initiates Consent Request"| DataPrincipal
+    DataFiduciary -->|"Minimal Academic Record"| Verifier
+```
+
+### 4.1 Legal Framework & DPDP Statutory Roles
+
+- **Data Fiduciary**: All India Council for Technical Education (AICTE), Ministry of Education, Government of India. Under the AICTE Act 1987, AICTE exercises statutory regulatory authority over approved technical courses and enrolment quotas.
+- **Data Principal**: The student enrolled in an AICTE-approved technical institution, uniquely identified by their 12-digit Automated Permanent Academic Account Registry (APAAR) ID.
+- **Data Processor / Authorized Verifier**: Accredited prospective employers, government regulators, and academic institutions requesting degree or enrolment verification.
+
+---
+
+### 4.2 Core DPDP Privacy Principles
+
+#### 1. Purpose Limitation
+Student data is collected exclusively for:
+1. Validating student enrolment against AICTE-approved intake and supernumerary caps.
+2. Detecting concurrent duplicate enrolments across institutions (`DUP_ACTIVE_OTHER_COLLEGE`).
+3. Issuing tamper-evident verifiable credentials for legitimate degree and background verification.
+Student data is strictly barred from commercial exploitation, advertising, or unconsented third-party dissemination.
+
+#### 2. Strict Data Minimisation (SPEC Section 8.2 & Hard Rule 2)
+The platform collects only the minimum 16 fields required for statutory enrolment validation:
+- **Identity (4)**: `apaar_id`, `name`, `dob`, `gender`
+- **Admission (7)**: `course`, `branch`, `admission_year`, `enrolment_no`, `admission_date`, `admission_mode`, `seat_type`
+- **Category (5)**: `reservation_category`, `nri`, `oci`, `foreign_national`, `country` (foreign nationals only)
+
+**Strictly Prohibited Fields**:
+Per SPEC.md Section 2 (Hard Rule 2) and Section 8.2, the following fields are prohibited from storage in the platform schema:
+- **Aadhaar Numbers / National ID**: APAAR ID is the sole statutory student identifier; Aadhaar numbers are never collected or stored.
+- **Parents / Guardians Details**: Excluded as unnecessary for higher educational regulatory oversight.
+- **Residential Address & Geolocation**: Excluded under data minimisation principles.
+- **Photographs & Biometrics**: Zero biometric or facial recognition data is captured or processed.
+- **Family Income & Financials**: Excluded from central intake compliance monitoring.
+- **Marks & Examination Transcripts**: Preserved in local institutional systems; AICTE only tracks enrolment status.
+
+#### 3. Cryptographic Privacy Safeguards
+- **Encryption at Rest**: Student Date of Birth (`dob`) is encrypted in PostgreSQL using Fernet symmetric encryption (128-bit AES in CBC mode with PKCS7 padding and HMAC-SHA256 authentication). The raw column `students.dob_encrypted` stores only ciphertext.
+- **Runtime Log Masking**: Root and framework loggers (`ApaarIdMaskingFilter`) automatically intercept and redact 12-digit APAAR IDs (`r"\b(?:\d{4}[\s-]?\d{4}[\s-]?|\d{8})(\d{4})\b"`) to `********<last4>`, preventing PII leakage into log aggregation pipelines.
+- **Password Security**: Passwords are hashed using Argon2id with random salts.
+- **Immutable Audit Trail**: Every access, status change, and verifier read records a tamper-evident entry in the SHA-256 hash-chained `audit_log` (`hash = SHA256(prev_hash + canonical_row)`).
+
+---
+
+### 4.3 Student Consent Framework & Minimal Disclosure Protocol
+
+Per SPEC.md Section 14 and TASKS.md T33:
+1. **Notice & Purpose Capture**: Verifiers must specify an explicit, legitimate purpose (e.g. *"Pre-employment academic background check"*) upon initiating a verification request.
+2. **Student Autonomy**: The student receives an OTP notice and reviews pending requests on the self-service Student Portal (`/student`), with full power to Approve or Deny.
+3. **Statutory 24-Hour Expiry**: Consent requests expire automatically 24 hours after issuance. Expired requests can never be approved or consumed.
+4. **Single-Use Access**: Approved consent tokens are single-use (`single_use = True`). Once accessed by the verifier, the consent token is consumed (`status = "used"`), preventing replay.
+5. **Minimal Consented Disclosure**: Upon student consent, the verifier receives **ONLY** the minimal verification tuple:
+   - `institution`, `course`, `years`, `status`, `verification_id`, `"verified by AICTE"`
+   - **NEVER** Date of Birth, Reservation Category, NRI/OCI status, or Contact Information.
+
+---
+
+### 4.4 Data Principal Rights & Statutory Grievance Redressal
+
+Students retain full statutory rights under Chapter III of the DPDP Act 2023:
+- **Right to Access & Review**: Students can inspect all institutional records held under their APAAR ID via the `/student` portal.
+- **Right to Consent History**: Comprehensive audit history of all past and active verification requests, including verifier identity, purpose, timestamp, and status.
+- **Right to Grievance Redressal**: Direct communication channel with the designated AICTE Data Protection Officer:
+  - **Officer**: Data Protection Officer (DPO), AICTE Central Repository
+  - **Designation**: Director (Legal Compliance & Data Protection)
+  - **Email**: `dpo@aicte-india.org`
+  - **Address**: All India Council for Technical Education, Nelson Mandela Marg, Vasant Kunj, New Delhi - 110070
+  - **Statutory Resolution SLA**: 30 days from receipt of grievance

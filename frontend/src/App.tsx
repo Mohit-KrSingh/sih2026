@@ -35,6 +35,7 @@ import { AicteReportsPage } from "./pages/AicteReportsPage";
 import { VerifierSearchPage } from "./pages/VerifierSearchPage";
 import { VerifierHistoryPage } from "./pages/VerifierHistoryPage";
 import { ApiKeyManagementPage } from "./pages/ApiKeyManagementPage";
+import { PrivacyPage } from "./pages/PrivacyPage";
 import { GenericPlaceholder } from "./pages/GenericPlaceholder";
 import type { Role } from "./types/auth";
 
@@ -75,6 +76,14 @@ export function AppRoutes() {
         element={
           <PublicLayout>
             <StudentPortalPage />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/privacy"
+        element={
+          <PublicLayout>
+            <PrivacyPage />
           </PublicLayout>
         }
       />

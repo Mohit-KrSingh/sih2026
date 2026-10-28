@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.analytics.router import router as analytics_router
 from app.api_v1.dev import router as dev_router
 from app.api_v1.health import router as health_router
+from app.api_v1.privacy import router as privacy_router
 from app.audit.router import router as audit_router
 from app.auth.api_keys_router import router as api_keys_router
 from app.auth.router import router as auth_router
@@ -21,6 +22,7 @@ from app.verification.router import router as verification_router
 
 api_v1_router = APIRouter(prefix="/api/v1")
 api_v1_router.include_router(health_router)
+api_v1_router.include_router(privacy_router)
 api_v1_router.include_router(dev_router)
 api_v1_router.include_router(auth_router)
 api_v1_router.include_router(api_keys_router)

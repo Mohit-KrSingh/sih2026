@@ -14,6 +14,8 @@ PUBLIC_ALLOWLIST: set[tuple[str, str]] = {
     ("/openapi.json", "GET"),
     # Public health check
     ("/api/v1/health", "GET"),
+    # Public privacy & DPDP compliance endpoint (Spec 16, TASKS.md T38)
+    ("/api/v1/privacy", "GET"),
     # Public authentication endpoints
     ("/api/v1/auth/login", "POST"),
     ("/api/v1/auth/refresh", "POST"),

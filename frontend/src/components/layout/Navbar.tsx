@@ -86,6 +86,14 @@ export function Navbar() {
             >
               Student Portal
             </Link>
+            <Link
+              to="/privacy"
+              className={`px-3 py-1.5 rounded-md transition ${
+                isActive("/privacy") ? "bg-slate-800 text-white font-semibold" : "text-slate-300 hover:text-white hover:bg-slate-800/60"
+              }`}
+            >
+              Privacy & DPDP
+            </Link>
           </nav>
 
           {/* Right actions: User menu or login buttons */}
@@ -178,6 +186,13 @@ export function Navbar() {
             className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800"
           >
             Student Portal
+          </Link>
+          <Link
+            to="/privacy"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800"
+          >
+            Privacy & DPDP
           </Link>
 
           <div className="pt-4 border-t border-slate-800 space-y-2">
