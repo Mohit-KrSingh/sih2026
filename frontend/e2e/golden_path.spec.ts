@@ -420,7 +420,7 @@ test.describe("T39: End-to-End Golden Path Smoke Test", () => {
     // Verify Consented Academic Verification Modal details
     await expect(page.getByText("Consented Academic Verification")).toBeVisible({ timeout: 10000 });
     await expect(
-      page.getByText(/Mumbai Metropolitan Institute of Technology|South Delhi Polytechnic & Engineering Academy/i)
+      page.getByText(/Pune Institute of Advanced Engineering & Technology|Mumbai Metropolitan Institute of Technology|South Delhi Polytechnic & Engineering Academy/i)
     ).toBeVisible({ timeout: 10000 });
     await expect(page.getByText(/Zero PII Guaranteed/i)).toBeVisible();
     await expect(page.getByText(/VR-2026-/)).toBeVisible();

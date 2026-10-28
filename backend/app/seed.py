@@ -555,6 +555,30 @@ def seed_2025_26_history(
                 )
                 session.add(consent)
 
+    # Seed dedicated tampered record for demo verification (VR-TAMPERED-DEMO)
+    tampered_student = session.scalar(
+        select(Student).where(
+            Student.academic_year == "2025-26",
+            Student.apaar_id == "100000000001",
+        )
+    )
+    if tampered_student:
+        vr_tampered = session.scalar(
+            select(VerifiedRecord).where(VerifiedRecord.verification_id == "VR-TAMPERED-DEMO")
+        )
+        if not vr_tampered:
+            vr_tampered = VerifiedRecord(
+                student_id=tampered_student.id,
+                verification_id="VR-TAMPERED-DEMO",
+                signature="0" * 128,  # Invalid signature causing mismatch
+                issued_at=datetime(2025, 11, 1, 10, 0, tzinfo=UTC),
+                status="active",
+            )
+            session.add(vr_tampered)
+        else:
+            vr_tampered.signature = "0" * 128
+            vr_tampered.status = "active"
+
     session.flush()
     return total_created
 
