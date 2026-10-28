@@ -20,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 # Verifier Onboarding Schemas
 # ============================================================================
 
+
 class VerifierRegisterRequest(BaseModel):
     """Payload for verifier organization self-registration."""
 
@@ -89,6 +90,7 @@ class VerifierStatusUpdateRequest(BaseModel):
 # Consent Request Schemas
 # ============================================================================
 
+
 class ConsentRequestCreate(BaseModel):
     """Verifier payload to initiate a student consent request."""
 
@@ -147,6 +149,7 @@ class ConsentDecisionRequest(BaseModel):
 # Student Portal Schemas
 # ============================================================================
 
+
 class StudentOtpRequest(BaseModel):
     """Student portal login initiation request."""
 
@@ -190,6 +193,8 @@ class StudentTokenResponse(BaseModel):
 class StudentAcademicRecordItem(BaseModel):
     """Academic record overview shown in student portal."""
 
+    student_id: int | None = None
+    enrolment_no: str | None = None
     institution_id: int
     institution_name: str
     institution_aicte_id: str
@@ -212,6 +217,7 @@ class StudentRecordsListResponse(BaseModel):
 # ============================================================================
 # Minimal Disclosure Consented Record Schema
 # ============================================================================
+
 
 class ConsentedStudentRecordResponse(BaseModel):
     """Minimal student academic verification record released to verifier upon consent.

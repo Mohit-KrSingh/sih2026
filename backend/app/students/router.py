@@ -1,16 +1,31 @@
 """API routes for student records, uploads, and seat declarations."""
 
+import io
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, Query, Request, Response, UploadFile
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Request,
+    Response,
+    UploadFile,
+    status,
+)
+from fastapi.responses import StreamingResponse
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import (
+    get_current_user,
     get_db,
     require_college_staff,
     verify_institution_access,
 )
-from app.models import User
+from app.models import Student, User
 from app.students import seat_declarations as seat_service
 from app.students import service as student_service
 from app.students import upload_service
@@ -149,12 +164,8 @@ def batch_save_seat_declarations(
 def list_students(
     institution_id: Annotated[int, Depends(verify_institution_access)],
     db: Annotated[Session, Depends(get_db)],
-    academic_year: str | None = Query(
-        default="2026-27", description="Filter by academic year"
-    ),
-    course_id: int | None = Query(
-        default=None, description="Filter by course ID"
-    ),
+    academic_year: str | None = Query(default="2026-27", description="Filter by academic year"),
+    course_id: int | None = Query(default=None, description="Filter by course ID"),
     status: str | None = Query(
         default=None, description="Filter by status (draft, valid, flagged, etc.)"
     ),
@@ -205,9 +216,7 @@ def download_student_template(
     return Response(
         content=csv_content,
         media_type="text/csv",
-        headers={
-            "Content-Disposition": 'attachment; filename="apaar_student_upload_template.csv"'
-        },
+        headers={"Content-Disposition": 'attachment; filename="apaar_student_upload_template.csv"'},
     )
 
 
@@ -308,9 +317,7 @@ def download_upload_errors(
     return Response(
         content=csv_content,
         media_type="text/csv",
-        headers={
-            "Content-Disposition": f'attachment; filename="upload_{upload_id}_errors.csv"'
-        },
+        headers={"Content-Disposition": f'attachment; filename="upload_{upload_id}_errors.csv"'},
     )
 
 
@@ -329,6 +336,57 @@ def get_student(
         db=db,
         institution_id=institution_id,
         student_id=student_id,
+    )
+
+
+@router.get(
+    "/institutions/{institution_id}/students/{student_id}/certificate",
+    summary="Download degree certificate PDF with side-by-side College ID and APAAR ID",
+)
+def get_student_certificate_endpoint(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    student_id: int,
+    request: Request,
+    db: Annotated[Session, Depends(get_db)],
+    current_user: Annotated[User, Depends(get_current_user)],
+    download: bool = Query(False, description="Whether to trigger file download attachment"),
+) -> StreamingResponse:
+    """Generate and return official degree certificate PDF for a student.
+
+    Spec: Section 17 & TASKS.md T35:
+    - Sample degree certificate with college student ID and APAAR ID side by side and the QR code.
+    - Endpoint for institutions; scanning the QR leads to the verify flow.
+    """
+    from app.verification.service import generate_student_certificate_service
+
+    student = db.scalar(
+        select(Student).where(
+            Student.id == student_id,
+            Student.institution_id == institution_id,
+        )
+    )
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Student #{student_id} not found under institution #{institution_id}.",
+        )
+
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    pdf_bytes, filename = generate_student_certificate_service(
+        db=db,
+        student_id=student.id,
+        actor=current_user,
+        client_ip=client_ip,
+    )
+
+    disposition = "attachment" if download else "inline"
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'{disposition}; filename="{filename}"',
+            "Cache-Control": "no-cache",
+        },
     )
 
 
@@ -420,5 +478,3 @@ def delete_student(
         user=current_user,
         client_ip=client_ip,
     )
-
-

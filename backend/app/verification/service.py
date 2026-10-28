@@ -78,9 +78,7 @@ def issue_verified_record(
     - Appends to hash-chained audit log.
     """
     # Check if student already has a verified record
-    existing_vr = db.scalar(
-        select(VerifiedRecord).where(VerifiedRecord.student_id == student.id)
-    )
+    existing_vr = db.scalar(select(VerifiedRecord).where(VerifiedRecord.student_id == student.id))
     if existing_vr and existing_vr.status == "active":
         return existing_vr
 
@@ -103,7 +101,7 @@ def issue_verified_record(
     course_name = (
         student.course.name
         if student.course
-        else (student.course_name or "General Technical Course")
+        else (getattr(student, "course_name", None) or "General Technical Course")
     )
     issued_at = datetime.now(UTC)
     vid = generate_verification_id(student.academic_year)
@@ -325,7 +323,7 @@ def verify_credential_by_id(db: Session, verification_id: str) -> dict[str, Any]
     course_name = (
         student.course.name
         if student.course
-        else (student.course_name or "General Technical Course")
+        else (getattr(student, "course_name", None) or "General Technical Course")
     )
 
     # Reconstruct canonical payload from current DB state to detect tampering
@@ -393,9 +391,76 @@ def generate_qr_code_png(verification_id: str, base_url: str | None = None) -> b
     return buf.getvalue()
 
 
+def generate_student_certificate_service(
+    db: Session,
+    student_id: int,
+    actor: User | None = None,
+    client_ip: str = "127.0.0.1",
+    base_url: str | None = None,
+) -> tuple[bytes, str]:
+    """Generate a sample degree certificate PDF for a student with audit logging.
+
+    Spec: Section 17 & TASKS.md T35:
+    - Side-by-side College Student ID and APAAR ID.
+    - Embedded verification QR code leading to the verify flow.
+    - Appends hash-chained audit log 'certificate.generate'.
+    """
+    student = db.scalar(
+        select(Student)
+        .options(
+            joinedload(Student.institution),
+            joinedload(Student.course),
+            joinedload(Student.verified_record),
+        )
+        .where(Student.id == student_id)
+    )
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Student #{student_id} not found.",
+        )
+
+    from app.verification.certificate import generate_certificate_pdf
+
+    pdf_bytes = generate_certificate_pdf(
+        student=student,
+        db=db,
+        base_url=base_url,
+        actor=actor,
+        client_ip=client_ip,
+    )
+
+    vr = student.verified_record
+    vid = vr.verification_id if vr else "unissued"
+
+    # Audit log entry for certificate generation
+    actor_id = actor.id if actor else None
+    actor_role = actor.role if actor else "student"
+    audit_service.record(
+        db=db,
+        actor_id=actor_id,
+        actor_role=actor_role,
+        action="certificate.generate",
+        entity="student",
+        entity_id=str(student.id),
+        before_json=None,
+        after_json={
+            "student_id": student.id,
+            "institution_id": student.institution_id,
+            "enrolment_no": student.enrolment_no,
+            "verification_id": vid,
+        },
+        ip=client_ip,
+    )
+
+    filename = f"certificate_{student.enrolment_no}.pdf"
+    return pdf_bytes, filename
+
+
 # ============================================================================
 # Verifier Onboarding Service Logic (SPEC.md Section 14, TASKS.md T33)
 # ============================================================================
+
 
 def register_verifier(
     db: Session,
@@ -421,9 +486,7 @@ def register_verifier(
         )
 
     # Check if user email is already registered
-    existing_user = db.scalar(
-        select(User).where(func.lower(User.email) == clean_email)
-    )
+    existing_user = db.scalar(select(User).where(func.lower(User.email) == clean_email))
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -492,9 +555,7 @@ def list_verifiers(
     total = db.scalar(count_query) or 0
     items = list(
         db.scalars(
-            base_query.order_by(Verifier.created_at.desc())
-            .limit(limit)
-            .offset(offset)
+            base_query.order_by(Verifier.created_at.desc()).limit(limit).offset(offset)
         ).all()
     )
     return items, total
@@ -599,9 +660,7 @@ def revoke_verifier(
 def get_verifier_for_user(db: Session, user: User) -> Verifier:
     """Retrieve and validate the active Verifier organisation linked to a verifier User account."""
     clean_email = user.email.strip().lower()
-    verifier = db.scalar(
-        select(Verifier).where(func.lower(Verifier.contact) == clean_email)
-    )
+    verifier = db.scalar(select(Verifier).where(func.lower(Verifier.contact) == clean_email))
     if not verifier:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -621,6 +680,7 @@ def get_verifier_for_user(db: Session, user: User) -> Verifier:
 # ============================================================================
 # Consent Engine Lifecycle Logic (SPEC.md Section 14, TASKS.md T33)
 # ============================================================================
+
 
 def create_consent_request(
     db: Session,
@@ -697,8 +757,7 @@ def create_consent_request(
             channel="sms",
             purpose="student_consent",
             context=(
-                f"Consent request #{consent.id} from {verifier.org_name} "
-                f"for purpose: {purpose}"
+                f"Consent request #{consent.id} from {verifier.org_name} for purpose: {purpose}"
             ),
         )
     except Exception as exc:
@@ -1072,6 +1131,8 @@ def get_student_academic_records(
 
         records.append(
             StudentAcademicRecordItem(
+                student_id=s.id,
+                enrolment_no=s.enrolment_no,
                 institution_id=s.institution_id,
                 institution_name=inst_name,
                 institution_aicte_id=aicte_id,
@@ -1085,4 +1146,3 @@ def get_student_academic_records(
         )
 
     return records
-

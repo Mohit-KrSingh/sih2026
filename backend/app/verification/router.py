@@ -30,12 +30,14 @@ SPEC.md section 14 & 16, TASKS.md T32 & T33:
   `POST /api/v1/verification/student/consent-requests/{request_id}/decide`.
 """
 
+import io
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
@@ -67,6 +69,7 @@ from app.verification.service import (
     create_consent_request,
     decide_consent_request,
     generate_qr_code_png,
+    generate_student_certificate_service,
     get_student_academic_records,
     get_verifier,
     get_verifier_for_user,
@@ -97,6 +100,7 @@ verify_rate_limiter = RateLimiter(
 # ============================================================================
 # Helpers
 # ============================================================================
+
 
 def create_student_token(apaar_id: str, student_name: str | None = None) -> str:
     """Issue a 24-hour signed JWT session token for student portal authentication."""
@@ -183,6 +187,7 @@ def _map_consent_response(cr: ConsentRequest) -> ConsentRequestResponse:
 # Existing Models (T32)
 # ============================================================================
 
+
 class RevokeRecordRequest(BaseModel):
     reason: str = Field(
         ...,
@@ -205,6 +210,7 @@ class PublicRecordResponse(BaseModel):
 # ============================================================================
 # Public Verification Endpoints (T32)
 # ============================================================================
+
 
 @router.get(
     "/verify",
@@ -242,9 +248,7 @@ def get_verification_record(
             detail="Verification record not found",
         )
 
-    vr = db.scalar(
-        select(VerifiedRecord).where(VerifiedRecord.verification_id == clean_vid)
-    )
+    vr = db.scalar(select(VerifiedRecord).where(VerifiedRecord.verification_id == clean_vid))
     if not vr:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -280,9 +284,7 @@ def get_verification_qr_code(
 ) -> Response:
     """Generate high-contrast QR code PNG encoding link to `/verify?vid={vid}`."""
     clean_vid = verification_id.strip()
-    vr = db.scalar(
-        select(VerifiedRecord.id).where(VerifiedRecord.verification_id == clean_vid)
-    )
+    vr = db.scalar(select(VerifiedRecord.id).where(VerifiedRecord.verification_id == clean_vid))
     if not vr:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -319,9 +321,7 @@ def get_ed25519_public_key() -> dict[str, str]:
 
 @router.post(
     "/records/{verification_id}/revoke",
-    dependencies=[
-        Depends(require_roles("aicte_admin", "aicte_officer", "college_admin"))
-    ],
+    dependencies=[Depends(require_roles("aicte_admin", "aicte_officer", "college_admin"))],
 )
 def revoke_record_endpoint(
     verification_id: str,
@@ -384,9 +384,7 @@ def get_student_verification_details(
                 detail="You do not have permission to view verification details for this student.",
             )
 
-    vr = db.scalar(
-        select(VerifiedRecord).where(VerifiedRecord.student_id == student_id)
-    )
+    vr = db.scalar(select(VerifiedRecord).where(VerifiedRecord.student_id == student_id))
 
     if not vr:
         return {
@@ -411,9 +409,67 @@ def get_student_verification_details(
     }
 
 
+@router.get(
+    "/students/{student_id}/certificate",
+    summary="Download sample degree certificate PDF with side-by-side College ID and APAAR ID",
+    dependencies=[
+        Depends(
+            require_roles(
+                "college_admin",
+                "college_staff",
+                "college_viewer",
+                "aicte_admin",
+                "aicte_officer",
+            )
+        )
+    ],
+)
+def get_student_certificate_from_verification(
+    student_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    download: bool = Query(False, description="Whether to trigger file download attachment"),
+) -> StreamingResponse:
+    """Institutional endpoint to generate and download sample degree certificate PDF."""
+    student = db.scalar(select(Student).where(Student.id == student_id))
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Student #{student_id} not found.",
+        )
+
+    # Institutional IDOR guard for college roles
+    if current_user.role in ("college_admin", "college_staff", "college_viewer"):
+        if student.institution_id != current_user.institution_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to access certificates for this student.",
+            )
+
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    pdf_bytes, filename = generate_student_certificate_service(
+        db=db,
+        student_id=student.id,
+        actor=current_user,
+        client_ip=client_ip,
+    )
+
+    disposition = "attachment" if download else "inline"
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'{disposition}; filename="{filename}"',
+            "Cache-Control": "no-cache",
+        },
+    )
+
+
 # ============================================================================
 # Verifier Onboarding & AICTE Admin Review Endpoints (T33)
 # ============================================================================
+
 
 @router.post(
     "/verifiers/register",
@@ -548,6 +604,7 @@ def revoke_verifier_endpoint(
 # Verifier Consent Request & Record Access Endpoints (T33)
 # ============================================================================
 
+
 @router.post(
     "/consent-requests",
     response_model=ConsentRequestResponse,
@@ -665,6 +722,7 @@ def read_consented_record_endpoint(
 # Student Consent Portal Endpoints (T33)
 # ============================================================================
 
+
 @router.post(
     "/student/otp/send",
     dependencies=[Depends(verify_rate_limiter)],
@@ -744,9 +802,7 @@ def student_otp_verify_endpoint(
 
     # Determine student name from registry or student record
     student_name: str | None = None
-    mock_reg = db.scalar(
-        select(MockApaarRegistry).where(MockApaarRegistry.apaar_id == clean_apaar)
-    )
+    mock_reg = db.scalar(select(MockApaarRegistry).where(MockApaarRegistry.apaar_id == clean_apaar))
     if mock_reg:
         student_name = mock_reg.name
     else:
@@ -778,6 +834,49 @@ def get_student_records_endpoint(
         apaar_id=student_apaar_id,
         records=records,
         total=len(records),
+    )
+
+
+@router.get(
+    "/student/records/{student_id}/certificate",
+    summary="Student portal endpoint to download degree certificate PDF",
+)
+def get_student_portal_certificate_endpoint(
+    student_id: int,
+    request: Request,
+    student_apaar_id: str = Depends(get_current_student),
+    db: Session = Depends(get_db),
+    download: bool = Query(False, description="Whether to trigger file download attachment"),
+) -> StreamingResponse:
+    """Download degree certificate PDF from authenticated student session."""
+    student = db.scalar(select(Student).where(Student.id == student_id))
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Student #{student_id} not found.",
+        )
+    if student.apaar_id != student_apaar_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to download certificates for other students.",
+        )
+
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    pdf_bytes, filename = generate_student_certificate_service(
+        db=db,
+        student_id=student.id,
+        actor=None,
+        client_ip=client_ip,
+    )
+
+    disposition = "attachment" if download else "inline"
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'{disposition}; filename="{filename}"',
+            "Cache-Control": "no-cache",
+        },
     )
 
 

@@ -8,6 +8,7 @@ import {
   type StudentResponse,
   type StudentValidationFlag,
 } from "../api/students";
+import { downloadStudentCertificate } from "../api/verification";
 import { useAuth } from "../auth/AuthContext";
 import { Badge, FlagBadge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
@@ -74,6 +75,18 @@ export const StudentsListPage: React.FC = () => {
   const [studentToDelete, setStudentToDelete] = useState<StudentResponse | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [actionSuccessMessage, setActionSuccessMessage] = useState<string | null>(null);
+  const [downloadingCertId, setDownloadingCertId] = useState<number | null>(null);
+
+  const handleDownloadCertificate = async (student: StudentResponse) => {
+    try {
+      setDownloadingCertId(student.id);
+      await downloadStudentCertificate(institutionId, student.id, `certificate_${student.enrolment_no}.pdf`);
+    } catch (err) {
+      setErrorMessage((err as Error).message || "Failed to download degree certificate.");
+    } finally {
+      setDownloadingCertId(null);
+    }
+  };
 
   // Debounce search input
   useEffect(() => {
@@ -445,6 +458,17 @@ export const StudentsListPage: React.FC = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="px-2 py-1 text-xs text-indigo-700 border-indigo-200 hover:bg-indigo-50"
+                          title="Download sample degree certificate PDF with APAAR ID and QR code"
+                          isLoading={downloadingCertId === student.id}
+                          disabled={downloadingCertId === student.id}
+                          onClick={() => handleDownloadCertificate(student)}
+                        >
+                          Certificate
+                        </Button>
                         {canModify ? (
                           <>
                             <Link to={`/college/students/${student.id}/edit`}>

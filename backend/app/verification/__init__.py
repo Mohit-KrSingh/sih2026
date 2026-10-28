@@ -1,8 +1,10 @@
 """Verification module: signing, verification IDs, QR code generation, and verification API."""
 
+from app.verification.certificate import generate_certificate_pdf
 from app.verification.router import router
 from app.verification.service import (
     generate_qr_code_png,
+    generate_student_certificate_service,
     generate_verification_id,
     issue_verified_record,
     issue_verified_records_for_submission,
@@ -23,7 +25,9 @@ from app.verification.signing import (
 __all__ = [
     "build_canonical_payload",
     "format_canonical_issued_at",
+    "generate_certificate_pdf",
     "generate_qr_code_png",
+    "generate_student_certificate_service",
     "generate_verification_id",
     "get_public_key_hex",
     "get_signing_key",

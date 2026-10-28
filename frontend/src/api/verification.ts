@@ -94,6 +94,8 @@ export interface StudentTokenResponse {
 }
 
 export interface StudentAcademicRecord {
+  student_id?: number | null;
+  enrolment_no?: string | null;
   institution_id: number;
   institution_name: string;
   institution_aicte_id: string;
@@ -234,3 +236,68 @@ export async function getDevOutbox(recipient?: string): Promise<DevOutboxMessage
   const query = recipient ? `?recipient=${encodeURIComponent(recipient.trim())}` : "";
   return api.get<DevOutboxMessage[]>(`/api/v1/dev/outbox${query}`);
 }
+
+// ============================================================================
+// Degree Certificate PDF APIs (Spec 17, TASKS.md T35)
+// ============================================================================
+
+export function getStudentCertificateUrl(
+  institutionId: number,
+  studentId: number,
+  download: boolean = false
+): string {
+  return `/api/v1/institutions/${institutionId}/students/${studentId}/certificate${download ? "?download=true" : ""}`;
+}
+
+export async function downloadStudentCertificate(
+  institutionId: number,
+  studentId: number,
+  filename?: string
+): Promise<void> {
+  const url = getStudentCertificateUrl(institutionId, studentId, true);
+  const token = localStorage.getItem("apaar_access_token");
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const response = await fetch(url, { headers });
+  if (!response.ok) {
+    throw new Error(`Failed to download certificate: ${response.statusText}`);
+  }
+
+  const blob = await response.blob();
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = downloadUrl;
+  a.download = filename || `certificate_student_${studentId}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(downloadUrl);
+}
+
+export async function downloadStudentPortalCertificate(
+  studentId: number,
+  studentToken: string,
+  filename?: string
+): Promise<void> {
+  const url = `/api/v1/verification/student/records/${studentId}/certificate?download=true`;
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${studentToken}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to download certificate: ${response.statusText}`);
+  }
+
+  const blob = await response.blob();
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = downloadUrl;
+  a.download = filename || `certificate_student_${studentId}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(downloadUrl);
+}
+

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import {
   decideStudentConsent,
+  downloadStudentPortalCertificate,
   getDevOutbox,
   getStudentAcademicRecords,
   getStudentConsentRequests,
@@ -56,6 +57,23 @@ export function StudentPortalPage() {
   const [consentRequests, setConsentRequests] = useState<ConsentRequestItem[]>([]);
   const [loadingDashboard, setLoadingDashboard] = useState(false);
   const [decidingId, setDecidingId] = useState<number | null>(null);
+  const [downloadingCertId, setDownloadingCertId] = useState<number | null>(null);
+
+  const handleDownloadCertificate = async (rec: StudentAcademicRecord) => {
+    if (!rec.student_id || !studentToken) return;
+    try {
+      setDownloadingCertId(rec.student_id);
+      await downloadStudentPortalCertificate(
+        rec.student_id,
+        studentToken,
+        `certificate_${rec.enrolment_no || rec.student_id}.pdf`
+      );
+    } catch (err) {
+      setErrorMessage((err as Error).message || "Failed to download degree certificate.");
+    } finally {
+      setDownloadingCertId(null);
+    }
+  };
 
   const loadStudentData = async (token: string) => {
     setLoadingDashboard(true);
@@ -433,7 +451,22 @@ export function StudentPortalPage() {
                           </p>
                         </div>
                         <div className="flex flex-col sm:flex-end items-start sm:items-end gap-2">
-                          <Badge variant="success">{rec.status}</Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="success">{rec.status}</Badge>
+                            {rec.student_id && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="px-2 py-0.5 text-xs text-indigo-700 border-indigo-200 hover:bg-indigo-50"
+                                onClick={() => handleDownloadCertificate(rec)}
+                                isLoading={downloadingCertId === rec.student_id}
+                                disabled={downloadingCertId === rec.student_id}
+                                title="Download sample degree certificate PDF with QR code"
+                              >
+                                Certificate PDF
+                              </Button>
+                            )}
+                          </div>
                           {rec.verification_id && (
                             <Link
                               to={`/verify?vid=${rec.verification_id}`}
