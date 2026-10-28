@@ -11,6 +11,7 @@ import { Input } from "../components/ui/Input";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   Table,
   TableHeader,
@@ -30,6 +31,7 @@ import {
 } from "lucide-react";
 
 export function AicteApprovalsPage() {
+  useDocumentTitle("Institution Approvals Queue");
   const [requests, setRequests] = useState<ActivationRequestResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

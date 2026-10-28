@@ -13,6 +13,7 @@ import {
 } from "../api/institutions";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   ArrowLeft,
   ArrowRight,
@@ -32,6 +33,7 @@ import {
 type WizardStep = 1 | 2 | 3 | 4;
 
 export function ActivatePage() {
+  useDocumentTitle("Institution Account Activation");
   const [activeTab, setActiveTab] = useState<"wizard" | "status">("wizard");
 
   // Step 1: Claim lookup & initiation

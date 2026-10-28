@@ -55,6 +55,7 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
     { label: "Anomaly Detection", path: "/aicte/anomalies", icon: <Shield className="w-4 h-4" /> },
     { label: "Review Queue", path: "/aicte/review", icon: <FileCheck2 className="w-4 h-4" /> },
     { label: "Change Requests", path: "/aicte/change-requests", icon: <FileCheck className="w-4 h-4" /> },
+    { label: "Verifiers", path: "/aicte/verifiers", icon: <UserCheck className="w-4 h-4" /> },
     { label: "Rule Configuration", path: "/aicte/rules", icon: <Sliders className="w-4 h-4" /> },
     { label: "Reports & Exports", path: "/aicte/reports", icon: <FileText className="w-4 h-4" /> },
     { label: "Audit Log Chain", path: "/aicte/audit", icon: <Shield className="w-4 h-4" /> },
@@ -109,7 +110,12 @@ export function AppLayout({ children }: { children?: React.ReactNode }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 overflow-x-auto scrollbar-none">
               <nav className="flex space-x-1 sm:space-x-2 border-t border-slate-100 pt-1 pb-1">
                 {navItems.map((item) => {
-                  const active = location.pathname === item.path;
+                  const isExact = location.pathname === item.path;
+                  const isPrefix =
+                    item.path !== "/college/dashboard" &&
+                    item.path !== "/aicte/overview" &&
+                    location.pathname.startsWith(item.path);
+                  const active = isExact || isPrefix;
                   return (
                     <Link
                       key={item.path}

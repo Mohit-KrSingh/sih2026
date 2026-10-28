@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   getInstitutionSeatDeclarations,
   type CourseSummaryResponse,
@@ -74,6 +75,7 @@ import {
 } from "lucide-react";
 
 export function CollegeDashboardPage() {
+  useDocumentTitle("College Portal Dashboard");
   const { user } = useAuth();
   const institutionId = user?.institution_id ?? 1;
 
@@ -802,7 +804,7 @@ export function CollegeDashboardPage() {
                 <div className="shrink-0 flex items-center gap-2">
                   {flag.student_id ? (
                     <Link
-                      to={`/college/students?search=${flag.student_id}`}
+                      to={`/college/students/${flag.student_id}`}
                       className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 transition"
                     >
                       <span>Row #{flag.student_id}</span>
@@ -818,20 +820,18 @@ export function CollegeDashboardPage() {
                     </Link>
                   ) : (
                     <Link
-                      to="/college/validation"
+                      to={`/college/validation/${flag.id}`}
                       className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-800 px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 transition"
                     >
-                      <span>File Flag</span>
+                      <span>Flag #{flag.id}</span>
                     </Link>
                   )}
 
-                  {flag.level !== "error" && (
-                    <Link to="/college/validation">
-                      <Button size="sm" variant={flag.status === "justified" ? "outline" : "secondary"}>
-                        {flag.status === "justified" ? "Edit Justification" : "Justify"}
-                      </Button>
-                    </Link>
-                  )}
+                  <Link to={`/college/validation/${flag.id}`}>
+                    <Button size="sm" variant={flag.status === "justified" ? "outline" : "secondary"}>
+                      {flag.status === "justified" ? "View Justification" : "View Flag"}
+                    </Button>
+                  </Link>
                 </div>
               </div>
             ))}

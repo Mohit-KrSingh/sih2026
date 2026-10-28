@@ -5,6 +5,7 @@ import { Input } from "../components/ui/Input";
 import { Badge } from "../components/ui/Badge";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { ErrorState } from "../components/ui/ErrorState";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   AlertTriangle,
   Building2,
@@ -29,6 +30,7 @@ import {
 } from "../api/verification";
 
 export function VerifierSearchPage() {
+  useDocumentTitle("Verifier Search & Student Consent");
   const [searchParams] = useSearchParams();
   const initialApaar = searchParams.get("apaar_id") || "";
 

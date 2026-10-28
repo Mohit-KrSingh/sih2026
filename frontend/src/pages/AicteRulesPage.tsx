@@ -5,6 +5,7 @@ import type { RuleConfigItem } from "../types/rules";
 import { FlagBadge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   AlertCircle,
   CheckCircle2,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 export function AicteRulesPage() {
+  useDocumentTitle("Validation Rules Configuration");
   const { user } = useAuth();
   const isAdmin = user?.role === "aicte_admin";
 

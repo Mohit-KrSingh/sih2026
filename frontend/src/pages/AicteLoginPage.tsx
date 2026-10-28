@@ -5,8 +5,10 @@ import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { ErrorState } from "../components/ui/ErrorState";
 import { KeyRound, ShieldAlert, ShieldCheck } from "lucide-react";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export function AicteLoginPage() {
+  useDocumentTitle("AICTE Central Login");
   const { login, verifyMfa, cancelMfa, pendingMfa } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,7 +19,19 @@ export function AicteLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const destination = (location.state as { from?: { pathname: string } })?.from?.pathname || "/aicte/overview";
+  const fromLocation = (location.state as { from?: { pathname: string; search?: string; hash?: string } })?.from;
+  const returnUrl = fromLocation
+    ? `${fromLocation.pathname}${fromLocation.search || ""}${fromLocation.hash || ""}`
+    : null;
+
+  const getTargetDashboard = (userRole?: string) => {
+    if (returnUrl) return returnUrl;
+    if (userRole === "college_admin" || userRole === "college_staff" || userRole === "college_viewer") {
+      return "/college/dashboard";
+    }
+    if (userRole === "verifier") return "/verifier/search";
+    return "/aicte/overview";
+  };
 
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +41,7 @@ export function AicteLoginPage() {
     try {
       const res = await login({ email, password });
       if (!res.mfaRequired) {
-        navigate(destination, { replace: true });
+        navigate(getTargetDashboard(res.user?.role), { replace: true });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to sign in. Please check your credentials.");
@@ -43,7 +57,7 @@ export function AicteLoginPage() {
 
     try {
       await verifyMfa(mfaCode);
-      navigate(destination, { replace: true });
+      navigate(getTargetDashboard(), { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid MFA verification code.");
     } finally {

@@ -17,6 +17,7 @@ import { ErrorState } from "../components/ui/ErrorState";
 import { Input } from "../components/ui/Input";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { Select } from "../components/ui/Select";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 const GENDER_OPTIONS = [
   { value: "Male", label: "Male" },
@@ -57,6 +58,8 @@ export const StudentFormPage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const isEditMode = Boolean(id);
   const studentId = id ? parseInt(id, 10) : undefined;
+
+  useDocumentTitle(isEditMode ? "Edit Student Record" : "New Student Admission");
 
   const institutionId = user?.institution_id ?? 1;
   const isViewer = user?.role === "college_viewer";

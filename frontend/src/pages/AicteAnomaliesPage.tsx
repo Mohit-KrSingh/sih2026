@@ -4,6 +4,7 @@ import type { AnomalyScoreItem } from "../types/analytics";
 import { NoticeModal } from "../components/action/NoticeModal";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   Brain,
   Calendar,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 
 export function AicteAnomaliesPage() {
+  useDocumentTitle("AICTE Statistical Anomaly Detection");
   const [academicYear, setAcademicYear] = useState("2026-27");
   const [flaggedOnly, setFlaggedOnly] = useState(true);
   const [search, setSearch] = useState("");

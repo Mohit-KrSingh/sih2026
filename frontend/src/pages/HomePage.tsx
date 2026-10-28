@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getHealthApi, type HealthResponse } from "../api/health";
 import { Button } from "../components/ui/Button";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   ArrowRight,
   Building2,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 
 export function HomePage() {
+  useDocumentTitle("National Student Registry & Verification Portal");
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [loadingHealth, setLoadingHealth] = useState(true);
 

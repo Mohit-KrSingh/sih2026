@@ -32,8 +32,10 @@ import { Badge, FlagBadge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { EmptyState } from "../components/ui/EmptyState";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export function SubmitPage() {
+  useDocumentTitle("Final Data Submission");
   const { user } = useAuth();
   const institutionId = user?.institution_id ?? 1;
   const isCollegeAdmin = user?.role === "college_admin";
@@ -404,12 +406,20 @@ export function SubmitPage() {
 
               {/* Navigation Actions */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                <Link to="/college/students">
-                  <Button variant="outline" size="sm" className="flex items-center gap-1.5">
-                    <Users className="h-4 w-4" />
-                    View Enrolled Students Directory
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link to="/college/students">
+                    <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+                      <Users className="h-4 w-4" />
+                      View Enrolled Students Directory
+                    </Button>
+                  </Link>
+                  <Link to={`/college/submissions/${receiptData?.submission_id || gateData?.submission_id || 1}`}>
+                    <Button variant="outline" size="sm" className="flex items-center gap-1.5 text-blue-700">
+                      <FileCheck className="h-4 w-4" />
+                      Formal Receipt Page
+                    </Button>
+                  </Link>
+                </div>
                 <Link to="/college/validation">
                   <Button variant="ghost" size="sm" className="flex items-center gap-1.5 text-indigo-600">
                     Review Validation Flags Archive

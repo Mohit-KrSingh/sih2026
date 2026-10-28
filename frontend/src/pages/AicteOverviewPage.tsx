@@ -23,6 +23,7 @@ import { NoticeModal } from "../components/action/NoticeModal";
 import { Button } from "../components/ui/Button";
 import { RoleBadge } from "../components/ui/Badge";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   AlertTriangle,
   Bell,
@@ -39,6 +40,7 @@ import {
 } from "lucide-react";
 
 export function AicteOverviewPage() {
+  useDocumentTitle("AICTE Central Command Overview");
   const { user } = useAuth();
   const [academicYear, setAcademicYear] = useState("2026-27");
   const [loading, setLoading] = useState(true);

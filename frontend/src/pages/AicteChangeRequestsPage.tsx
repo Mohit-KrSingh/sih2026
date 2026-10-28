@@ -9,6 +9,7 @@ import { Button } from "../components/ui/Button";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   AlertCircle,
   CheckCircle2,
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 
 export function AicteChangeRequestsPage() {
+  useDocumentTitle("Change Requests Approval Queue");
   const [requests, setRequests] = useState<ChangeRequest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

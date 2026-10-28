@@ -29,12 +29,14 @@ import {
   type ConsentRequestItem,
   type StudentAcademicRecord,
 } from "../api/verification";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 const STUDENT_TOKEN_KEY = "apaar_student_token";
 const STUDENT_APAAR_KEY = "apaar_student_apaar";
 const STUDENT_NAME_KEY = "apaar_student_name";
 
 export function StudentPortalPage() {
+  useDocumentTitle("Student Credential & Consent Portal");
   const [apaarId, setApaarId] = useState(() => sessionStorage.getItem(STUDENT_APAAR_KEY) || "111122223333");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState<"id" | "otp" | "dashboard">(() => {

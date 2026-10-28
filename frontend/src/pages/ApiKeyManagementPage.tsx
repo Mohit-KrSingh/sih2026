@@ -12,6 +12,7 @@ import { Input } from "../components/ui/Input";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   Table,
   TableHeader,
@@ -34,6 +35,7 @@ import {
 } from "lucide-react";
 
 export const ApiKeyManagementPage: React.FC = () => {
+  useDocumentTitle("Integration API Keys");
   const { user } = useAuth();
   const institutionId = user?.institution_id;
 

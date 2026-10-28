@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { downloadReportFile, fetchReportPreview } from "../api/reports";
 import { listInstitutions, type InstitutionResponse } from "../api/institutions";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import type {
   ReportFilterState,
   ReportFormat,
@@ -87,6 +88,7 @@ const STATES = [
 ];
 
 export const AicteReportsPage: React.FC = () => {
+  useDocumentTitle("Reports & Statutory Exports");
   const [selectedReport, setSelectedReport] = useState<ReportType>("enrolment-by-state-course");
   const [filters, setFilters] = useState<ReportFilterState>({
     academic_year: "2026-27",

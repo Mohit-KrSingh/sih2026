@@ -14,6 +14,7 @@ import { Input } from "../components/ui/Input";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   Table,
   TableHeader,
@@ -35,6 +36,7 @@ import {
 } from "lucide-react";
 
 export function AicteIntakePage() {
+  useDocumentTitle("Intake & Capacity Control");
   const [institutions, setInstitutions] = useState<InstitutionResponse[]>([]);
   const [selectedInstitutionId, setSelectedInstitutionId] = useState<number | null>(null);
   const [selectedInstitution, setSelectedInstitution] = useState<InstitutionResponse | null>(null);

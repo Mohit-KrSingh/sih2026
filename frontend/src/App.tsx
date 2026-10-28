@@ -36,7 +36,12 @@ import { VerifierSearchPage } from "./pages/VerifierSearchPage";
 import { VerifierHistoryPage } from "./pages/VerifierHistoryPage";
 import { ApiKeyManagementPage } from "./pages/ApiKeyManagementPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
-import { GenericPlaceholder } from "./pages/GenericPlaceholder";
+import { StudentDetailPage } from "./pages/StudentDetailPage";
+import { FlagDetailPage } from "./pages/FlagDetailPage";
+import { ReviewItemDetailPage } from "./pages/ReviewItemDetailPage";
+import { SubmissionDetailPage } from "./pages/SubmissionDetailPage";
+import { StaffManagementPage } from "./pages/StaffManagementPage";
+import { AicteVerifiersPage } from "./pages/AicteVerifiersPage";
 import type { Role } from "./types/auth";
 
 const COLLEGE_ROLES: Role[] = ["college_admin", "college_staff", "college_viewer"];
@@ -160,6 +165,16 @@ export function AppRoutes() {
         }
       />
       <Route
+        path="/college/students/:id"
+        element={
+          <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
+            <AppLayout>
+              <StudentDetailPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/college/students/:id/edit"
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
@@ -190,11 +205,31 @@ export function AppRoutes() {
         }
       />
       <Route
+        path="/college/validation/:flagId"
+        element={
+          <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
+            <AppLayout>
+              <FlagDetailPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/college/submit"
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
               <SubmitPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/college/submissions/:id"
+        element={
+          <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
+            <AppLayout>
+              <SubmissionDetailPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -224,7 +259,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={COLLEGE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Staff Management" section="College Portal" taskRef="T09" />
+              <StaffManagementPage />
             </AppLayout>
           </ProtectedRoute>
         }
@@ -312,6 +347,26 @@ export function AppRoutes() {
         }
       />
       <Route
+        path="/aicte/review/:id"
+        element={
+          <ProtectedRoute allowedRoles={AICTE_ROLES}>
+            <AppLayout>
+              <ReviewItemDetailPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/aicte/submissions/:id"
+        element={
+          <ProtectedRoute allowedRoles={AICTE_ROLES}>
+            <AppLayout>
+              <SubmissionDetailPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/aicte/change-requests"
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
@@ -356,7 +411,7 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={AICTE_ROLES}>
             <AppLayout>
-              <GenericPlaceholder title="Third-Party Verifier Management" section="AICTE Central" taskRef="T33" />
+              <AicteVerifiersPage />
             </AppLayout>
           </ProtectedRoute>
         }

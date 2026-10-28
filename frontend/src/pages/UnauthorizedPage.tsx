@@ -3,8 +3,10 @@ import { useAuth } from "../auth/AuthContext";
 import { Button } from "../components/ui/Button";
 import { RoleBadge } from "../components/ui/Badge";
 import { ShieldAlert } from "lucide-react";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export function UnauthorizedPage() {
+  useDocumentTitle("403 Access Restricted");
   const { user, logout } = useAuth();
   const location = useLocation();
   const attemptedPath = (location.state as { attemptedPath?: string })?.attemptedPath;

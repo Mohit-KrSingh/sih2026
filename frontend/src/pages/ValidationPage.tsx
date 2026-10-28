@@ -33,8 +33,10 @@ import { Badge, FlagBadge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { EmptyState } from "../components/ui/EmptyState";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export function ValidationPage() {
+  useDocumentTitle("Validation Flags");
   const { user } = useAuth();
   const institutionId = user?.institution_id ?? 1;
 
@@ -512,7 +514,13 @@ export function ValidationPage() {
 
                       {/* Rule Code & Field */}
                       <td className="py-3.5 px-4 font-mono font-medium text-slate-900 whitespace-nowrap">
-                        {flag.rule_code}
+                        <Link
+                          to={`/college/validation/${flag.id}`}
+                          className="hover:text-blue-600 hover:underline font-bold"
+                          title="View flag details and regulatory justification"
+                        >
+                          {flag.rule_code}
+                        </Link>
                         {flag.field && (
                           <div className="text-[11px] font-sans font-normal text-slate-500">
                             field: <code className="text-slate-700">{flag.field}</code>
@@ -523,8 +531,12 @@ export function ValidationPage() {
                       {/* Target Student or Course */}
                       <td className="py-3.5 px-4">
                         {flag.student ? (
-                          <div>
-                            <div className="font-semibold text-slate-900">
+                          <Link
+                            to={`/college/students/${flag.student.id}`}
+                            className="group block hover:text-blue-600"
+                            title="Open student record"
+                          >
+                            <div className="font-semibold text-slate-900 group-hover:text-blue-600 underline decoration-slate-300">
                               {flag.student.name}
                             </div>
                             <div className="font-mono text-[11px] text-slate-500">
@@ -533,7 +545,7 @@ export function ValidationPage() {
                             <div className="text-[11px] text-slate-500">
                               Enrol: {flag.student.enrolment_no || "N/A"}
                             </div>
-                          </div>
+                          </Link>
                         ) : flag.course ? (
                           <div>
                             <div className="font-semibold text-slate-900">
@@ -601,7 +613,7 @@ export function ValidationPage() {
                           <Link
                             to={
                               flag.student
-                                ? `/college/students?search=${flag.student.apaar_id}`
+                                ? `/college/students/${flag.student.id}/edit`
                                 : `/college/upload`
                             }
                           >

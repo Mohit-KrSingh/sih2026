@@ -6,6 +6,7 @@ import type {
 } from "../types/audit";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   AlertCircle,
   CheckCircle2,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 export function AicteAuditPage() {
+  useDocumentTitle("Cryptographic Audit Chain");
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
   const [verificationResult, setVerificationResult] = useState<AuditChainVerificationResponse | null>(null);

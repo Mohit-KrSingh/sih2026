@@ -7,6 +7,7 @@ import { ResolveFlagModal } from "../components/action/ResolveFlagModal";
 import { FlagBadge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   Building2,
   Calendar,
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 
 export function AicteDrilldownPage() {
+  useDocumentTitle("Drill-Down Data Explorer");
   const [searchParams, setSearchParams] = useSearchParams();
   const academicYear = searchParams.get("academic_year") || "2026-27";
   const stateParam = searchParams.get("state") || "";

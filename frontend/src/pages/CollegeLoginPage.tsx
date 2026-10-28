@@ -5,8 +5,10 @@ import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { ErrorState } from "../components/ui/ErrorState";
 import { Building2, KeyRound, ShieldCheck } from "lucide-react";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export function CollegeLoginPage() {
+  useDocumentTitle("College Portal Login");
   const { login, verifyMfa, cancelMfa, pendingMfa } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,7 +19,17 @@ export function CollegeLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const destination = (location.state as { from?: { pathname: string } })?.from?.pathname || "/college/dashboard";
+  const fromLocation = (location.state as { from?: { pathname: string; search?: string; hash?: string } })?.from;
+  const returnUrl = fromLocation
+    ? `${fromLocation.pathname}${fromLocation.search || ""}${fromLocation.hash || ""}`
+    : null;
+
+  const getTargetDashboard = (userRole?: string) => {
+    if (returnUrl) return returnUrl;
+    if (userRole === "aicte_admin" || userRole === "aicte_officer") return "/aicte/overview";
+    if (userRole === "verifier") return "/verifier/search";
+    return "/college/dashboard";
+  };
 
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,11 +39,7 @@ export function CollegeLoginPage() {
     try {
       const res = await login({ email, password });
       if (!res.mfaRequired) {
-        let target = destination;
-        if (destination === "/college/dashboard" && res.user?.role === "verifier") {
-          target = "/verifier/search";
-        }
-        navigate(target, { replace: true });
+        navigate(getTargetDashboard(res.user?.role), { replace: true });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to sign in. Please verify your credentials.");
@@ -47,7 +55,7 @@ export function CollegeLoginPage() {
 
     try {
       await verifyMfa(mfaCode);
-      navigate(destination, { replace: true });
+      navigate(getTargetDashboard(), { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid verification code.");
     } finally {

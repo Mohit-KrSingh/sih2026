@@ -21,6 +21,7 @@ import { ErrorState } from "../components/ui/ErrorState";
 import { Input } from "../components/ui/Input";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { Select } from "../components/ui/Select";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 const SEAT_TYPE_OPTIONS = [
   { value: "Regular", label: "Regular" },
@@ -28,6 +29,7 @@ const SEAT_TYPE_OPTIONS = [
 ];
 
 export function BulkUploadPage() {
+  useDocumentTitle("Bulk Student Upload");
   const { user } = useAuth();
   const institutionId = user?.institution_id ?? 1;
 

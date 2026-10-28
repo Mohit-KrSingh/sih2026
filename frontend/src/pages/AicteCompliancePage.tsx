@@ -6,6 +6,7 @@ import type { ComplianceViolation } from "../types/analytics";
 import { NoticeModal } from "../components/action/NoticeModal";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   AlertOctagon,
   Calendar,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 
 export function AicteCompliancePage() {
+  useDocumentTitle("Compliance & Over-Intake Oversight");
   const [academicYear, setAcademicYear] = useState("2026-27");
   const [stateFilter, setStateFilter] = useState("");
   const [minOvershoot, setMinOvershoot] = useState(1);

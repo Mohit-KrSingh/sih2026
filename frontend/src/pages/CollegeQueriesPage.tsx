@@ -3,6 +3,7 @@ import { useAuth } from "../auth/AuthContext";
 import { fetchCollegeQueries, respondToCollegeQuery } from "../api/review";
 import type { CollegeQueryResponse } from "../types/review";
 import { Button } from "../components/ui/Button";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 export function CollegeQueriesPage() {
+  useDocumentTitle("AICTE Inquiries & Directives");
   const { user } = useAuth();
   const institutionId = user?.institution_id;
 

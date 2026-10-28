@@ -8,6 +8,7 @@ import {
 import { getStudents, type StudentResponse } from "../api/students";
 import type { ChangeRequest, ChangeRequestStatus } from "../types/changeRequests";
 import { Button } from "../components/ui/Button";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
@@ -48,6 +49,7 @@ const STATUS_VALUES = [
 ];
 
 export function CollegeChangeRequestsPage() {
+  useDocumentTitle("Student Record Change Requests");
   const { user } = useAuth();
   const institutionId = user?.institution_id;
 

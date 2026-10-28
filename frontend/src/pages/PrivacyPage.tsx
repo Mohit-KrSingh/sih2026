@@ -6,6 +6,7 @@ import {
   type PrivacyPolicyResponse,
 } from "../api/privacy";
 import { Button } from "../components/ui/Button";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   ArrowRight,
   CheckCircle2,
@@ -24,6 +25,7 @@ import {
 } from "lucide-react";
 
 export function PrivacyPage() {
+  useDocumentTitle("DPDP Privacy Architecture & Charter");
   const [policy, setPolicy] = useState<PrivacyPolicyResponse>(FALLBACK_PRIVACY_DATA);
   const [activeTab, setActiveTab] = useState<"collected" | "prohibited">("collected");
 

@@ -4,6 +4,7 @@ import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { ErrorState } from "../components/ui/ErrorState";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   ArrowLeft,
   History,
@@ -24,6 +25,7 @@ import {
 type StatusFilter = "all" | "pending" | "approved" | "used" | "expired" | "denied";
 
 export function VerifierHistoryPage() {
+  useDocumentTitle("Verifier Consent Audit History");
   const [requests, setRequests] = useState<ConsentRequestItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

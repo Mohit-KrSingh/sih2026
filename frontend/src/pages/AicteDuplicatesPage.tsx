@@ -6,6 +6,7 @@ import { NoticeModal } from "../components/action/NoticeModal";
 import { FlagBadge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   Calendar,
   Download,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 
 export function AicteDuplicatesPage() {
+  useDocumentTitle("Cross-College Duplicate Admissions");
   const [academicYear, setAcademicYear] = useState("2026-27");
   const [ruleFilter, setRuleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");

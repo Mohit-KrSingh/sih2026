@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/Table";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 const ACADEMIC_YEAR_OPTIONS = [
   { value: "2026-27", label: "2026-27 (Current Admissions)" },
@@ -50,6 +51,7 @@ const LEVEL_FILTER_OPTIONS = [
 ];
 
 export const StudentsListPage: React.FC = () => {
+  useDocumentTitle("Student Directory");
   const { user } = useAuth();
   const navigate = useNavigate();
   const institutionId = user?.institution_id ?? 1;
@@ -398,7 +400,13 @@ export const StudentsListPage: React.FC = () => {
                       {student.apaar_id}
                     </TableCell>
                     <TableCell>
-                      <div className="font-medium text-slate-900">{student.name}</div>
+                      <Link
+                        to={`/college/students/${student.id}`}
+                        className="font-medium text-slate-900 hover:text-blue-600 underline decoration-slate-300 block"
+                        title="View student profile"
+                      >
+                        {student.name}
+                      </Link>
                       <div className="text-xs text-slate-400 capitalize">
                         {student.gender} • {student.reservation_category}
                       </div>

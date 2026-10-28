@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   fetchReviewItems,
   fetchReviewItemDetail,
   submitReviewDecision,
   getReviewDocumentDownloadUrl,
 } from "../api/review";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import type {
   ReviewDecision,
   ReviewItemDetailResponse,
@@ -43,6 +45,7 @@ import {
 } from "lucide-react";
 
 export function AicteReviewPage() {
+  useDocumentTitle("AICTE Submission Review Queue");
   const [data, setData] = useState<ReviewItemListResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -363,9 +366,12 @@ export function AicteReviewPage() {
               {data.items.map((item) => (
                 <TableRow key={item.id} className="hover:bg-slate-50/80 transition-colors">
                   <TableCell>
-                    <div className="font-semibold text-sm text-slate-900">
+                    <Link
+                      to={`/aicte/review/${item.id}`}
+                      className="font-semibold text-sm text-slate-900 hover:text-blue-600 block underline decoration-slate-300"
+                    >
                       {item.institution_name}
-                    </div>
+                    </Link>
                     <div className="text-xs font-mono text-slate-500 flex items-center gap-1 mt-0.5">
                       <Building2 className="w-3 h-3 text-slate-400" />
                       {item.aicte_id}
@@ -407,14 +413,22 @@ export function AicteReviewPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => openItemDetail(item.id)}
-                      className="font-medium text-xs"
-                    >
-                      Review Item
-                    </Button>
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        to={`/aicte/review/${item.id}`}
+                        className="text-xs text-blue-600 hover:text-blue-800 font-medium hover:underline"
+                      >
+                        Inspect Page
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openItemDetail(item.id)}
+                        className="font-medium text-xs"
+                      >
+                        Review Item
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

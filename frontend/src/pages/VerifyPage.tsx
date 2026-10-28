@@ -17,8 +17,10 @@ import {
   XCircle,
 } from "lucide-react";
 import { getVerificationQrUrl, verifyCredential, type VerificationResult } from "../api/verification";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export function VerifyPage() {
+  useDocumentTitle("Public Credential Verification");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();

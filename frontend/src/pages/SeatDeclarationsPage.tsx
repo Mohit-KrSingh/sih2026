@@ -14,6 +14,7 @@ import { FlagBadge } from "../components/ui/Badge";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { EmptyState } from "../components/ui/EmptyState";
 import { ErrorState } from "../components/ui/ErrorState";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import {
   Table,
   TableHeader,
@@ -58,6 +59,7 @@ interface FormCourseRow {
 }
 
 export function SeatDeclarationsPage() {
+  useDocumentTitle("Seat Declarations & Intake Quotas");
   const { user } = useAuth();
   const institutionId = user?.institution_id;
   const isReadOnly = user?.role === "college_viewer";
