@@ -16,7 +16,7 @@ import logging
 from typing import Any
 
 import redis
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session, joinedload
 
 from app.analytics.anomaly_service import evaluate_and_store_anomalies
@@ -92,9 +92,29 @@ def promote_submission_and_run_cross_checks(
                 apaar_ids.append(str(s.apaar_id).strip())
 
     # -------------------------------------------------------------------------
-    # 2. Lock institutional seat declarations
+    # 2. Lock institutional seat declarations & link validation flags
     # -------------------------------------------------------------------------
     inst_course_ids = {s.course_id for s in students if s.course_id is not None}
+    student_ids = [s.id for s in students]
+
+    if student_ids:
+        db.execute(
+            update(ValidationFlag)
+            .where(
+                ValidationFlag.student_id.in_(student_ids),
+                ValidationFlag.submission_id.is_(None),
+            )
+            .values(submission_id=submission.id)
+        )
+    if inst_course_ids:
+        db.execute(
+            update(ValidationFlag)
+            .where(
+                ValidationFlag.course_id.in_(inst_course_ids),
+                ValidationFlag.submission_id.is_(None),
+            )
+            .values(submission_id=submission.id)
+        )
     if inst_course_ids:
         inst_decls = list(
             db.scalars(

@@ -47,9 +47,8 @@ test.describe("T25: AICTE Review Queue and College Query Round-Trip End-to-End",
     ).toBeVisible({ timeout: 10000 });
 
     // Open first review item (MMIT Mumbai)
-    const reviewButtons = page.getByRole("button", { name: "Review Item" });
-    await expect(reviewButtons.first()).toBeVisible();
-    await reviewButtons.first().click();
+    const mmitRow = page.locator("tr").filter({ hasText: "Mumbai Metropolitan Institute of Technology" });
+    await mmitRow.getByRole("button", { name: "Review Item" }).click();
 
     // Verify Inspection Modal opens
     await expect(page.getByText("Take Review Action")).toBeVisible({ timeout: 10000 });
@@ -147,10 +146,9 @@ test.describe("T25: AICTE Review Queue and College Query Round-Trip End-to-End",
     await page.goto("/aicte/review");
     await expect(page.locator("h1")).toContainText("AICTE Submission Review Queue");
 
-    // Open item
-    const reviewAgainBtns = page.getByRole("button", { name: "Review Item" });
-    await expect(reviewAgainBtns.first()).toBeVisible();
-    await reviewAgainBtns.first().click();
+    // Open item for MMIT Mumbai
+    const mmitRowAgain = page.locator("tr").filter({ hasText: "Mumbai Metropolitan Institute of Technology" });
+    await mmitRowAgain.getByRole("button", { name: "Review Item" }).click();
 
     // Verify clarification response visible in thread
     await expect(page.getByText(collegeResponse).first()).toBeVisible({ timeout: 10000 });

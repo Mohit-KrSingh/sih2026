@@ -118,21 +118,21 @@ export const api = {
   post: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
     apiClient<T>(endpoint, {
       method: "POST",
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
       ...options,
     }),
 
   put: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
     apiClient<T>(endpoint, {
       method: "PUT",
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
       ...options,
     }),
 
   patch: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
     apiClient<T>(endpoint, {
       method: "PATCH",
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
       ...options,
     }),
 

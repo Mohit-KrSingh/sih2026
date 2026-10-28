@@ -112,12 +112,30 @@ def persist_validation_flags(
     """
     mapping: dict[Any, Student] = student_mapping or {}
 
+    s_ids: list[int] = []
+    if mapping:
+        s_ids = [
+            s.id if hasattr(s, "id") else s
+            for s in mapping.values()
+            if (hasattr(s, "id") and getattr(s, "id") is not None) or isinstance(s, int)
+        ]
+
     # Query existing flags in this scope
     stmt = select(ValidationFlag).options(selectinload(ValidationFlag.justifications))
     if submission_id is not None:
         stmt = stmt.where(ValidationFlag.submission_id == submission_id)
     elif course_id is not None:
-        stmt = stmt.where(ValidationFlag.course_id == course_id)
+        if s_ids:
+            stmt = stmt.where(
+                or_(
+                    ValidationFlag.course_id == course_id,
+                    ValidationFlag.student_id.in_(s_ids),
+                )
+            )
+        else:
+            stmt = stmt.where(ValidationFlag.course_id == course_id)
+    elif s_ids:
+        stmt = stmt.where(ValidationFlag.student_id.in_(s_ids))
     elif institution_id is not None:
         stmt = (
             stmt.outerjoin(Student, ValidationFlag.student_id == Student.id)
@@ -192,6 +210,16 @@ def persist_validation_flags(
         if composite_key in existing_map and existing_map[composite_key]:
             # Pop first matching existing flag
             matched_existing = existing_map[composite_key].pop(0)
+        elif target_student_id is not None:
+            for k in list(existing_map.keys()):
+                if (
+                    k[0] == target_student_id
+                    and k[2] == flag.rule_code
+                    and k[3] == flag.field
+                    and existing_map[k]
+                ):
+                    matched_existing = existing_map[k].pop(0)
+                    break
 
         if matched_existing is not None:
             matched_flag_ids.add(matched_existing.id)
