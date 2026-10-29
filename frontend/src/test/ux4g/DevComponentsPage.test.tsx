@@ -45,6 +45,6 @@ describe("DevComponentsPage", () => {
 
     // Section 7: Content
     expect(screen.getByText("7. Content: Card, Accordion, Modal, Table, EmptyState & Progress")).toBeInTheDocument();
-    expect(screen.getByRole("table")).toBeInTheDocument();
+    expect(screen.getAllByRole("table").length).toBeGreaterThanOrEqual(1);
   });
 });

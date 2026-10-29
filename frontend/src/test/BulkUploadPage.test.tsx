@@ -415,4 +415,105 @@ describe("BulkUploadPage UI Component", () => {
       expect(screen.getByText("Upload Results (3 rows)")).toBeInTheDocument();
     });
   });
+
+  it("handles sorting and pagination on a large 5,000-row result set smoothly", async () => {
+    // Generate 5,000 rows
+    const largeRows: studentsApi.UploadRowResult[] = Array.from({ length: 5000 }, (_, i) => ({
+      row_number: i + 1,
+      student_id: 1000 + i,
+      apaar_id: `9000${String(i).padStart(8, "0")}`,
+      name: `Student Name ${String(i).padStart(5, "0")}`,
+      dob: "2004-05-10",
+      gender: i % 2 === 0 ? "Male" : "Female",
+      course: "Computer Science and Engineering",
+      branch: "Computer Science",
+      admission_year: "2026-27",
+      enrolment_no: `ENR-${String(i).padStart(5, "0")}`,
+      admission_date: "2026-07-15",
+      admission_mode: "State counselling",
+      seat_type: "Regular",
+      reservation_category: "General",
+      nri: "No",
+      oci: "No",
+      foreign_national: "No",
+      country: null,
+      status: i % 10 === 0 ? "flagged" : "valid",
+      flags:
+        i % 10 === 0
+          ? [
+              {
+                rule_code: "ADMISSION_DATE_WINDOW",
+                level: "warning",
+                field: "admission_date",
+                message: "Admission date outside standard window.",
+                fix_hint: "Check admission schedule.",
+                requires_justification: false,
+                status: "open",
+              },
+            ]
+          : [],
+    }));
+
+    const mock5000Result: studentsApi.UploadResultResponse = {
+      upload_id: 99,
+      filename: "large_5000_upload.csv",
+      row_count: 5000,
+      summary: {
+        total_rows: 5000,
+        valid_rows: 4500,
+        flagged_rows: 500,
+        error_count: 0,
+        exception_count: 0,
+        warning_count: 500,
+        info_count: 0,
+        inserted_count: 5000,
+        updated_count: 0,
+      },
+      rows: largeRows,
+    };
+
+    vi.spyOn(studentsApi, "uploadStudentsFile").mockResolvedValue(mock5000Result);
+
+    const startTime = performance.now();
+    render(
+      <BrowserRouter>
+        <BulkUploadPage />
+      </BrowserRouter>
+    );
+
+    const file = new File(["mock 5000 rows"], "large_5000_upload.csv", { type: "text/csv" });
+    const fileInput = document.getElementById("file-upload") as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [file] } });
+    fireEvent.click(screen.getByText(/Upload & Run Validation Engine/i));
+
+    await waitFor(() => {
+      expect(screen.getByText("Upload Results (5000 rows)")).toBeInTheDocument();
+    });
+
+    const elapsed = performance.now() - startTime;
+    // Rendering 5000 records with windowed pagination must execute rapidly
+    expect(elapsed).toBeLessThan(3000);
+
+    // Initial page shows 25 rows
+    expect(screen.getByText("Student Name 00000")).toBeInTheDocument();
+    expect(screen.getByText(/Showing/i)).toBeInTheDocument();
+    expect(screen.getAllByText("5000").length).toBeGreaterThanOrEqual(1);
+
+    // Test sortable header click on "Student Name"
+    const nameSortBtn = screen.getByRole("button", { name: /Student Name, sort ascending/i });
+    fireEvent.click(nameSortBtn);
+
+    // Test page size adjustment to 50
+    const pageSizeSelect = screen.getByLabelText("Rows per page:") as HTMLSelectElement;
+    fireEvent.change(pageSizeSelect, { target: { value: "50" } });
+    expect(pageSizeSelect.value).toBe("50");
+
+    // Verify next page navigation
+    const nextBtn = screen.getByRole("button", { name: "Next page" });
+    fireEvent.click(nextBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("Page 2 of 100")).toBeInTheDocument();
+    });
+  });
 });

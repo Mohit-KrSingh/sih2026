@@ -16,7 +16,7 @@ export interface FileUploadProps {
 
 /**
  * UX4G File Upload Component
- * Drag-and-drop file upload region with browse button and keyboard support.
+ * Drag-and-drop file upload region with keyboard-operable browse button.
  */
 export const FileUpload: React.FC<FileUploadProps> = ({
   id = "file-upload",
@@ -70,7 +70,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <div className="w-full flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={id} className="text-sm font-semibold select-none">
+        <label htmlFor={id} className="text-sm font-semibold select-none ux4g-text-neutral-primary">
           {label}
         </label>
       )}
@@ -79,6 +79,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       <input
         ref={fileInputRef}
         id={id}
+        data-testid="file-upload-input"
         type="file"
         accept={accept}
         disabled={disabled}
@@ -91,7 +92,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           <div className="flex items-center gap-2.5 overflow-hidden">
             <Icon name="description" size="md" color="primary" aria-hidden="true" />
             <div className="min-w-0">
-              <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+              <p className="text-sm font-medium truncate ux4g-text-neutral-primary">{selectedFile.name}</p>
               <p className="text-xs ux4g-text-neutral-tertiary">{formatFileSize(selectedFile.size)}</p>
             </div>
           </div>
@@ -103,7 +104,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             }}
             disabled={disabled}
             aria-label="Remove selected file"
-            className="p-1 rounded hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-1 ux4g-text-neutral-secondary"
+            className="p-1 rounded hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-1 ux4g-text-neutral-secondary cursor-pointer"
           >
             <Icon name="close" size="sm" color="inherit" aria-hidden="true" />
           </button>
@@ -117,34 +118,36 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           onDragLeave={() => setIsDragOver(false)}
           onDrop={handleDrop}
           onClick={() => !disabled && fileInputRef.current?.click()}
-          onKeyDown={(e) => {
-            if ((e.key === "Enter" || e.key === " ") && !disabled) {
-              e.preventDefault();
-              fileInputRef.current?.click();
-            }
-          }}
-          tabIndex={disabled ? -1 : 0}
-          role="button"
-          aria-label={label}
-          className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors ${
             isDragOver
               ? "ux4g-border-primary ux4g-bg-primary-soft"
               : displayError
               ? "ux4g-border-error ux4g-bg-neutral-soft"
-              : "ux4g-border-neutral-subtle ux4g-bg-neutral-elevated"
+              : "ux4g-border-neutral-subtle ux4g-bg-neutral-elevated hover:ux4g-bg-neutral-soft"
           } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
         >
           <Icon name="cloud_upload" size="xl" color="primary" aria-hidden="true" />
-          <p className="mt-2 text-sm font-medium">
-            Drag and drop your file here, or{" "}
-            <span className="ux4g-text-brand-primary underline font-semibold">browse</span>
+          <p className="mt-2 text-sm font-medium ux4g-text-neutral-primary">
+            Drag and drop your file here, or browse from your device
           </p>
           {accept && <p className="text-xs ux4g-text-neutral-tertiary mt-1">Accepted: {accept}</p>}
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={(e) => {
+              e.stopPropagation();
+              fileInputRef.current?.click();
+            }}
+            className="ux4g-btn ux4g-btn-secondary ux4g-btn-sm mt-3 cursor-pointer"
+            aria-label={`Browse files for ${label}`}
+          >
+            Browse files
+          </button>
         </div>
       )}
 
       {displayError && (
-        <p role="alert" className="text-xs font-semibold ux4g-text-error mt-0.5">
+        <p role="alert" className="text-xs font-semibold ux4g-text-status-error mt-0.5">
           {displayError}
         </p>
       )}
