@@ -158,7 +158,8 @@ export async function getRecentEvents(params?: {
  */
 export function subscribeLiveEvents(
   onEvent: (event: SSEEventPayload) => void,
-  onError?: (err: any) => void
+  onError?: (err: any) => void,
+  onStatusChange?: (status: "live" | "reconnecting") => void
 ): () => void {
   const token = localStorage.getItem("apaar_access_token");
   let eventSource: EventSource | null = null;
@@ -171,8 +172,13 @@ export function subscribeLiveEvents(
       const streamUrl = `/api/v1/analytics/stream${token ? `?token=${encodeURIComponent(token)}` : ""}`;
       eventSource = new EventSource(streamUrl);
 
+      eventSource.onopen = () => {
+        if (onStatusChange) onStatusChange("live");
+      };
+
       eventSource.onmessage = (e) => {
         try {
+          if (onStatusChange) onStatusChange("live");
           const payload = JSON.parse(e.data);
           onEvent({
             id: payload.id || String(Date.now()),
@@ -187,6 +193,7 @@ export function subscribeLiveEvents(
 
       // Also listen to named event types
       const knownEvents = [
+        "connected",
         "submission_created",
         "submission_promoted",
         "flag_detected",
@@ -200,6 +207,7 @@ export function subscribeLiveEvents(
       knownEvents.forEach((evtName) => {
         eventSource?.addEventListener(evtName, (e: any) => {
           try {
+            if (onStatusChange) onStatusChange("live");
             const parsed = JSON.parse(e.data);
             onEvent({
               id: parsed.id || String(Date.now()),
@@ -214,9 +222,11 @@ export function subscribeLiveEvents(
       });
 
       eventSource.onerror = (err) => {
+        if (onStatusChange) onStatusChange("reconnecting");
         if (onError) onError(err);
       };
     } catch (e) {
+      if (onStatusChange) onStatusChange("reconnecting");
       if (onError) onError(e);
     }
   }

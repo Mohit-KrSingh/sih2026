@@ -30,12 +30,8 @@ const legacyBaselineList = fs.existsSync(BASELINE_PATH)
   : [];
 const LEGACY_BASELINE = new Set(legacyBaselineList.map((f) => f.replace(/\\/g, "/")));
 
-// The 3 chart files with existing hex colors awaiting R10 ECharts theme migration
-const LEGACY_CHART_HEX_FILES = new Set([
-  "src/charts/CourseDistributionChart.tsx",
-  "src/charts/StateIntakeChart.tsx",
-  "src/charts/SubmissionProgressChart.tsx",
-]);
+// All chart files migrated to UX4G ECharts theme in R10
+const LEGACY_CHART_HEX_FILES = new Set();
 
 const TW_COLOR_FAMILIES = [
   "slate", "gray", "zinc", "neutral", "stone",

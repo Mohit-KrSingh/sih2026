@@ -75,9 +75,31 @@
 
   /* Focus and Accessibility */
   --edutrace-focus-outline: var(--ux4g-color-primary-600);
+
+  /* ==========================================================================
+     ECharts Analytical Visualizations Tokens (R10)
+     Colour-blind safe sequence mapped strictly to UX4G semantic tokens
+     ========================================================================== */
+  --edutrace-chart-primary: var(--ux4g-color-primary-600);
+  --edutrace-chart-secondary: var(--ux4g-color-cyan-700);
+  --edutrace-chart-accent: var(--ux4g-color-orange-800);
+  --edutrace-chart-success: var(--ux4g-color-green-700);
+  --edutrace-chart-blue: var(--ux4g-color-blue-600);
+  --edutrace-chart-purple: var(--ux4g-color-purple-600);
+  --edutrace-chart-error: var(--ux4g-color-red-700);
+  --edutrace-chart-neutral: var(--ux4g-color-neutral-500);
+  --edutrace-chart-neutral-subtle: var(--ux4g-color-neutral-300);
+  --edutrace-chart-axis-line: var(--ux4g-color-neutral-300);
+  --edutrace-chart-split-line: var(--ux4g-color-neutral-100);
+  --edutrace-chart-text-primary: var(--ux4g-text-neutral-primary, var(--ux4g-color-neutral-900));
+  --edutrace-chart-text-secondary: var(--ux4g-text-neutral-secondary, var(--ux4g-color-neutral-700));
 }
 
 [data-theme="dark"] {
+  --edutrace-chart-split-line: var(--ux4g-color-neutral-800);
+  --edutrace-chart-axis-line: var(--ux4g-color-neutral-700);
+  --edutrace-chart-text-primary: var(--ux4g-color-neutral-100);
+  --edutrace-chart-text-secondary: var(--ux4g-color-neutral-300);
   --edutrace-flag-error-bg: var(--ux4g-color-red-700);
   --edutrace-flag-error-text: var(--ux4g-color-neutral-0);
   --edutrace-flag-error-border: var(--ux4g-color-red-500);

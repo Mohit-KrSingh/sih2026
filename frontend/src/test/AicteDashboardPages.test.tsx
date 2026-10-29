@@ -14,7 +14,12 @@ import * as auditApi from "../api/audit";
 
 // Mock echarts-for-react to cleanly render in jsdom
 vi.mock("echarts-for-react", () => ({
-  default: (props: any) => <div data-testid="echarts-mock" {...props} />,
+  default: (props: any) => {
+    const domProps = { ...props };
+    delete domProps.notMerge;
+    delete domProps.lazyUpdate;
+    return <div data-testid="echarts-mock" {...domProps} />;
+  },
 }));
 
 // Mock AuthContext
@@ -165,12 +170,26 @@ describe("AICTE Dashboard & Oversight Pages", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("+10 Over Intake")).toBeInTheDocument();
 
-    // Verify prominent Live Feed
+    // Verify Live Feed and SSE status chip
     expect(screen.getByText("Live System Activity Feed")).toBeInTheDocument();
     expect(screen.getByText("CONNECTED")).toBeInTheDocument();
+    expect(screen.getByTestId("sse-status-chip")).toHaveTextContent("Live");
 
     // Verify ECharts containers are rendered
     expect(screen.getAllByTestId("echarts-mock").length).toBeGreaterThanOrEqual(1);
+
+    // Verify AccessibleChartCard "View as table" toggle and accessible tables
+    const viewAsTableButtons = screen.getAllByRole("button", { name: /view as table/i });
+    expect(viewAsTableButtons.length).toBe(3);
+
+    // Toggle the first chart (State Intake) to table view
+    fireEvent.click(viewAsTableButtons[0]);
+    expect(screen.getByRole("button", { name: /view as chart for State-Level Intake vs Actual Enrolment/i })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: /State-Level Intake vs Actual Enrolment data table/i })).toBeInTheDocument();
+
+    // Toggle back to chart view
+    fireEvent.click(screen.getByRole("button", { name: /view as chart for State-Level Intake vs Actual Enrolment/i }));
+    expect(screen.getAllByRole("button", { name: /view as table/i }).length).toBe(3);
   });
 
   it("renders AicteCompliancePage with over-intake filters and notice trigger", async () => {

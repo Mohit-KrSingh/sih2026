@@ -17,12 +17,60 @@ logger = logging.getLogger(__name__)
 
 SSE_REDIS_CHANNEL = "sse:aicte_events"
 MAX_RECENT_EVENTS = 200
+PROCESS_ID = str(uuid.uuid4())
 
 # Thread-safe in-memory buffer for recent events
 _recent_events: deque[dict[str, Any]] = deque(maxlen=MAX_RECENT_EVENTS)
 
 # Active in-process asyncio subscriber queues
 _local_subscribers: set[asyncio.Queue[dict[str, Any]]] = set()
+
+_redis_listener_task: asyncio.Task[None] | None = None
+
+
+async def _listen_redis_pubsub() -> None:
+    """Background listener that forwards Redis pub/sub events to local SSE queues."""
+    from app.config import get_settings
+    import redis.asyncio as aioredis
+
+    settings = get_settings()
+    while True:
+        try:
+            r = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+            pubsub = r.pubsub()
+            await pubsub.subscribe(SSE_REDIS_CHANNEL)
+            logger.info("SSE Redis PubSub subscriber started on channel %s", SSE_REDIS_CHANNEL)
+            async for message in pubsub.listen():
+                if message.get("type") == "message":
+                    try:
+                        raw_data = message.get("data")
+                        if isinstance(raw_data, str):
+                            payload = json.loads(raw_data)
+                            if payload.get("sender_id") != PROCESS_ID:
+                                _recent_events.append(payload)
+                                for q in list(_local_subscribers):
+                                    try:
+                                        q.put_nowait(payload)
+                                    except Exception:
+                                        _local_subscribers.discard(q)
+                    except Exception as parse_err:
+                        logger.warning("Error parsing Redis SSE payload: %s", parse_err)
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.warning("Redis SSE listener reconnecting after error: %s", e)
+            await asyncio.sleep(2)
+
+
+def ensure_redis_subscriber() -> None:
+    """Ensure background Redis pub/sub listener is running in the active event loop."""
+    global _redis_listener_task
+    if _redis_listener_task is None or _redis_listener_task.done():
+        try:
+            loop = asyncio.get_running_loop()
+            _redis_listener_task = loop.create_task(_listen_redis_pubsub())
+        except RuntimeError:
+            pass
 
 
 def publish_sse_event(
@@ -37,6 +85,7 @@ def publish_sse_event(
     event_id = str(uuid.uuid4())
     payload = {
         "id": event_id,
+        "sender_id": PROCESS_ID,
         "event": event_type,
         "data": data,
         "timestamp": datetime.now(UTC).isoformat(),
@@ -91,6 +140,7 @@ async def sse_event_generator(
     """
     queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(maxsize=100)
     _local_subscribers.add(queue)
+    ensure_redis_subscriber()
 
     # Send initial greeting/handshake event
     greeting = {

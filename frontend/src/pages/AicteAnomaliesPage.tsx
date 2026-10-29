@@ -1,20 +1,12 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getAnomalies } from "../api/analytics";
 import type { AnomalyScoreItem } from "../types/analytics";
 import { NoticeModal } from "../components/action/NoticeModal";
-import { Button } from "../components/ui/Button";
-import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { Button } from "../components/ux4g/Button";
+import { FlagBadge } from "../components/ux4g/Badge";
+import { Spinner } from "../components/ux4g/Spinner";
+import { Icon } from "../components/ux4g/Icon";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
-import {
-  Brain,
-  Calendar,
-  Cpu,
-  RefreshCw,
-  Search,
-  Send,
-  Shield,
-  Sparkles,
-} from "lucide-react";
 
 export function AicteAnomaliesPage() {
   useDocumentTitle("AICTE Statistical Anomaly Detection");
@@ -77,32 +69,41 @@ export function AicteAnomaliesPage() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200 flex items-center gap-1.5">
-              <Brain className="w-3.5 h-3.5" />
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span
+              className="text-xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full border flex items-center gap-1.5"
+              style={{
+                backgroundColor: "var(--ux4g-color-purple-50)",
+                color: "var(--ux4g-color-purple-800)",
+                borderColor: "var(--ux4g-color-purple-300)",
+              }}
+            >
+              <Icon name="psychology" size="xs" color="inherit" />
               Machine Learning Oversight
             </span>
-            <span className="text-xs text-slate-500 font-medium">
+            <span className="text-xs ux4g-text-neutral-secondary font-medium">
               &bull; IsolationForest & Statistical Anomaly Rules
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold ux4g-text-neutral-primary tracking-tight">
             Intelligent Anomaly Detection & Pattern Recognition
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs ux4g-text-neutral-secondary mt-1">
             Unsupervised machine learning identifying irregular cohort admissions, sequential APAAR IDs, and quota spikes
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700">
-            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Academic Year Selector */}
+          <div className="flex items-center gap-1.5 ux4g-bg-neutral-soft border ux4g-border-neutral-subtle rounded-lg px-2.5 py-1.5 text-xs">
+            <Icon name="calendar_month" size="xs" color="inherit" className="ux4g-text-neutral-secondary" />
             <select
               value={academicYear}
               onChange={(e) => setAcademicYear(e.target.value)}
-              className="bg-transparent font-semibold text-slate-800 focus:outline-none cursor-pointer"
+              className="bg-transparent font-semibold ux4g-text-neutral-primary focus:outline-none cursor-pointer"
+              aria-label="Select Academic Year"
             >
               <option value="2026-27">Academic Year 2026-27</option>
               <option value="2025-26">Academic Year 2025-26</option>
@@ -111,19 +112,19 @@ export function AicteAnomaliesPage() {
 
           <Button
             size="sm"
-            className="bg-purple-900 hover:bg-purple-950 text-white text-xs"
-            isLoading={scanning}
-            leftIcon={<Cpu className="w-3.5 h-3.5" />}
+            variant="primary"
             onClick={() => loadData(true)}
+            disabled={scanning}
+            leftIcon={<Icon name="memory" size="xs" color="inherit" />}
           >
-            Scan now (ML)
+            {scanning ? "Evaluating Model..." : "Run ML Model Scan"}
           </Button>
 
           <Button
             size="sm"
             variant="outline"
             onClick={() => loadData(false)}
-            leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
+            leftIcon={<Icon name="refresh" size="xs" color="inherit" />}
           >
             Refresh
           </Button>
@@ -131,127 +132,154 @@ export function AicteAnomaliesPage() {
       </div>
 
       {scanMessage && (
-        <div className="p-3.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs flex items-center gap-2 animate-in fade-in duration-200">
-          <Sparkles className="w-4 h-4 text-purple-600 shrink-0" />
-          <span className="font-medium">{scanMessage}</span>
+        <div
+          className="p-4 rounded-xl border text-xs font-medium flex items-center gap-2"
+          style={{
+            backgroundColor: "var(--ux4g-color-purple-50)",
+            color: "var(--ux4g-color-purple-900)",
+            borderColor: "var(--ux4g-color-purple-300)",
+          }}
+        >
+          <Icon name="auto_awesome" size="xs" color="inherit" />
+          <span>{scanMessage}</span>
         </div>
       )}
 
-      {/* Model Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 bg-white border border-slate-200 rounded-xl space-y-1 shadow-sm">
-          <p className="text-xs text-slate-500">Evaluated Cohorts</p>
-          <p className="text-2xl font-bold text-slate-900">{anomalies.length}</p>
-          <p className="text-[11px] text-slate-500">Course-institution streams</p>
+      {/* KPI Overview Banner */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="p-4 ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl shadow-sm space-y-1">
+          <p className="text-[11px] font-medium ux4g-text-neutral-secondary uppercase tracking-wider">
+            Evaluated Cohorts
+          </p>
+          <p className="text-2xl font-bold ux4g-text-neutral-primary">{anomalies.length}</p>
+          <p className="text-[11px] ux4g-text-neutral-secondary">Institution & course pairs</p>
         </div>
 
-        <div className="p-4 bg-white border border-purple-200 bg-purple-50/20 rounded-xl space-y-1 shadow-sm">
-          <p className="text-xs text-purple-700 font-semibold">Flagged Anomalies</p>
-          <p className="text-2xl font-bold text-purple-700">{totalFlagged}</p>
-          <p className="text-[11px] text-purple-600 font-medium">Contamination threshold &gt; 0.08</p>
+        <div
+          className="p-4 ux4g-bg-neutral-elevated border rounded-xl shadow-sm space-y-1"
+          style={{ borderColor: "var(--ux4g-color-purple-300)" }}
+        >
+          <p
+            className="text-[11px] font-medium uppercase tracking-wider"
+            style={{ color: "var(--ux4g-color-purple-800)" }}
+          >
+            Flagged Statistical Anomalies
+          </p>
+          <p className="text-2xl font-bold" style={{ color: "var(--ux4g-color-purple-700)" }}>
+            {totalFlagged}
+          </p>
+          <p className="text-[11px] font-medium" style={{ color: "var(--ux4g-color-purple-700)" }}>
+            IsolationForest score &lt; -0.05
+          </p>
         </div>
 
-        <div className="p-4 bg-white border border-slate-200 rounded-xl space-y-1 shadow-sm">
-          <p className="text-xs text-slate-500">Algorithm</p>
-          <p className="text-lg font-bold text-slate-800">IsolationForest</p>
-          <p className="text-[11px] text-slate-400">100 estimators, 6D standardized</p>
-        </div>
-
-        <div className="p-4 bg-white border border-slate-200 rounded-xl space-y-1 shadow-sm">
-          <p className="text-xs text-slate-500">Regulatory Impact</p>
-          <p className="text-lg font-bold text-emerald-700">Non-Blocking</p>
-          <p className="text-[11px] text-slate-400">Audience: AICTE supervisory only</p>
+        <div className="p-4 ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl shadow-sm space-y-1">
+          <p className="text-[11px] font-medium ux4g-text-neutral-secondary uppercase tracking-wider">
+            Evaluated Feature Dimensions
+          </p>
+          <p className="text-2xl font-bold ux4g-text-brand-primary">6-Dimensional</p>
+          <p className="text-[11px] ux4g-text-neutral-secondary">
+            YoY Growth, NRI %, Supernum %, DOB Clusters, Admit Day %, Sequential APAAR
+          </p>
         </div>
       </div>
 
-      {/* Search & Flagged Filter */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+      {/* Filter and Search Bar */}
+      <div className="ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          <Icon name="search" size="xs" color="inherit" className="ux4g-text-neutral-secondary absolute left-3 top-2.5" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by college, AICTE ID, or anomaly insight..."
-            className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="Search by college, AICTE ID, course, or insight..."
+            className="w-full pl-9 pr-3 py-2 text-xs border ux4g-border-neutral-subtle rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ux4g-bg-neutral-elevated ux4g-text-neutral-primary"
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700 select-none">
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <label className="flex items-center gap-2 cursor-pointer font-medium ux4g-text-neutral-primary">
             <input
               type="checkbox"
               checked={flaggedOnly}
               onChange={(e) => setFlaggedOnly(e.target.checked)}
-              className="w-4 h-4 rounded text-purple-600 focus:ring-purple-500 border-slate-300 cursor-pointer"
-            >
-            </input>
-            <span>Show Flagged Anomalies Only</span>
+              className="rounded border ux4g-border-neutral-subtle text-primary focus:ring-primary"
+            />
+            <span>Show Only Flagged Anomalies ({totalFlagged})</span>
           </label>
         </div>
       </div>
 
-      {/* Anomaly Alerts List */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      {/* Anomalies List */}
+      <div className="ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl shadow-sm p-4">
         {loading ? (
           <div className="py-16 flex flex-col items-center justify-center space-y-3">
-            <LoadingSpinner size="md" />
-            <p className="text-xs text-slate-500">Evaluating 6-dimensional institutional cohorts with scikit-learn...</p>
+            <Spinner size="m" />
+            <p className="text-xs ux4g-text-neutral-secondary">Computing multidimensional anomaly vectors...</p>
           </div>
         ) : filteredItems.length === 0 ? (
-          <div className="py-16 text-center text-slate-400 text-xs">
-            <Shield className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
-            <p className="font-bold text-slate-800 text-sm">No Statistical Anomalies Detected</p>
-            <p className="text-slate-500 mt-1">
-              All institutional cohorts conform to normative growth and distribution patterns.
+          <div className="py-16 text-center ux4g-text-neutral-secondary text-xs">
+            <Icon name="verified_user" size="l" color="success" className="mx-auto mb-2" />
+            <p className="font-bold ux4g-text-neutral-primary text-sm">No Statistical Anomalies Detected</p>
+            <p className="ux4g-text-neutral-secondary mt-1">
+              All student cohorts conform to standard baseline admission distributions.
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100">
-            {filteredItems.map((item) => {
+          <div className="space-y-4">
+            {filteredItems.map((item, idx) => {
               const feat = item.features || {};
-              const isNegative = item.score < 0;
+              const isNegative = (item.score || 0) < 0;
 
               return (
-                <div key={item.id} className="p-5 hover:bg-slate-50/50 transition space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div
+                  key={`${item.institution_id}-${item.course_id}-${idx}`}
+                  className="p-4 rounded-xl border transition space-y-3"
+                  style={{
+                    backgroundColor: item.flagged ? "var(--ux4g-color-purple-50)" : "var(--ux4g-bg-neutral-soft)",
+                    borderColor: item.flagged ? "var(--ux4g-color-purple-300)" : "var(--ux4g-border-neutral-subtle)",
+                  }}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b ux4g-border-neutral-subtle pb-3">
                     <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-slate-900 text-sm">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-bold ux4g-text-neutral-primary text-sm">
                           {item.institution_name || `Institution #${item.institution_id}`}
                         </h4>
-                        <span className="font-mono text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200">
+                        <span className="font-mono text-xs ux4g-bg-neutral-elevated ux4g-text-neutral-primary px-2 py-0.5 rounded border ux4g-border-neutral-subtle">
                           {item.aicte_id || "-"}
                         </span>
-                        <span className="text-xs font-medium text-slate-600">
+                        <span className="text-xs font-medium ux4g-text-neutral-secondary">
                           &bull; {item.course_name || `Course #${item.course_id}`}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5">
+                      <p className="text-xs ux4g-text-neutral-secondary mt-0.5">
                         Academic Year: <strong>{item.academic_year}</strong> &bull; IsolationForest Score:{" "}
-                        <strong className={isNegative ? "text-purple-700 font-bold" : "text-slate-700"}>
+                        <strong
+                          style={{
+                            color: isNegative
+                              ? "var(--ux4g-color-purple-700)"
+                              : "var(--ux4g-text-neutral-primary)",
+                          }}
+                        >
                           {item.score?.toFixed(4)}
                         </strong>
                       </p>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${
-                          item.flagged
-                            ? "bg-purple-100 text-purple-900 border border-purple-300"
-                            : "bg-slate-100 text-slate-600 border border-slate-200"
-                        }`}
-                      >
-                        {item.flagged ? "Flagged Anomaly" : "Normal Baseline"}
-                      </span>
+                      {/* Anomaly cards use unified FlagBadge */}
+                      <FlagBadge
+                        level={item.flagged ? "warning" : "info"}
+                        label={item.flagged ? "Flagged Anomaly" : "Normal Baseline"}
+                      />
 
                       {item.institution_id && (
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-xs text-purple-900 hover:bg-purple-50 border-purple-200"
-                          leftIcon={<Send className="w-3.5 h-3.5" />}
+                          className="text-xs"
+                          leftIcon={<Icon name="send" size="xs" color="inherit" />}
                           onClick={() =>
                             setSelectedNoticeCollege({
                               id: item.institution_id,
@@ -269,8 +297,15 @@ export function AicteAnomaliesPage() {
 
                   {/* Plain-English Explanation Card */}
                   {item.summary && (
-                    <div className="p-3 rounded-lg bg-purple-50/60 border border-purple-200 text-xs text-purple-950 flex items-start gap-2">
-                      <Sparkles className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
+                    <div
+                      className="p-3 rounded-lg border text-xs flex items-start gap-2"
+                      style={{
+                        backgroundColor: "var(--ux4g-bg-neutral-elevated)",
+                        borderColor: "var(--ux4g-color-purple-200)",
+                        color: "var(--ux4g-color-purple-950)",
+                      }}
+                    >
+                      <Icon name="auto_awesome" size="xs" color="inherit" className="shrink-0 mt-0.5" />
                       <div>
                         <span className="font-bold">Automated Anomaly Insight:</span> {item.summary}
                       </div>
@@ -279,46 +314,46 @@ export function AicteAnomaliesPage() {
 
                   {/* 6D Feature Badges */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 text-[11px] pt-1">
-                    <div className="p-2 rounded bg-slate-50 border border-slate-200">
-                      <span className="text-slate-400 block text-[10px]">YoY Growth</span>
-                      <strong className="text-slate-800">
+                    <div className="p-2 rounded ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle">
+                      <span className="ux4g-text-neutral-secondary block text-[10px]">YoY Growth</span>
+                      <strong className="ux4g-text-neutral-primary">
                         {feat.yoy_growth !== undefined ? `${(feat.yoy_growth * 100).toFixed(1)}%` : "-"}
                       </strong>
                     </div>
 
-                    <div className="p-2 rounded bg-slate-50 border border-slate-200">
-                      <span className="text-slate-400 block text-[10px]">NRI/FN Share</span>
-                      <strong className="text-slate-800">
+                    <div className="p-2 rounded ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle">
+                      <span className="ux4g-text-neutral-secondary block text-[10px]">NRI/FN Share</span>
+                      <strong className="ux4g-text-neutral-primary">
                         {feat.nri_share !== undefined ? `${(feat.nri_share * 100).toFixed(1)}%` : "-"}
                       </strong>
                     </div>
 
-                    <div className="p-2 rounded bg-slate-50 border border-slate-200">
-                      <span className="text-slate-400 block text-[10px]">Supernum. Share</span>
-                      <strong className="text-slate-800">
+                    <div className="p-2 rounded ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle">
+                      <span className="ux4g-text-neutral-secondary block text-[10px]">Supernum. Share</span>
+                      <strong className="ux4g-text-neutral-primary">
                         {feat.supernum_share !== undefined ? `${(feat.supernum_share * 100).toFixed(1)}%` : "-"}
                       </strong>
                     </div>
 
-                    <div className="p-2 rounded bg-slate-50 border border-slate-200">
-                      <span className="text-slate-400 block text-[10px]">DOB Cluster Ratio</span>
-                      <strong className="text-slate-800">
+                    <div className="p-2 rounded ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle">
+                      <span className="ux4g-text-neutral-secondary block text-[10px]">DOB Cluster Ratio</span>
+                      <strong className="ux4g-text-neutral-primary">
                         {feat.dob_cluster_ratio !== undefined ? `${(feat.dob_cluster_ratio * 100).toFixed(1)}%` : "-"}
                       </strong>
                     </div>
 
-                    <div className="p-2 rounded bg-slate-50 border border-slate-200">
-                      <span className="text-slate-400 block text-[10px]">Admit Day Conc.</span>
-                      <strong className="text-slate-800">
+                    <div className="p-2 rounded ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle">
+                      <span className="ux4g-text-neutral-secondary block text-[10px]">Admit Day Conc.</span>
+                      <strong className="ux4g-text-neutral-primary">
                         {feat.admission_day_concentration !== undefined
                           ? `${(feat.admission_day_concentration * 100).toFixed(1)}%`
                           : "-"}
                       </strong>
                     </div>
 
-                    <div className="p-2 rounded bg-slate-50 border border-slate-200">
-                      <span className="text-slate-400 block text-[10px]">Max Sequential APAAR</span>
-                      <strong className="text-slate-800">
+                    <div className="p-2 rounded ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle">
+                      <span className="ux4g-text-neutral-secondary block text-[10px]">Max Sequential APAAR</span>
+                      <strong className="ux4g-text-neutral-primary">
                         {feat.max_apaar_sequence_run !== undefined ? `${feat.max_apaar_sequence_run} IDs` : "-"}
                       </strong>
                     </div>
