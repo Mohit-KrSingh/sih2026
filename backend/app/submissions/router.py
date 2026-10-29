@@ -26,6 +26,7 @@ from app.auth.dependencies import (
 from app.db import get_db, get_redis
 from app.models import User
 from app.submissions import service
+from app.submissions.receipt_pdf import generate_submission_receipt_pdf
 from app.submissions.schemas import (
     InstitutionFlagsListResponse,
     JustificationResponse,
@@ -275,4 +276,32 @@ def get_submission_receipt(
         db=db,
         institution_id=institution_id,
         academic_year=academic_year,
+    )
+
+
+@router.get(
+    "/submissions/receipt/pdf",
+    summary="Download official submission receipt PDF",
+)
+def download_submission_receipt_pdf(
+    institution_id: Annotated[int, Depends(verify_institution_access)],
+    current_user: Annotated[User, require_college_user],
+    db: Annotated[Session, Depends(get_db)],
+    academic_year: Annotated[str, Query(description="Academic year")] = "2026-27",
+) -> Response:
+    """Download the official submission receipt PDF for a finalized academic year."""
+    receipt = service.get_submission_receipt(
+        db=db,
+        institution_id=institution_id,
+        academic_year=academic_year,
+    )
+    pdf_bytes = generate_submission_receipt_pdf(receipt)
+    filename = f"submission_receipt_{receipt.receipt_no}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Access-Control-Expose-Headers": "Content-Disposition",
+        },
     )
