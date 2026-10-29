@@ -147,7 +147,7 @@ export const PortalSidebar: React.FC<PortalSidebarProps> = ({ className = "" }) 
           onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
           aria-expanded={mobileDrawerOpen}
           aria-label="Toggle sidebar navigation menu"
-          className="ux4g-btn ux4g-btn-outline-primary ux4g-btn-s flex items-center gap-1.5"
+          className="ux4g-btn ux4g-btn-outline-primary ux4g-btn-s min-h-[44px] px-3 flex items-center gap-1.5"
         >
           <Icon name={mobileDrawerOpen ? "close" : "menu"} size="xs" aria-hidden="true" />
           <span>{mobileDrawerOpen ? "Close" : "Navigation"}</span>
@@ -173,7 +173,7 @@ export const PortalSidebar: React.FC<PortalSidebarProps> = ({ className = "" }) 
                         to={item.path}
                         onClick={() => setMobileDrawerOpen(false)}
                         aria-current={active ? "page" : undefined}
-                        className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        className={`flex items-center justify-between px-3 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition-colors ${
                           active
                             ? "ux4g-bg-primary-soft ux4g-text-brand-primary font-bold border-l-4 ux4g-border-primary"
                             : "ux4g-text-neutral-secondary hover:ux4g-bg-neutral-soft hover:ux4g-text-neutral-primary"

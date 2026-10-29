@@ -670,7 +670,7 @@ export function BulkUploadPage() {
           {/* Action and Filter Toolbar */}
           <div className="ux4g-bg-neutral-elevated p-4 rounded-lg border ux4g-border-neutral-subtle shadow-xs space-y-3">
             <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2">
                 <Select
                   aria-label="Filter records by flag severity level"
                   value={levelFilter}
@@ -685,7 +685,7 @@ export function BulkUploadPage() {
                     { value: "warning", label: "Warnings Only" },
                     { value: "clean", label: "Clean / Valid Only" },
                   ]}
-                  className="w-40 text-xs"
+                  className="w-full sm:w-40 text-xs"
                 />
 
                 <Select
@@ -699,7 +699,7 @@ export function BulkUploadPage() {
                     { value: "all", label: "All Courses" },
                     ...courses.map((c) => ({ value: c.name, label: c.name })),
                   ]}
-                  className="w-48 text-xs"
+                  className="w-full sm:w-48 text-xs"
                 />
 
                 <Input
@@ -711,7 +711,7 @@ export function BulkUploadPage() {
                     setSearchQuery(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-56 text-xs"
+                  className="w-full sm:w-56 text-xs"
                 />
               </div>
 

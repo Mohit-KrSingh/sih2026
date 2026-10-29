@@ -72,7 +72,7 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
             aria-haspopup="dialog"
             aria-expanded={isPanelOpen}
             title="Open accessibility options (text size, high contrast, reduce motion)"
-            className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded text-xs font-medium ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary hover:ux4g-bg-neutral-subtle transition-colors focus:outline focus:outline-2"
+            className="inline-flex items-center gap-1 min-h-[44px] lg:min-h-0 px-2.5 lg:px-2 py-1.5 lg:py-0.5 rounded text-xs font-medium ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary hover:ux4g-bg-neutral-subtle transition-colors focus:outline focus:outline-2"
             style={{ outlineColor: "var(--edutrace-focus-outline)" }}
           >
             <Icon name="tune" size="xs" aria-hidden="true" />

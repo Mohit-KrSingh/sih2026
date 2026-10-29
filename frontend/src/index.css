@@ -2,7 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
 body {
   margin: 0;
+  padding: 0;
   font-family: var(--ux4g-font-family-base, "Noto Sans", system-ui, sans-serif);
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ==========================================================================
+   R11: Responsive and Mobile-First Rules
+   - Touch targets at least 44px on small screens (<= 768px) per UX4G & WCAG 2.1 AA
+   - Prevent horizontal page scroll at any width (360px, 768px, 1280px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Buttons and clickable controls: minimum touch target of 44px */
+  .ux4g-btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ux4g-icon-btn {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Form controls: inputs, selects, and textareas */
+  .ux4g-input,
+  .ux4g-input-sm,
+  .ux4g-input-md,
+  .ux4g-input-lg,
+  .ux4g-input-xl,
+  .ux4g-select,
+  .ux4g-textarea {
+    min-height: 44px !important;
+    height: auto !important;
+  }
+
+  .ux4g-input input {
+    min-height: 44px !important;
+  }
+
+  /* Navigation drawer links and interactive elements */
+  .ux4g-navbar a,
+  .ux4g-sidebar a,
+  nav a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Checkbox and radio labels */
+  .ux4g-checkbox-label,
+  .ux4g-radio-label {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
 }

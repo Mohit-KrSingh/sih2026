@@ -31,7 +31,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div
-        className={`ux4g-input ux4g-input-${size} ux4g-input-${state} ${
+        style={{ minHeight: "44px" }}
+        className={`ux4g-input ux4g-input-${size} ux4g-input-${state} min-h-[44px] flex items-center ${
           fullWidth ? "w-full" : ""
         } ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`.trim()}
       >
@@ -45,7 +46,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={id}
           disabled={disabled}
           aria-invalid={isError ? "true" : undefined}
-          className="w-full bg-transparent border-none outline-none text-inherit text-sm focus:ring-0"
+          style={{ minHeight: "44px" }}
+          className="w-full min-h-[44px] py-2.5 bg-transparent border-none outline-none text-inherit text-sm focus:ring-0"
           {...props}
         />
         {suffixIcon && (
