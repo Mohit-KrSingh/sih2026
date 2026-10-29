@@ -318,7 +318,8 @@ describe("T43: Separate Pages, Real URLs, Detail Views & Navigation", () => {
 
     const studentsTab = screen.getByRole("link", { name: /Students/i });
     expect(studentsTab).toBeInTheDocument();
-    // Prefix matching highlights the active tab with bg-blue-50 and border-blue-600
-    expect(studentsTab.className).toContain("bg-blue-50");
+    // Prefix matching highlights the active item with UX4G semantic primary token and aria-current
+    expect(studentsTab).toHaveAttribute("aria-current", "page");
+    expect(studentsTab.className).toContain("ux4g-bg-primary-soft");
   });
 });

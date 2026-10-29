@@ -36,6 +36,9 @@ import { VerifierSearchPage } from "./pages/VerifierSearchPage";
 import { VerifierHistoryPage } from "./pages/VerifierHistoryPage";
 import { ApiKeyManagementPage } from "./pages/ApiKeyManagementPage";
 import { PrivacyPage } from "./pages/PrivacyPage";
+import { TermsPage } from "./pages/TermsPage";
+import { AccessibilityPage } from "./pages/AccessibilityPage";
+import { HelpPage } from "./pages/HelpPage";
 import { StudentDetailPage } from "./pages/StudentDetailPage";
 import { FlagDetailPage } from "./pages/FlagDetailPage";
 import { ReviewItemDetailPage } from "./pages/ReviewItemDetailPage";
@@ -90,6 +93,30 @@ export function AppRoutes() {
         element={
           <PublicLayout>
             <PrivacyPage />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/terms"
+        element={
+          <PublicLayout>
+            <TermsPage />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/accessibility"
+        element={
+          <PublicLayout>
+            <AccessibilityPage />
+          </PublicLayout>
+        }
+      />
+      <Route
+        path="/help"
+        element={
+          <PublicLayout>
+            <HelpPage />
           </PublicLayout>
         }
       />
