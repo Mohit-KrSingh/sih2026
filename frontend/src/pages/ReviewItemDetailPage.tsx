@@ -40,7 +40,13 @@ export function ReviewItemDetailPage() {
   const [decisionError, setDecisionError] = useState<string | null>(null);
   const [decisionSuccess, setDecisionSuccess] = useState<string | null>(null);
 
-  useDocumentTitle(detailItem ? `Review Item #${detailItem.id} - ${detailItem.institution_name}` : "Review Item Inspection");
+  useDocumentTitle(
+    detailItem
+      ? `Review Item #${detailItem.id} - ${detailItem.institution_name}`
+      : id
+      ? `Review Item #${id}`
+      : "Review Item Inspection"
+  );
 
   const loadItem = useCallback(async () => {
     if (!id) return;

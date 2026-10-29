@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import { useAccessibility } from "../../context/accessibilityUtils";
 import { RoleBadge } from "../ux4g/Badge";
 import { Icon } from "../ux4g/Icon";
 
@@ -23,6 +24,15 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
   className = "",
 }) => {
   const { user, isAuthenticated, logout } = useAuth();
+  const { togglePanel, isPanelOpen } = useAccessibility();
+
+  const handleToggleA11y = () => {
+    if (onToggleAccessibility) {
+      onToggleAccessibility();
+    } else {
+      togglePanel();
+    }
+  };
 
   return (
     <div
@@ -50,11 +60,14 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
 
         {/* Right: Accessibility, Language, and Authentication */}
         <div className="flex items-center gap-3 ml-auto">
-          {/* Accessibility Tools Trigger (R05 ready) */}
+          {/* Accessibility Tools Trigger */}
           <button
             type="button"
-            onClick={onToggleAccessibility}
+            id="a11y-trigger-btn"
+            onClick={handleToggleA11y}
             aria-label="Accessibility options"
+            aria-haspopup="dialog"
+            aria-expanded={isPanelOpen}
             title="Open accessibility options (text size, high contrast, reduce motion)"
             className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary hover:ux4g-bg-neutral-subtle transition-colors focus:outline focus:outline-2"
             style={{ outlineColor: "var(--edutrace-focus-outline)" }}

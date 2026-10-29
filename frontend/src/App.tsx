@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AccessibilityProvider } from "./context/AccessibilityContext";
+import { AccessibilityPanel } from "./components/ux4g";
 import { AuthProvider } from "./auth/AuthContext";
 import { GuestOnlyRoute, ProtectedRoute } from "./auth/RouteGuards";
 import { PublicLayout } from "./components/layout/PublicLayout";
@@ -496,11 +498,14 @@ export function AppRoutes() {
 
 export function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <AccessibilityProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <AccessibilityPanel />
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </AccessibilityProvider>
   );
 }
 

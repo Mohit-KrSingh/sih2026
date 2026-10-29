@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAccessibility } from "../context/accessibilityUtils";
 import {
   Button,
   IconButton,
@@ -51,6 +52,7 @@ import {
 
 function DevComponentsContent() {
   const { addToast } = useToast();
+  const a11y = useAccessibility();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [otpValue, setOtpValue] = useState("1234");
   const [currentPage, setCurrentPage] = useState(2);
@@ -636,6 +638,77 @@ function DevComponentsContent() {
                 <Skeleton height={20} width="60%" />
                 <Skeleton height={14} width="100%" />
                 <Skeleton height={14} width="85%" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 5: ACCESSIBILITY TOOLKIT */}
+        <section aria-labelledby="section-a11y" className="space-y-4">
+          <div className="border-b ux4g-border-neutral-subtle pb-2">
+            <h2 id="section-a11y" className="text-lg font-bold ux4g-text-neutral-primary">
+              5. Accessibility Toolkit (R05)
+            </h2>
+            <p className="text-xs ux4g-text-neutral-secondary">
+              Interactive panel controls, text scaling (100% / 112% / 125%), theme modes, high contrast, underline links, and reduced motion.
+            </p>
+          </div>
+
+          <div className="ux4g-bg-neutral-elevated p-6 rounded-lg border ux4g-border-neutral-subtle space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="font-semibold text-sm ux4g-text-neutral-primary">
+                  Interactive Drawer Panel Trigger
+                </h3>
+                <p className="text-xs ux4g-text-neutral-secondary">
+                  Opens the accessible slide-out toolkit dialog.
+                </p>
+              </div>
+              <Button
+                variant="primary"
+                size="m"
+                leftIcon={<Icon name="tune" size="sm" aria-hidden="true" />}
+                onClick={a11y.togglePanel}
+              >
+                Open Accessibility Panel
+              </Button>
+            </div>
+
+            <div className="border-t ux4g-border-neutral-subtle pt-4">
+              <h4 className="text-xs font-semibold ux4g-text-neutral-tertiary uppercase mb-3">
+                Current Active Accessibility Settings
+              </h4>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div className="p-3 rounded border ux4g-border-neutral-subtle ux4g-bg-neutral-soft">
+                  <span className="block text-[11px] ux4g-text-neutral-secondary">Text Size</span>
+                  <span className="text-sm font-semibold font-mono uppercase ux4g-text-brand-primary">
+                    {a11y.textSize}
+                  </span>
+                </div>
+                <div className="p-3 rounded border ux4g-border-neutral-subtle ux4g-bg-neutral-soft">
+                  <span className="block text-[11px] ux4g-text-neutral-secondary">Color Theme</span>
+                  <span className="text-sm font-semibold font-mono uppercase ux4g-text-brand-primary">
+                    {a11y.theme}
+                  </span>
+                </div>
+                <div className="p-3 rounded border ux4g-border-neutral-subtle ux4g-bg-neutral-soft">
+                  <span className="block text-[11px] ux4g-text-neutral-secondary">High Contrast</span>
+                  <span className="text-sm font-semibold font-mono uppercase ux4g-text-brand-primary">
+                    {a11y.highContrast ? "Enabled" : "Disabled"}
+                  </span>
+                </div>
+                <div className="p-3 rounded border ux4g-border-neutral-subtle ux4g-bg-neutral-soft">
+                  <span className="block text-[11px] ux4g-text-neutral-secondary">Underline Links</span>
+                  <span className="text-sm font-semibold font-mono uppercase ux4g-text-brand-primary">
+                    {a11y.underlineLinks ? "Enabled" : "Disabled"}
+                  </span>
+                </div>
+                <div className="p-3 rounded border ux4g-border-neutral-subtle ux4g-bg-neutral-soft">
+                  <span className="block text-[11px] ux4g-text-neutral-secondary">Reduced Motion</span>
+                  <span className="text-sm font-semibold font-mono uppercase ux4g-text-brand-primary">
+                    {a11y.reduceMotion ? "Enabled" : "Disabled"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
