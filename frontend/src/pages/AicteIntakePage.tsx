@@ -231,7 +231,7 @@ export function AicteIntakePage() {
         <div className="lg:col-span-1 bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Approved Institutions
+              Approved institutions
             </h2>
             <span className="text-xs font-mono text-slate-400">
               {filteredInstitutions.length}
@@ -258,6 +258,7 @@ export function AicteIntakePage() {
                 <button
                   key={inst.id}
                   type="button"
+                  aria-label={`Select institution ${inst.name}`}
                   onClick={() => setSelectedInstitutionId(inst.id)}
                   className={`w-full text-left p-2.5 rounded-lg text-xs transition-all flex items-center justify-between ${
                     selectedInstitutionId === inst.id
@@ -345,7 +346,7 @@ export function AicteIntakePage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-slate-900">
-                    Approved Academic Courses & Intake Quotas
+                    Approved academic courses and intake quotas
                   </h3>
                   <Button
                     size="sm"
@@ -470,12 +471,13 @@ export function AicteIntakePage() {
                   {selectedInstitution.aicte_id}
                 </span>
                 <h3 className="text-lg font-bold text-slate-900 mt-0.5">
-                  Update Approved Intake: {editingCourse.name}
+                  Update approved intake: {editingCourse.name}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingCourse(null)}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-600 text-sm p-1"
               >
                 ✕
@@ -580,12 +582,13 @@ export function AicteIntakePage() {
               <div>
                 <span className="text-xs font-mono font-semibold text-blue-600">INTAKE HISTORY</span>
                 <h3 className="text-base font-bold text-slate-900 mt-0.5">
-                  Audit Revisions: {historyCourse.name}
+                  Audit revisions: {historyCourse.name}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setHistoryCourse(null)}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-600 text-sm p-1"
               >
                 ✕
@@ -658,13 +661,14 @@ export function AicteIntakePage() {
             <div className="flex items-start justify-between border-b border-slate-200 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
-                  Update Institutional Approval Status
+                  Update institutional approval status
                 </h3>
                 <p className="text-xs text-slate-500">{selectedInstitution.name}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsStatusModalOpen(false)}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-600 text-sm p-1"
               >
                 ✕

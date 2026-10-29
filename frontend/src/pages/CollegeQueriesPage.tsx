@@ -158,6 +158,7 @@ export function CollegeQueriesPage() {
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
         <div className="flex flex-wrap gap-2">
           <button
+            aria-label="Filter by all queries"
             onClick={() => setStateFilter("all")}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               stateFilter === "all"
@@ -168,6 +169,7 @@ export function CollegeQueriesPage() {
             All Queries ({queries.length})
           </button>
           <button
+            aria-label="Filter by pending response"
             onClick={() => setStateFilter("pending")}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
               stateFilter === "pending"
@@ -189,6 +191,7 @@ export function CollegeQueriesPage() {
             )}
           </button>
           <button
+            aria-label="Filter by answered queries under review"
             onClick={() => setStateFilter("answered")}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               stateFilter === "answered"

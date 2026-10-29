@@ -109,19 +109,21 @@ export function PrivacyPage() {
             <Link to="/student">
               <Button
                 variant="primary"
+                aria-label="Open student portal"
                 className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white shadow-sm"
               >
                 <UserCheck className="w-4 h-4 mr-2" />
-                Student Portal
+                Open student portal
               </Button>
             </Link>
             <Link to="/verify">
               <Button
                 variant="outline"
+                aria-label="Verify record"
                 className="w-full sm:w-auto text-white border-slate-600 hover:bg-slate-800"
               >
                 <FileCheck2 className="w-4 h-4 mr-2" />
-                Verify Record
+                Verify record
               </Button>
             </Link>
           </div>
@@ -278,7 +280,7 @@ export function PrivacyPage() {
         <div className="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-bold text-slate-900">
-              Data Minimisation Specification (SPEC.md Section 8)
+              Data minimisation specification (SPEC.md section 8)
             </h3>
             <p className="text-xs text-slate-500">
               Comparison of strictly collected fields versus prohibited personal data categories
@@ -287,6 +289,7 @@ export function PrivacyPage() {
           <div className="inline-flex p-1 bg-slate-100 rounded-lg border border-slate-200 shrink-0">
             <button
               type="button"
+              aria-label="Show collected fields"
               onClick={() => setActiveTab("collected")}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition ${
                 activeTab === "collected"
@@ -294,10 +297,11 @@ export function PrivacyPage() {
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              Collected Fields ({policy.data_minimisation.collected_fields.length})
+              Collected fields ({policy.data_minimisation.collected_fields.length})
             </button>
             <button
               type="button"
+              aria-label="Show prohibited fields"
               onClick={() => setActiveTab("prohibited")}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition ${
                 activeTab === "prohibited"
@@ -305,7 +309,7 @@ export function PrivacyPage() {
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              Prohibited Fields ({policy.data_minimisation.prohibited_fields.length})
+              Prohibited fields ({policy.data_minimisation.prohibited_fields.length})
             </button>
           </div>
         </div>
@@ -381,7 +385,7 @@ export function PrivacyPage() {
         <div className="flex items-center gap-3 text-blue-900">
           <EyeOff className="w-5 h-5 text-blue-700 shrink-0" />
           <h4 className="font-bold text-sm">
-            Strict Minimal Disclosure on Approved Employer Verifications
+            Strict minimal disclosure on approved employer verifications
           </h4>
         </div>
         <p className="text-xs text-slate-700 leading-relaxed">
@@ -475,7 +479,7 @@ export function PrivacyPage() {
       <div className="flex justify-center pt-2">
         <Link to="/">
           <Button variant="outline" className="px-6 text-slate-700">
-            Return to Home Page
+            Return to home page
           </Button>
         </Link>
       </div>

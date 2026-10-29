@@ -566,7 +566,7 @@ export function AicteOverviewPage() {
       <div className="ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl p-6 shadow-sm space-y-4">
         <h3 className="font-bold ux4g-text-neutral-primary text-sm border-b ux4g-border-neutral-subtle pb-3 flex items-center gap-2">
           <Icon name="grid_view" size="xs" color="primary" />
-          AICTE Central Oversight Modules
+          AICTE central oversight modules
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">

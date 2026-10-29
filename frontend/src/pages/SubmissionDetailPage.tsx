@@ -111,7 +111,7 @@ export function SubmissionDetailPage() {
         >
           <ArrowLeft className="w-3.5 h-3.5" /> {backText}
         </Link>
-        <ErrorState title="Submission Not Found" message={error} />
+        <ErrorState title="Submission not found" message={error} />
       </div>
     );
   }
@@ -138,7 +138,7 @@ export function SubmissionDetailPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Submission Receipt</h1>
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Submission receipt</h1>
               <Badge variant="success">LOCKED & SUBMITTED</Badge>
             </div>
             <p className="text-xs text-slate-500 mt-1">
@@ -153,7 +153,7 @@ export function SubmissionDetailPage() {
               onClick={handleDownloadReport}
               className="flex items-center gap-1.5"
             >
-              <Download className="w-3.5 h-3.5" /> Download Summary PDF
+              <Download className="w-3.5 h-3.5" /> Download summary PDF
             </Button>
           </div>
         </div>
@@ -186,6 +186,7 @@ export function SubmissionDetailPage() {
               <span className="font-mono font-bold text-white tracking-wider">{receiptNo}</span>
               <button
                 onClick={copyReceiptToken}
+                aria-label="Copy receipt token"
                 title="Copy Receipt Token"
                 className="p-1 hover:bg-blue-800/60 rounded text-blue-300 hover:text-white"
               >

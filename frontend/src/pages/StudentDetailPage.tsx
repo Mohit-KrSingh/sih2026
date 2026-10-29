@@ -93,7 +93,7 @@ export function StudentDetailPage() {
     return (
       <div className="max-w-4xl mx-auto py-8 px-4">
         <ErrorState
-          title="Student Record Not Found"
+          title="Student record not found"
           message={error || "The requested student could not be located."}
           onRetry={() => navigate("/college/students")}
         />
@@ -142,7 +142,7 @@ export function StudentDetailPage() {
           <div className="flex items-center gap-2">
             <Link to={`/college/students/${student.id}/edit`}>
               <Button variant="primary" size="sm" className="flex items-center gap-1.5">
-                <Edit className="w-4 h-4" /> Edit Record
+                <Edit className="w-4 h-4" /> Edit record
               </Button>
             </Link>
           </div>
@@ -165,6 +165,7 @@ export function StudentDetailPage() {
                 <span className="font-mono font-bold text-slate-900 text-sm">{student.apaar_id}</span>
                 <button
                   onClick={copyApaar}
+                  aria-label="Copy APAAR ID"
                   title="Copy APAAR ID"
                   className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-700"
                 >
@@ -322,7 +323,7 @@ export function StudentDetailPage() {
                 <div className="flex items-center gap-2">
                   <Link to={`/college/validation/${flag.id}`}>
                     <Button variant="outline" size="sm">
-                      View Flag Details
+                      View flag details
                     </Button>
                   </Link>
                 </div>

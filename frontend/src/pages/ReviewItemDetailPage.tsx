@@ -111,7 +111,7 @@ export function ReviewItemDetailPage() {
     return (
       <div className="max-w-4xl mx-auto py-8 px-4">
         <ErrorState
-          title="Review Item Not Found"
+          title="Review item not found"
           message={error || "The review item could not be found."}
           onRetry={() => navigate("/aicte/review")}
         />
@@ -161,7 +161,7 @@ export function ReviewItemDetailPage() {
           <div className="flex items-center gap-2">
             <Link to={`/aicte/submissions/${detailItem.submission_id}`}>
               <Button variant="outline" size="sm">
-                View Formal Submission
+                View formal submission
               </Button>
             </Link>
           </div>
@@ -240,7 +240,7 @@ export function ReviewItemDetailPage() {
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
         <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
           <FileCheck2 className="w-5 h-5 text-blue-600" />
-          <span>Underlying Validation Issues & Submitted Justifications</span>
+          <span>Underlying validation issues and submitted justifications</span>
         </h2>
 
         {!detailItem.flags || detailItem.flags.length === 0 ? (
@@ -282,10 +282,11 @@ export function ReviewItemDetailPage() {
                         {j.document_filename && (
                           <button
                             onClick={() => handleDownloadEvidence(j.id)}
+                            aria-label={`Download uploaded proof ${j.document_filename}`}
                             className="inline-flex items-center gap-1.5 text-blue-700 hover:text-blue-900 font-medium text-xs underline"
                           >
                             <Download className="w-3.5 h-3.5" />
-                            Download Uploaded Proof ({j.document_filename})
+                            Download uploaded proof ({j.document_filename})
                           </button>
                         )}
                       </div>
@@ -302,7 +303,7 @@ export function ReviewItemDetailPage() {
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
         <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
           <MessageSquare className="w-5 h-5 text-blue-600" />
-          <span>Regulatory Action & Determination</span>
+          <span>Regulatory action and determination</span>
         </h2>
 
         {decisionError && (
@@ -406,12 +407,12 @@ export function ReviewItemDetailPage() {
 
           <div className="flex justify-end gap-3 pt-2">
             <Link to="/aicte/review">
-              <Button type="button" variant="outline" size="sm">
+              <Button type="button" variant="outline" size="sm" aria-label="Cancel and return to review queue">
                 Cancel
               </Button>
             </Link>
             <Button type="submit" variant="primary" size="sm" disabled={submitting}>
-              {submitting ? "Applying..." : "Submit Determination"}
+              {submitting ? "Applying..." : "Submit determination"}
             </Button>
           </div>
         </form>

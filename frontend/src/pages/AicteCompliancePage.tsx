@@ -141,6 +141,7 @@ export function AicteCompliancePage() {
               size="sm"
               variant="outline"
               disabled={downloading !== null}
+              aria-label="Export CSV"
               onClick={() => handleExport("csv")}
               leftIcon={<Icon name="download" size="xs" color="inherit" />}
             >
@@ -150,6 +151,7 @@ export function AicteCompliancePage() {
               size="sm"
               variant="outline"
               disabled={downloading !== null}
+              aria-label="Export Excel"
               onClick={() => handleExport("xlsx")}
               leftIcon={<Icon name="download" size="xs" color="inherit" />}
             >
@@ -159,6 +161,7 @@ export function AicteCompliancePage() {
               size="sm"
               variant="outline"
               disabled={downloading !== null}
+              aria-label="Export PDF"
               onClick={() => handleExport("pdf")}
               leftIcon={<Icon name="download" size="xs" color="inherit" />}
             >
@@ -185,7 +188,7 @@ export function AicteCompliancePage() {
           </span>
           <div>
             <h3 className="font-bold text-sm" style={{ color: "var(--ux4g-color-red-950)" }}>
-              Statutory Quota Over-Enrolment Mandate
+              Statutory quota over-enrolment mandate
             </h3>
             <p className="text-xs mt-0.5 max-w-3xl" style={{ color: "var(--ux4g-color-red-900)" }}>
               Institutions on this list have enrolled students above approved intake. Regular admissions exceeding capacity violate AICTE Approval Process Handbooks. AICTE officers may issue statutory compliance directives or initiate intake de-allocation.

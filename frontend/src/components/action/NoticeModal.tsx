@@ -74,6 +74,7 @@ export function NoticeModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close dialog"
             className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition"
           >
             <X className="w-5 h-5" />
@@ -83,7 +84,7 @@ export function NoticeModal({
         {success ? (
           <div className="p-8 text-center space-y-3">
             <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
-            <h4 className="font-bold text-slate-900 text-lg">Notice Dispatched</h4>
+            <h4 className="font-bold text-slate-900 text-lg">Notice dispatched</h4>
             <p className="text-xs text-slate-500 max-w-xs mx-auto">
               The compliance notice has been recorded in the central audit log and delivered to the institution's dashboard.
             </p>
@@ -118,6 +119,7 @@ export function NoticeModal({
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <button
                   type="button"
+                  aria-label="Select informational urgency"
                   onClick={() => setUrgency("normal")}
                   className={`py-2 px-3 rounded-lg border text-center font-medium transition ${
                     urgency === "normal"
@@ -129,6 +131,7 @@ export function NoticeModal({
                 </button>
                 <button
                   type="button"
+                  aria-label="Select warning urgency"
                   onClick={() => setUrgency("warning")}
                   className={`py-2 px-3 rounded-lg border text-center font-medium transition ${
                     urgency === "warning"
@@ -140,6 +143,7 @@ export function NoticeModal({
                 </button>
                 <button
                   type="button"
+                  aria-label="Select statutory urgent level"
                   onClick={() => setUrgency("urgent")}
                   className={`py-2 px-3 rounded-lg border text-center font-medium transition ${
                     urgency === "urgent"

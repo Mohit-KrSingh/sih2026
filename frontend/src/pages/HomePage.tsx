@@ -54,7 +54,7 @@ export function HomePage() {
       <section aria-labelledby="entry-portals-heading" className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
           <h2 id="entry-portals-heading" className="text-xl font-bold ux4g-text-neutral-primary">
-            System Entry Portals
+            System entry portals
           </h2>
           <span className="text-xs ux4g-text-neutral-secondary font-medium">Select your portal to continue</span>
         </div>
@@ -196,7 +196,7 @@ export function HomePage() {
             <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ux4g-bg-primary-soft ux4g-text-brand-primary">
               1
             </div>
-            <h3 className="text-sm font-bold ux4g-text-neutral-primary">Institution Activation</h3>
+            <h3 className="text-sm font-bold ux4g-text-neutral-primary">Institution activation</h3>
             <p className="text-xs ux4g-text-neutral-secondary leading-relaxed">
               Colleges claim their profile using on-file AICTE master records, OTP verification to official contacts, and authorization letters.
             </p>
@@ -206,7 +206,7 @@ export function HomePage() {
             <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ux4g-bg-primary-soft ux4g-text-brand-primary">
               2
             </div>
-            <h3 className="text-sm font-bold ux4g-text-neutral-primary">Student Data Upload</h3>
+            <h3 className="text-sm font-bold ux4g-text-neutral-primary">Student data upload</h3>
             <p className="text-xs ux4g-text-neutral-secondary leading-relaxed">
               Institutions declare course seat quotas and upload student enrollment records keyed by the national 12-digit APAAR ID via CSV or API.
             </p>
@@ -216,7 +216,7 @@ export function HomePage() {
             <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ux4g-bg-primary-soft ux4g-text-brand-primary">
               3
             </div>
-            <h3 className="text-sm font-bold ux4g-text-neutral-primary">Automated Validation</h3>
+            <h3 className="text-sm font-bold ux4g-text-neutral-primary">Automated validation</h3>
             <p className="text-xs ux4g-text-neutral-secondary leading-relaxed">
               Deterministic validation engine detects formatting errors, over-admissions against approved intake, and cross-college duplicate enrollments.
             </p>
@@ -226,7 +226,7 @@ export function HomePage() {
             <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ux4g-bg-primary-soft ux4g-text-brand-primary">
               4
             </div>
-            <h3 className="text-sm font-bold ux4g-text-neutral-primary">Central Repository &amp; Verification</h3>
+            <h3 className="text-sm font-bold ux4g-text-neutral-primary">Central repository and verification</h3>
             <p className="text-xs ux4g-text-neutral-secondary leading-relaxed">
               Approved records receive tamper-proof Ed25519 digital signatures, QR codes, and are verifiable by employers with DPDP student consent.
             </p>

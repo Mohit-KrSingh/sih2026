@@ -117,7 +117,7 @@ export function AicteAnomaliesPage() {
             disabled={scanning}
             leftIcon={<Icon name="memory" size="xs" color="inherit" />}
           >
-            {scanning ? "Evaluating Model..." : "Run ML Model Scan"}
+            {scanning ? "Evaluating model..." : "Run ML model scan"}
           </Button>
 
           <Button
@@ -289,7 +289,7 @@ export function AicteAnomaliesPage() {
                             })
                           }
                         >
-                          Clarification notice
+                          Send clarification notice
                         </Button>
                       )}
                     </div>

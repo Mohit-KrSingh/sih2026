@@ -171,7 +171,7 @@ export function VerifierSearchPage() {
           </p>
         </div>
         <Link to="/verifier/history">
-          <Button variant="outline" size="sm" leftIcon={<History className="w-4 h-4" />}>
+          <Button variant="outline" size="sm" aria-label="View consent audit history" leftIcon={<History className="w-4 h-4" />}>
             Consent history
           </Button>
         </Link>
@@ -210,7 +210,7 @@ export function VerifierSearchPage() {
       {/* Consent Request Form */}
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5">
         <div>
-          <h2 className="text-base font-bold text-slate-900">Request Student Verification Consent</h2>
+          <h2 className="text-base font-bold text-slate-900">Request student verification consent</h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Under Section 14 of the AICTE framework, third-party verification requires student authorization before minimal record disclosure.
           </p>
@@ -248,6 +248,7 @@ export function VerifierSearchPage() {
               <span className="font-semibold text-slate-700">Quick Test APAAR:</span>
               <button
                 type="button"
+                aria-label="Use demo student 111122223333"
                 onClick={() => setApaarId("111122223333")}
                 className="text-blue-700 underline font-mono hover:text-blue-900"
               >

@@ -328,7 +328,7 @@ export function AicteRulesPage() {
               <div>
                 <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                   <Sliders className="w-4 h-4 text-indigo-700" />
-                  Configure Policy: {editingRule.rule_code}
+                  Configure policy: {editingRule.rule_code}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
                   Scope: <span className="font-mono font-semibold uppercase">{editingRule.scope}</span>
@@ -337,6 +337,7 @@ export function AicteRulesPage() {
               <button
                 type="button"
                 onClick={() => setEditingRule(null)}
+                aria-label="Close dialog"
                 className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition"
               >
                 <X className="w-5 h-5" />
@@ -382,6 +383,7 @@ export function AicteRulesPage() {
                     <button
                       key={lvl}
                       type="button"
+                      aria-label={`Set severity to ${lvl}`}
                       onClick={() => setEditLevel(lvl)}
                       className={`py-2 px-2 rounded-lg border text-center font-bold capitalize transition ${
                         editLevel === lvl

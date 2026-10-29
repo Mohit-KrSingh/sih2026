@@ -299,11 +299,11 @@ export const StudentFormPage: React.FC = () => {
     return (
       <div className="max-w-4xl mx-auto py-8 px-4">
         <EmptyState
-          title="Failed to Load Student Information"
+          title="Failed to load student information"
           description={errorMessage}
           action={
             <Button variant="primary" onClick={() => window.location.reload()}>
-              Retry Loading
+              Retry loading
             </Button>
           }
         />
@@ -331,7 +331,7 @@ export const StudentFormPage: React.FC = () => {
             </Link>
           </div>
           <h1 className="text-2xl font-bold ux4g-text-neutral-primary tracking-tight mt-1">
-            {isEditMode ? `Edit Student Record #${studentId}` : "Single Student Entry"}
+            {isEditMode ? `Edit student record #${studentId}` : "Single Student Entry"}
           </h1>
           <p className="text-xs ux4g-text-neutral-secondary">
             {isEditMode
@@ -435,7 +435,7 @@ export const StudentFormPage: React.FC = () => {
           {saveResult.flags.length > 0 && (
             <div className="mt-3 space-y-2 border-t ux4g-border-neutral-subtle pt-3">
               <span className="text-xs font-semibold uppercase tracking-wider ux4g-text-neutral-secondary block">
-                Rule Violations & Advisory Notices ({saveResult.flags.length})
+                Rule violations and advisory notices ({saveResult.flags.length})
               </span>
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {saveResult.flags.map((flag: StudentValidationFlag, index: number) => (
@@ -478,7 +478,7 @@ export const StudentFormPage: React.FC = () => {
               size="sm"
               onClick={() => navigate("/college/students")}
             >
-              View in Directory
+              View in directory
             </Button>
           </div>
         </Card>
@@ -1067,6 +1067,7 @@ export const StudentFormPage: React.FC = () => {
           <Button
             type="button"
             variant="outline"
+            aria-label="Cancel and return to student directory"
             onClick={() => navigate("/college/students")}
             disabled={submitting}
           >

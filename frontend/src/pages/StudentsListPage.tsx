@@ -188,14 +188,14 @@ export const StudentsListPage: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <Link to="/college/upload">
-            <Button variant="outline" size="sm">
-              Bulk CSV Upload
+            <Button variant="outline" size="sm" aria-label="Bulk CSV upload">
+              Bulk CSV upload
             </Button>
           </Link>
           {!isViewer && (
             <Link to="/college/students/new">
               <Button variant="primary" size="sm">
-                + Add Student
+                + Add student
               </Button>
             </Link>
           )}
@@ -208,6 +208,7 @@ export const StudentsListPage: React.FC = () => {
           <span>{actionSuccessMessage}</span>
           <button
             onClick={() => setActionSuccessMessage(null)}
+            aria-label="Dismiss notification"
             className="text-emerald-700 font-bold hover:text-emerald-900"
           >
             ✕
@@ -221,6 +222,7 @@ export const StudentsListPage: React.FC = () => {
           <span>{errorMessage}</span>
           <button
             onClick={() => setErrorMessage(null)}
+            aria-label="Dismiss error"
             className="text-red-700 font-bold hover:text-red-900"
           >
             ✕
@@ -351,7 +353,7 @@ export const StudentsListPage: React.FC = () => {
             onClick={handleClearFilters}
             className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
           >
-            Reset Filters
+            Reset filters
           </button>
         </div>
       </div>
@@ -365,13 +367,13 @@ export const StudentsListPage: React.FC = () => {
       ) : !data || data.items.length === 0 ? (
         <div className="bg-white rounded-lg border border-slate-200 p-8">
           <EmptyState
-            title="No Student Records Found"
+            title="No student records found"
             description={
               debouncedSearch || statusFilter !== "all" || levelFilter !== "all" || courseId !== "all"
                 ? "No student records match the active search and filter criteria. Try adjusting your filters."
                 : "No students have been added for this academic year yet. Use 'Add Student' or 'Bulk CSV Upload' to get started."
             }
-            actionLabel={!isViewer ? "+ Add Student" : undefined}
+            actionLabel={!isViewer ? "+ Add student" : undefined}
             onAction={!isViewer ? () => navigate("/college/students/new") : undefined}
           />
         </div>
@@ -471,6 +473,7 @@ export const StudentsListPage: React.FC = () => {
                           size="sm"
                           className="px-2 py-1 text-xs text-indigo-700 border-indigo-200 hover:bg-indigo-50"
                           title="Download sample degree certificate PDF with APAAR ID and QR code"
+                          aria-label={`Download certificate for ${student.name}`}
                           isLoading={downloadingCertId === student.id}
                           disabled={downloadingCertId === student.id}
                           onClick={() => handleDownloadCertificate(student)}
@@ -518,6 +521,7 @@ export const StudentsListPage: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
+                  aria-label="Go to previous page"
                   disabled={data.page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
@@ -526,6 +530,7 @@ export const StudentsListPage: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
+                  aria-label="Go to next page"
                   disabled={data.page >= data.total_pages}
                   onClick={() => setPage((p) => p + 1)}
                 >
@@ -554,6 +559,7 @@ export const StudentsListPage: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
+                aria-label="Cancel deletion and close modal"
                 onClick={() => setStudentToDelete(null)}
                 disabled={isDeleting}
               >

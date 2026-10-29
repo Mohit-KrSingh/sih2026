@@ -513,7 +513,7 @@ export function CollegeDashboardPage() {
               disabled={downloadingReport !== null}
               leftIcon={<Download className="w-3.5 h-3.5 text-blue-600" />}
             >
-              {downloadingReport === "sub_pdf" ? "Downloading..." : "Submission PDF"}
+              {downloadingReport === "sub_pdf" ? "Downloading..." : "Download submission PDF"}
             </Button>
             <Button
               size="sm"
@@ -522,7 +522,7 @@ export function CollegeDashboardPage() {
               disabled={downloadingReport !== null}
               leftIcon={<Download className="w-3.5 h-3.5 text-indigo-600" />}
             >
-              {downloadingReport === "accreditation" ? "Downloading..." : "Accreditation PDF"}
+              {downloadingReport === "accreditation" ? "Downloading..." : "Download accreditation PDF"}
             </Button>
             {isLocked ? (
               <Link to="/college/submit">
@@ -565,7 +565,7 @@ export function CollegeDashboardPage() {
           <div className="flex items-center gap-2">
             <Link to="/college/seats">
               <Button size="sm" variant="outline" leftIcon={<FileText className="w-3.5 h-3.5" />}>
-                Seat Breakdown
+                View seat breakdown
               </Button>
             </Link>
             {!isLocked && (
@@ -694,7 +694,7 @@ export function CollegeDashboardPage() {
           <div className="flex items-center gap-2">
             <Link to="/college/validation">
               <Button size="sm" variant="outline" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                Validation Hub
+                Open validation hub
               </Button>
             </Link>
           </div>
@@ -704,6 +704,7 @@ export function CollegeDashboardPage() {
         <div className="px-6 py-3 bg-slate-50/70 border-b border-slate-100 flex flex-wrap items-center gap-2">
           <button
             type="button"
+            aria-label={`Filter by all flags (${flagsList.length})`}
             onClick={() => setSelectedFlagLevel("all")}
             className={`px-3 py-1 rounded-lg text-xs font-semibold transition ${
               selectedFlagLevel === "all"
@@ -715,6 +716,7 @@ export function CollegeDashboardPage() {
           </button>
           <button
             type="button"
+            aria-label={`Filter by errors (${errorCount})`}
             onClick={() => setSelectedFlagLevel("error")}
             className={`px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
               selectedFlagLevel === "error"
@@ -727,6 +729,7 @@ export function CollegeDashboardPage() {
           </button>
           <button
             type="button"
+            aria-label={`Filter by exceptions (${exceptionCount})`}
             onClick={() => setSelectedFlagLevel("exception")}
             className={`px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
               selectedFlagLevel === "exception"
@@ -739,6 +742,7 @@ export function CollegeDashboardPage() {
           </button>
           <button
             type="button"
+            aria-label={`Filter by warnings (${warningCount})`}
             onClick={() => setSelectedFlagLevel("warning")}
             className={`px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
               selectedFlagLevel === "warning"
@@ -751,6 +755,7 @@ export function CollegeDashboardPage() {
           </button>
           <button
             type="button"
+            aria-label={`Filter by info (${infoCount})`}
             onClick={() => setSelectedFlagLevel("info")}
             className={`px-3 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
               selectedFlagLevel === "info"
@@ -860,7 +865,7 @@ export function CollegeDashboardPage() {
           </div>
           <Link to="/college/queries">
             <Button size="sm" variant="outline" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-              All Inquiries Hub
+              View all inquiries
             </Button>
           </Link>
         </div>
@@ -947,6 +952,7 @@ export function CollegeDashboardPage() {
             <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs">
               <button
                 type="button"
+                aria-label="Filter all notifications"
                 onClick={() => setSelectedNotifFilter("all")}
                 className={`px-2.5 py-1 rounded font-medium transition ${
                   selectedNotifFilter === "all" ? "bg-white text-slate-800 shadow-xs" : "text-slate-500"
@@ -956,6 +962,7 @@ export function CollegeDashboardPage() {
               </button>
               <button
                 type="button"
+                aria-label={`Filter unread notifications (${unreadNotificationsCount})`}
                 onClick={() => setSelectedNotifFilter("unread")}
                 className={`px-2.5 py-1 rounded font-medium transition ${
                   selectedNotifFilter === "unread" ? "bg-white text-slate-800 shadow-xs" : "text-slate-500"
@@ -1066,7 +1073,7 @@ export function CollegeDashboardPage() {
         <div>
           <h3 className="font-bold text-slate-900 flex items-center gap-2 text-sm uppercase tracking-wider text-slate-700">
             <Layers className="w-4 h-4 text-blue-600" />
-            Statutory Data Submission Pipeline (Section 13)
+            Statutory data submission pipeline (SPEC section 13)
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
             Follow the sequential stages to record, validate, justify, and formally sign off on annual enrolment records.

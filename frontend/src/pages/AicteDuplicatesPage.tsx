@@ -131,6 +131,7 @@ export function AicteDuplicatesPage() {
               size="sm"
               variant="outline"
               disabled={downloading !== null}
+              aria-label="Export CSV"
               onClick={() => handleExport("csv")}
               leftIcon={<Download className="w-3 h-3" />}
             >
@@ -140,6 +141,7 @@ export function AicteDuplicatesPage() {
               size="sm"
               variant="outline"
               disabled={downloading !== null}
+              aria-label="Export Excel"
               onClick={() => handleExport("xlsx")}
               leftIcon={<Download className="w-3 h-3 text-emerald-600" />}
             >
@@ -149,6 +151,7 @@ export function AicteDuplicatesPage() {
               size="sm"
               variant="outline"
               disabled={downloading !== null}
+              aria-label="Export PDF"
               onClick={() => handleExport("pdf")}
               leftIcon={<Download className="w-3 h-3 text-blue-600" />}
             >
@@ -166,7 +169,7 @@ export function AicteDuplicatesPage() {
           </span>
           <div>
             <h3 className="font-bold text-amber-950 text-sm">
-              One Student, Multiple Institutions Detection
+              One student, multiple institutions detection
             </h3>
             <p className="text-xs text-amber-800 mt-0.5 max-w-3xl">
               Cross-college duplicate rules index students by APAAR ID and academic year. When a student is active at multiple colleges, both institutions are notified. Marking a student as withdrawn or transferred at one college automatically resolves flags at both institutions.
@@ -311,7 +314,7 @@ export function AicteDuplicatesPage() {
                           })
                         }
                       >
-                        Notice
+                        Send notice
                       </Button>
                     </div>
                   ))}

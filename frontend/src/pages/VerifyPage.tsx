@@ -112,12 +112,12 @@ export function VerifyPage() {
           </div>
           <div className="flex items-center gap-2">
             <Link to="/verifier/search">
-              <Button size="s" variant="primary" className="text-xs">
+              <Button size="s" variant="primary" aria-label="Open verifier search and consent" className="text-xs">
                 Verifier Search &amp; Consent
               </Button>
             </Link>
             <Link to="/verifier/history">
-              <Button size="s" variant="outline" className="text-xs">
+              <Button size="s" variant="outline" aria-label="View consent audit history" className="text-xs">
                 Consent History
               </Button>
             </Link>
@@ -163,6 +163,7 @@ export function VerifyPage() {
           <span className="font-semibold ux4g-text-neutral-primary">Quick Demo Verification:</span>
           <button
             type="button"
+            aria-label="Verify sample VID-2026-PIAET-0042"
             onClick={() => {
               setVerificationId("VID-2026-PIAET-0042");
               executeVerification("VID-2026-PIAET-0042");
@@ -174,6 +175,7 @@ export function VerifyPage() {
           <span className="ux4g-text-neutral-tertiary">|</span>
           <button
             type="button"
+            aria-label="Verify sample VR-2025-111122223333"
             onClick={() => {
               setVerificationId("VR-2025-111122223333");
               executeVerification("VR-2025-111122223333");
@@ -185,6 +187,7 @@ export function VerifyPage() {
           <span className="ux4g-text-neutral-tertiary">|</span>
           <button
             type="button"
+            aria-label="Verify sample APAAR 111122223333"
             onClick={() => {
               setVerificationId("111122223333");
               executeVerification("111122223333");
@@ -196,7 +199,7 @@ export function VerifyPage() {
         </div>
 
         {searchError && (
-          <Alert variant="error" title="Verification Error">
+          <Alert variant="error" title="Verification error">
             {searchError}
           </Alert>
         )}
@@ -214,7 +217,7 @@ export function VerifyPage() {
                 DPDP Consent Protocol Required
               </span>
               <h3 className="text-base font-bold ux4g-text-neutral-primary">
-                12-Digit Student APAAR ID Entered ({apaarNotice})
+                12-digit student APAAR ID entered ({apaarNotice})
               </h3>
             </div>
           </div>
@@ -247,8 +250,8 @@ export function VerifyPage() {
                 }}
               >
                 {isAuthenticated && user?.role === "verifier"
-                  ? "Initiate Consent Request"
-                  : "Sign in as Verifier"}
+                  ? "Initiate consent request"
+                  : "Sign in as verifier"}
               </Button>
             </div>
 
@@ -265,7 +268,7 @@ export function VerifyPage() {
                   className="text-xs justify-between"
                   rightIcon={<Icon name="open_in_new" size="xs" color="inherit" aria-hidden="true" />}
                 >
-                  Open Student Portal
+                  Open student portal
                 </Button>
               </Link>
             </div>
@@ -285,7 +288,7 @@ export function VerifyPage() {
                 <span className="text-xs font-semibold uppercase tracking-wider ux4g-text-success">
                   Cryptographically Valid Credential
                 </span>
-                <h3 className="text-lg font-bold ux4g-text-neutral-primary">Verified by AICTE Central Registry</h3>
+                <h3 className="text-lg font-bold ux4g-text-neutral-primary">Verified by AICTE central registry</h3>
               </div>
             </div>
             <Badge variant="success" className="text-xs uppercase tracking-wider self-start sm:self-auto">
@@ -360,7 +363,7 @@ export function VerifyPage() {
 
       {/* Result Display: Revoked Credential */}
       {result && result.status === "revoked" && (
-        <Alert variant="warning" title="Academic Credential Revoked">
+        <Alert variant="warning" title="Academic credential revoked">
           <p className="text-sm ux4g-text-neutral-primary">
             This verification credential ({searchedId}) was previously issued but has been formally revoked by AICTE or the issuing institution.
           </p>
@@ -372,7 +375,7 @@ export function VerifyPage() {
 
       {/* Result Display: Tamper Detection */}
       {result && result.status === "tampered" && (
-        <Alert variant="error" title="Security Alert: Signature Mismatch">
+        <Alert variant="error" title="Security alert: signature mismatch">
           <p className="text-sm ux4g-text-neutral-primary">
             The cryptographic Ed25519 signature does NOT match the academic record on file.
             One or more signed fields have been modified after issuance.
@@ -389,7 +392,7 @@ export function VerifyPage() {
           <div className="w-10 h-10 rounded-full border ux4g-border-neutral-subtle ux4g-bg-neutral-soft flex items-center justify-center mx-auto">
             <Icon name="cancel" size="md" color="neutral" aria-hidden="true" />
           </div>
-          <h3 className="text-base font-bold ux4g-text-neutral-primary">Credential Not Found</h3>
+          <h3 className="text-base font-bold ux4g-text-neutral-primary">Credential not found</h3>
           <p className="text-sm ux4g-text-neutral-secondary max-w-md mx-auto">
             No academic credential matching <code className="ux4g-bg-neutral-soft px-1 py-0.5 rounded font-mono text-xs border ux4g-border-neutral-subtle">{searchedId}</code> was found in the AICTE Central Repository.
           </p>
@@ -402,7 +405,7 @@ export function VerifyPage() {
           <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ux4g-bg-primary-soft ux4g-text-brand-primary">
             1
           </div>
-          <h4 className="font-semibold ux4g-text-neutral-primary">Student Consent Protocol</h4>
+          <h4 className="font-semibold ux4g-text-neutral-primary">Student consent protocol</h4>
           <p className="ux4g-text-neutral-secondary">
             Every external verification request requires time-bound student approval via the student portal.
           </p>
@@ -412,7 +415,7 @@ export function VerifyPage() {
           <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ux4g-bg-primary-soft ux4g-text-brand-primary">
             2
           </div>
-          <h4 className="font-semibold ux4g-text-neutral-primary">Signed Canonical Proof</h4>
+          <h4 className="font-semibold ux4g-text-neutral-primary">Signed canonical proof</h4>
           <p className="ux4g-text-neutral-secondary">
             Each accepted record receives an immutable cryptographic signature linked to the AICTE master directory.
           </p>
@@ -422,7 +425,7 @@ export function VerifyPage() {
           <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ux4g-bg-primary-soft ux4g-text-brand-primary">
             3
           </div>
-          <h4 className="font-semibold ux4g-text-neutral-primary">Tamper-Proof QR Link</h4>
+          <h4 className="font-semibold ux4g-text-neutral-primary">Tamper-proof QR link</h4>
           <p className="ux4g-text-neutral-secondary">
             Degrees and transcripts embed clean QR codes that link directly to verification records without transmitting PII.
           </p>

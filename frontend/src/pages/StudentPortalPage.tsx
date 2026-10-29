@@ -262,13 +262,13 @@ export function StudentPortalPage() {
       </div>
 
       {errorMessage && (
-        <Alert variant="error" title="Action Failed">
+        <Alert variant="error" title="Action failed">
           {errorMessage}
         </Alert>
       )}
 
       {successNotice && (
-        <Alert variant="success" title="Consent Decision Recorded">
+        <Alert variant="success" title="Consent decision recorded">
           {successNotice}
         </Alert>
       )}
@@ -277,7 +277,7 @@ export function StudentPortalPage() {
       {step === "id" && (
         <Card variant="outline" className="p-6 max-w-md mx-auto space-y-4">
           <div>
-            <h3 className="text-base font-bold ux4g-text-neutral-primary">Step 1: Enter your 12-Digit APAAR ID</h3>
+            <h3 className="text-base font-bold ux4g-text-neutral-primary">Step 1: Enter your 12-digit APAAR ID</h3>
             <p className="text-xs ux4g-text-neutral-secondary mt-0.5">
               Your One Nation One Student ID issued by the Ministry of Education.
             </p>
@@ -314,10 +314,11 @@ export function StudentPortalPage() {
           <div className="text-center pt-2">
             <button
               type="button"
+              aria-label="Use demo student ID 111122223333"
               onClick={() => setApaarId("111122223333")}
               className="text-xs ux4g-text-brand-primary underline hover:opacity-80 font-mono font-medium"
             >
-              Use Demo Student ID (111122223333)
+              Use demo student ID (111122223333)
             </button>
           </div>
         </Card>
@@ -327,7 +328,7 @@ export function StudentPortalPage() {
       {step === "otp" && (
         <Card variant="outline" className="p-6 max-w-md mx-auto space-y-4">
           <div>
-            <h3 className="text-base font-bold ux4g-text-neutral-primary">Step 2: Enter Verification OTP</h3>
+            <h3 className="text-base font-bold ux4g-text-neutral-primary">Step 2: Enter verification OTP</h3>
             <p className="text-xs ux4g-text-neutral-secondary mt-0.5">
               A 6-digit one-time password was dispatched to your contact registered with APAAR registry.
             </p>
@@ -355,12 +356,12 @@ export function StudentPortalPage() {
                 className="ux4g-text-brand-primary underline font-semibold hover:opacity-80 flex items-center gap-1"
               >
                 <Icon name="key" size="xs" color="inherit" aria-hidden="true" />
-                <span>Fetch OTP from Dev Outbox</span>
+                <span>Fetch OTP from dev outbox</span>
               </button>
             </div>
 
             <div className="flex gap-2 pt-1">
-              <Button type="button" variant="outline" className="w-1/2" onClick={() => setStep("id")}>
+              <Button type="button" variant="outline" className="w-1/2" aria-label="Back to step 1" onClick={() => setStep("id")}>
                 Back
               </Button>
               <Button
@@ -475,6 +476,7 @@ export function StudentPortalPage() {
                                 variant="outline"
                                 size="s"
                                 className="px-2 py-0.5 text-xs"
+                                aria-label="Download degree certificate PDF"
                                 onClick={() => handleDownloadCertificate(rec)}
                                 isLoading={downloadingCertId === rec.student_id}
                                 disabled={downloadingCertId === rec.student_id}
@@ -590,7 +592,7 @@ export function StudentPortalPage() {
                 <div className="flex items-center justify-between border-b ux4g-border-neutral-subtle pb-3">
                   <h3 className="text-base font-bold ux4g-text-neutral-primary flex items-center gap-2">
                     <Icon name="history" size="sm" color="neutral" aria-hidden="true" />
-                    Consent Decision History
+                    Consent decision history
                   </h3>
                   <span className="text-xs ux4g-text-neutral-tertiary">{historyRequests.length} Past Records</span>
                 </div>
