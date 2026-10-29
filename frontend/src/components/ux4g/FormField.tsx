@@ -54,14 +54,14 @@ export const FormField: React.FC<FormFieldProps> = ({
           )}
         </label>
         {required && (
-          <span className="text-xs ux4g-text-neutral-tertiary font-normal select-none">
+          <span className="text-xs ux4g-text-neutral-secondary font-normal select-none">
             Required
           </span>
         )}
       </div>
 
       {hint && (
-        <p id={hintId} className="text-xs ux4g-text-neutral-tertiary">
+        <p id={hintId} className="text-xs ux4g-text-neutral-secondary">
           {hint}
         </p>
       )}

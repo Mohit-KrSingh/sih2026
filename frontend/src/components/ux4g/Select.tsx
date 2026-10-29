@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "./Icon";
 
 export interface SelectOption {
-  value: string;
+  value: string | number;
   label: string;
   disabled?: boolean;
 }

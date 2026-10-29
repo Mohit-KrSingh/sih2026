@@ -198,6 +198,21 @@ textarea,
 }
 
 /* ==========================================================================
+   Alert Accessibility & Contrast Overrides (WCAG 2.1 AA 4.5:1)
+   Default UX4G cyan-600 on cyan-100 yields 1.89:1; cyan-950 guarantees > 7:1.
+   ========================================================================== */
+.ux4g-alert-info {
+  --ux4g-alert-text: var(--ux4g-color-cyan-950);
+  color: var(--ux4g-color-cyan-950) !important;
+}
+
+.ux4g-alert-info p,
+.ux4g-alert-info span,
+.ux4g-alert-info div {
+  color: var(--ux4g-color-cyan-950);
+}
+
+/* ==========================================================================
    Badge Accessibility & Contrast Overrides (WCAG 2.1 AA 4.5:1)
    Ensures status badges meet minimum contrast thresholds using UX4G tokens.
    ========================================================================== */

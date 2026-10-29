@@ -42,16 +42,19 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
     >
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
         {/* Left: Authority & initiative context */}
-        <div className="flex items-center gap-2 text-xs">
-          <span className="font-semibold ux4g-text-neutral-primary">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-xs truncate">
+          <span className="font-semibold ux4g-text-neutral-primary hidden sm:inline">
             All India Council for Technical Education
           </span>
-          <span aria-hidden="true" className="ux4g-text-neutral-secondary">
+          <span className="font-semibold ux4g-text-neutral-primary sm:hidden">
+            AICTE
+          </span>
+          <span aria-hidden="true" className="ux4g-text-neutral-secondary hidden sm:inline">
             &bull;
           </span>
-          <span className="hidden sm:inline">Ministry of Education, Govt. of India</span>
+          <span className="hidden md:inline">Ministry of Education, Govt. of India</span>
           <span
-            className="px-1.5 py-0.5 rounded text-[10px] font-mono ux4g-bg-neutral-subtle ux4g-text-neutral-primary font-medium border ux4g-border-neutral-subtle"
+            className="px-1.5 py-0.5 rounded text-[10px] font-mono ux4g-bg-neutral-subtle ux4g-text-neutral-primary font-medium border ux4g-border-neutral-subtle shrink-0"
             title="Smart India Hackathon 2026 Prototype"
           >
             SIH 2026
@@ -59,7 +62,7 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
         </div>
 
         {/* Right: Accessibility, Language, and Authentication */}
-        <div className="flex items-center gap-3 ml-auto">
+        <div className="flex items-center gap-2 sm:gap-3 ml-auto">
           {/* Accessibility Tools Trigger */}
           <button
             type="button"
@@ -69,7 +72,7 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
             aria-haspopup="dialog"
             aria-expanded={isPanelOpen}
             title="Open accessibility options (text size, high contrast, reduce motion)"
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary hover:ux4g-bg-neutral-subtle transition-colors focus:outline focus:outline-2"
+            className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded text-xs font-medium ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary hover:ux4g-bg-neutral-subtle transition-colors focus:outline focus:outline-2"
             style={{ outlineColor: "var(--edutrace-focus-outline)" }}
           >
             <Icon name="tune" size="xs" aria-hidden="true" />
@@ -78,7 +81,7 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
 
           {/* Language Switch (English default; Hindi in R13) */}
           <div
-            className="inline-flex items-center gap-1 border-l ux4g-border-neutral-subtle pl-3"
+            className="hidden sm:inline-flex items-center gap-1 border-l ux4g-border-neutral-subtle pl-3"
             role="group"
             aria-label="Language selection"
           >
@@ -105,11 +108,11 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
           </div>
 
           {/* Authentication State */}
-          <div className="inline-flex items-center gap-2 border-l ux4g-border-neutral-subtle pl-3">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 border-l ux4g-border-neutral-subtle pl-2 sm:pl-3">
             {isAuthenticated && user ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <span
-                  className="font-medium ux4g-text-neutral-primary truncate max-w-[160px] text-xs"
+                  className="font-medium ux4g-text-neutral-primary truncate max-w-[120px] text-xs hidden md:inline"
                   title={user.email}
                 >
                   {user.email}
@@ -120,7 +123,7 @@ export const UtilityBar: React.FC<UtilityBarProps> = ({
                   onClick={logout}
                   aria-label="Sign out"
                   title="Sign out of account"
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium ux4g-text-neutral-secondary hover:ux4g-text-brand-primary hover:ux4g-bg-neutral-subtle transition-colors focus:outline focus:outline-2"
+                  className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded text-xs font-medium ux4g-text-neutral-secondary hover:ux4g-text-brand-primary hover:ux4g-bg-neutral-subtle transition-colors focus:outline focus:outline-2"
                   style={{ outlineColor: "var(--edutrace-focus-outline)" }}
                 >
                   <Icon name="logout" size="xs" aria-hidden="true" />
