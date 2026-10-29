@@ -218,6 +218,7 @@ export function AicteLoginPage() {
           <div className="space-y-1.5">
             <button
               type="button"
+              aria-label="Fill demo credentials for AICTE System Administrator"
               onClick={() => quickFill("aicte_admin@aicte-india.org")}
               className="w-full text-left p-2 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-elevated hover:border-current transition flex justify-between items-center"
             >
@@ -230,6 +231,7 @@ export function AicteLoginPage() {
 
             <button
               type="button"
+              aria-label="Fill demo credentials for AICTE Compliance Officer"
               onClick={() => quickFill("aicte_officer@aicte-india.org")}
               className="w-full text-left p-2 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-elevated hover:border-current transition flex justify-between items-center"
             >

@@ -110,7 +110,7 @@ export function StaffManagementPage() {
             onClick={() => setShowInviteModal(true)}
             className="flex items-center gap-1.5"
           >
-            <UserPlus className="w-4 h-4" /> Add Staff Member
+            <UserPlus className="w-4 h-4" /> Add staff member
           </Button>
         )}
       </div>
@@ -127,7 +127,7 @@ export function StaffManagementPage() {
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4 text-blue-600" />
-            <h2 className="text-sm font-bold text-slate-900">Institutional Users ({staffList.length})</h2>
+            <h2 className="text-sm font-bold text-slate-900">Institutional users ({staffList.length})</h2>
           </div>
           <span className="text-xs text-slate-500">Institution ID #{user?.institution_id ?? 1}</span>
         </div>
@@ -211,6 +211,7 @@ export function StaffManagementPage() {
               <h3 className="font-bold text-slate-900">Add Staff Account</h3>
               <button
                 onClick={() => setShowInviteModal(false)}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-600 text-sm font-bold"
               >
                 ✕
@@ -253,11 +254,11 @@ export function StaffManagementPage() {
               />
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" size="sm" onClick={() => setShowInviteModal(false)}>
+                <Button type="button" variant="outline" size="sm" aria-label="Cancel and close dialog" onClick={() => setShowInviteModal(false)}>
                   Cancel
                 </Button>
                 <Button type="submit" variant="primary" size="sm">
-                  Send Invitation
+                  Send invitation
                 </Button>
               </div>
             </form>

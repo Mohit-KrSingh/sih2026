@@ -102,7 +102,7 @@ export function AicteVerifiersPage() {
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-blue-600" />
-            <h2 className="text-sm font-bold text-slate-900">Registered Verifier Organisations ({verifiers.length})</h2>
+            <h2 className="text-sm font-bold text-slate-900">Registered verifier organisations ({verifiers.length})</h2>
           </div>
           <span className="text-xs text-slate-500">SPEC.md Section 14 Regulatory Authority</span>
         </div>

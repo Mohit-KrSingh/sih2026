@@ -265,6 +265,7 @@ export function CollegeChangeRequestsPage() {
           </div>
           <button
             onClick={() => setSuccessMsg(null)}
+            aria-label="Dismiss notification"
             className="text-emerald-600 hover:text-emerald-800 p-1 rounded-md"
           >
             <X className="w-4 h-4" />
@@ -335,6 +336,7 @@ export function CollegeChangeRequestsPage() {
           ].map((tab) => (
             <button
               key={tab.id}
+              aria-label={`Filter by ${tab.label}`}
               onClick={() => setStatusFilter(tab.id)}
               className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                 statusFilter === tab.id
@@ -483,6 +485,7 @@ export function CollegeChangeRequestsPage() {
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
               >
                 <X className="w-5 h-5" />

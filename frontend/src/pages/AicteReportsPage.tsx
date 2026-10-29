@@ -185,7 +185,7 @@ export const AicteReportsPage: React.FC = () => {
               title="Refresh Preview"
             >
               <RefreshCw className={`w-4 h-4 ${loadingPreview ? "animate-spin" : ""}`} />
-              Refresh Data
+              Refresh data
             </button>
           </div>
         </div>
@@ -204,7 +204,7 @@ export const AicteReportsPage: React.FC = () => {
         {/* Left Column: Report Catalog Selector */}
         <div className="lg:col-span-1 space-y-2">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 px-1 mb-2">
-            Regulatory Reports Catalog
+            Regulatory reports catalog
           </h2>
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm divide-y divide-slate-100 overflow-hidden">
             {REPORT_CATALOG.map((item) => {
@@ -212,6 +212,7 @@ export const AicteReportsPage: React.FC = () => {
               return (
                 <button
                   key={item.id}
+                  aria-label={`Select report ${item.title}`}
                   onClick={() => setSelectedReport(item.id)}
                   className={`w-full text-left p-3.5 transition flex flex-col gap-1 ${
                     isSelected

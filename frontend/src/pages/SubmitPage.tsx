@@ -282,7 +282,7 @@ export function SubmitPage() {
                   ) : (
                     <>
                       <Copy className="h-4 w-4" />
-                      Copy Receipt No
+                      Copy receipt number
                     </>
                   )}
                 </Button>
@@ -341,7 +341,7 @@ export function SubmitPage() {
               {/* Student and Quota Breakdown */}
               <div className="rounded-xl border border-slate-200 bg-white p-5">
                 <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
-                  Verified Enrollment Breakdown
+                  Verified enrolment breakdown
                 </h3>
                 <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5">
                   <div className="border-r border-slate-100 pr-4">
@@ -408,19 +408,19 @@ export function SubmitPage() {
                   <Link to="/college/students">
                     <Button variant="outline" size="sm" className="flex items-center gap-1.5">
                       <Users className="h-4 w-4" />
-                      View Enrolled Students Directory
+                      View enrolled students directory
                     </Button>
                   </Link>
                   <Link to={`/college/submissions/${receiptData?.submission_id || gateData?.submission_id || 1}`}>
                     <Button variant="outline" size="sm" className="flex items-center gap-1.5 text-blue-700">
                       <FileCheck className="h-4 w-4" />
-                      Formal Receipt Page
+                      View formal receipt page
                     </Button>
                   </Link>
                 </div>
                 <Link to="/college/validation">
                   <Button variant="ghost" size="sm" className="flex items-center gap-1.5 text-indigo-600">
-                    Review Validation Flags Archive
+                    Review validation flags archive
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
@@ -492,7 +492,7 @@ export function SubmitPage() {
             unjustifiedWarningsCount={gateData.unjustified_warnings_count}
             title={
               gateData.can_submit
-                ? "Submit Gate Passed: Ready for Final Submission"
+                ? "Submit gate passed: ready for final submission"
                 : `Submission Gate Blocked (${gateData.blockers.length} Blocker(s))`
             }
           >
@@ -531,7 +531,7 @@ export function SubmitPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-                      Actionable Blocker List ({gateData.blockers.length})
+                      Actionable blocker list ({gateData.blockers.length})
                     </h3>
                     <p className="text-xs text-slate-500">
                       Click the action link on each blocker to resolve the error or write a justification.
@@ -625,7 +625,7 @@ export function SubmitPage() {
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-slate-900">
-                      Statutory Declaration & Verification Confirmation
+                      Statutory declaration and verification confirmation
                     </h3>
                     <p className="text-xs text-slate-500">
                       Step 2 of 2: Confirm declaration and verify mock OTP to lock annual records.
@@ -680,7 +680,7 @@ export function SubmitPage() {
                         className="flex items-center gap-1.5 self-start sm:self-auto"
                       >
                         <Send className="h-3.5 w-3.5" />
-                        {isRequestingOtp ? "Requesting OTP..." : "Request Declaration OTP"}
+                        {isRequestingOtp ? "Requesting OTP..." : "Request declaration OTP"}
                       </Button>
                     ) : (
                       <button
@@ -773,9 +773,9 @@ export function SubmitPage() {
       {/* Empty State when no data is loaded */}
       {!gateData && !isLoading && (
         <EmptyState
-          title="No Submission Gate Data"
+          title="No submission gate data"
           description="Could not locate submission records for this academic year."
-          actionLabel="Try Again"
+          actionLabel="Try again"
           onAction={() => fetchGateStatus(true)}
         />
       )}

@@ -202,7 +202,7 @@ export function AicteDrilldownPage() {
             <div className="ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl shadow-sm overflow-hidden">
               <div className="px-5 py-3.5 ux4g-bg-neutral-soft border-b ux4g-border-neutral-subtle flex items-center justify-between">
                 <h3 className="font-bold text-xs ux4g-text-neutral-primary uppercase tracking-wider">
-                  State-Level Enrolment & Compliance Breakdown
+                  State-level enrolment and compliance breakdown
                 </h3>
                 <span className="text-xs ux4g-text-neutral-secondary">{data?.states?.length || 0} States Registered</span>
               </div>
@@ -402,7 +402,7 @@ export function AicteDrilldownPage() {
                     }
                     leftIcon={<Icon name="send" size="xs" color="inherit" />}
                   >
-                    Issue Formal Notice
+                    Issue formal notice
                   </Button>
                   <Button
                     size="sm"
@@ -418,7 +418,7 @@ export function AicteDrilldownPage() {
               <div className="ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl shadow-sm overflow-hidden">
                 <div className="px-5 py-3.5 ux4g-bg-neutral-soft border-b ux4g-border-neutral-subtle flex items-center justify-between">
                   <h3 className="font-bold text-xs ux4g-text-neutral-primary uppercase tracking-wider">
-                    Academic Courses & Seat Quotas ({data.courses?.length || 0})
+                    Academic courses and seat quotas ({data.courses?.length || 0})
                   </h3>
                 </div>
 

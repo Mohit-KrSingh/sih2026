@@ -253,6 +253,7 @@ export function ActivatePage() {
       <div className="flex border-b ux4g-border-neutral-subtle justify-center gap-8 text-sm font-medium">
         <button
           type="button"
+          aria-label="Open activation wizard"
           onClick={() => setActiveTab("wizard")}
           className={`pb-3 px-2 border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === "wizard"
@@ -410,7 +411,7 @@ export function ActivatePage() {
             <Card variant="outline" className="p-6 space-y-5">
               <div>
                 <h2 className="text-base font-bold ux4g-text-neutral-primary">
-                  Step 1: Enter AICTE Permanent Institute Identifier
+                  Step 1: Enter AICTE permanent institute identifier
                 </h2>
                 <p className="text-xs ux4g-text-neutral-secondary mt-1">
                   Query the AICTE master directory to confirm your institution&apos;s approved status.
@@ -519,7 +520,7 @@ export function ActivatePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-base font-bold ux4g-text-neutral-primary">
-                    Step 2: Enter Verification Code
+                    Step 2: Enter verification code
                   </h2>
                   <p className="text-xs ux4g-text-neutral-secondary mt-0.5">
                     Code dispatched to verified institutional contacts on file.
@@ -527,6 +528,7 @@ export function ActivatePage() {
                 </div>
                 <button
                   type="button"
+                  aria-label="Change institution ID"
                   onClick={() => setStep(1)}
                   className="text-xs ux4g-text-brand-primary hover:underline flex items-center gap-1 font-semibold"
                 >
@@ -632,7 +634,7 @@ export function ActivatePage() {
             <Card variant="outline" className="p-6 space-y-5">
               <div>
                 <h2 className="text-base font-bold ux4g-text-neutral-primary">
-                  Step 3: Authorized Signatory Verification &amp; Letter
+                  Step 3: Authorized signatory verification and letter
                 </h2>
                 <p className="text-xs ux4g-text-neutral-secondary mt-1">
                   Upload the official authorization letter signed by the head of the institution.

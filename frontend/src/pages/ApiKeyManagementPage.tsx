@@ -214,7 +214,7 @@ export const ApiKeyManagementPage: React.FC = () => {
             className="flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4" />
-            Generate New API Key
+            Generate new API key
           </Button>
         </div>
       </div>
@@ -241,7 +241,7 @@ export const ApiKeyManagementPage: React.FC = () => {
       ) : (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-gray-900">Configured API Credentials</h2>
+            <h2 className="text-base font-semibold text-gray-900">Configured API credentials</h2>
             <span className="text-xs text-gray-500 font-medium">
               {keys.filter((k) => k.is_active).length} Active Keys ({keys.length} Total)
             </span>
@@ -386,7 +386,7 @@ export const ApiKeyManagementPage: React.FC = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
             <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <Key className="w-5 h-5 text-blue-600" />
-              Generate Integration API Key
+              Generate integration API key
             </h3>
 
             {actionError && (
@@ -485,7 +485,7 @@ export const ApiKeyManagementPage: React.FC = () => {
             <div className="flex items-center gap-2 text-emerald-700">
               <ShieldCheck className="w-6 h-6" />
               <h3 className="text-lg font-bold">
-                API Key {generatedKey.action === "created" ? "Created" : "Rotated"} Successfully!
+                API key {generatedKey.action === "created" ? "created" : "rotated"} successfully!
               </h3>
             </div>
 
@@ -533,7 +533,7 @@ export const ApiKeyManagementPage: React.FC = () => {
                 type="button"
                 onClick={() => setGeneratedKey(null)}
               >
-                I have saved this key
+                Confirm key saved
               </Button>
             </div>
           </div>
@@ -546,7 +546,7 @@ export const ApiKeyManagementPage: React.FC = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
             <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <RefreshCw className="w-5 h-5 text-blue-600" />
-              Rotate API Key
+              Rotate API key
             </h3>
             <p className="text-sm text-gray-600">
               Rotating this API key will <strong>immediately invalidate</strong> the current key. Any external ERP systems using this secret will fail authentication until updated with the newly generated secret.
@@ -585,7 +585,7 @@ export const ApiKeyManagementPage: React.FC = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 space-y-4">
             <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2 text-red-600">
               <AlertTriangle className="w-5 h-5" />
-              Revoke API Key
+              Revoke API key
             </h3>
             <p className="text-sm text-gray-600">
               Are you sure you want to permanently revoke this API key? This credential will immediately lose access and cannot be reactivated.

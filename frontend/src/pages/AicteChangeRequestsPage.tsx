@@ -167,7 +167,7 @@ export function AicteChangeRequestsPage() {
           className="flex items-center gap-2 self-start md:self-auto"
         >
           <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-          Refresh Queue
+          Refresh queue
         </Button>
       </div>
 
@@ -180,6 +180,7 @@ export function AicteChangeRequestsPage() {
           </div>
           <button
             onClick={() => setSuccessBanner(null)}
+            aria-label="Dismiss notification"
             className="text-emerald-600 hover:text-emerald-800 p-1 rounded-md"
           >
             <X className="w-4 h-4" />
@@ -250,6 +251,7 @@ export function AicteChangeRequestsPage() {
           ].map((tab) => (
             <button
               key={tab.id}
+              aria-label={`Filter by ${tab.label}`}
               onClick={() => setStatusFilter(tab.id)}
               className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
                 statusFilter === tab.id
@@ -405,6 +407,7 @@ export function AicteChangeRequestsPage() {
               </div>
               <button
                 onClick={() => setActiveRequest(null)}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
               >
                 <X className="w-5 h-5" />

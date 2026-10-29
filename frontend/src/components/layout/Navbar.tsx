@@ -150,12 +150,12 @@ export const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
           {!isAuthenticated && (
             <div className="flex items-center gap-2">
               <Link to="/login/college">
-                <Button variant="outline-primary" size="s">
+                <Button variant="outline-primary" size="s" aria-label="Log in as college">
                   College Login
                 </Button>
               </Link>
               <Link to="/login/aicte">
-                <Button variant="primary" size="s">
+                <Button variant="primary" size="s" aria-label="Log in as AICTE">
                   AICTE Login
                 </Button>
               </Link>

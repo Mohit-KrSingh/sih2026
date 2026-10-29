@@ -300,6 +300,7 @@ export function AicteReviewPage() {
           ].map((tab) => (
             <button
               key={tab.id}
+              aria-label={`Filter by ${tab.label}`}
               onClick={() => setStatusFilter(tab.id)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 statusFilter === tab.id
@@ -320,7 +321,7 @@ export function AicteReviewPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="text-xs"
           />
-          <Button type="submit" size="sm" variant="outline" className="px-3">
+          <Button type="submit" size="sm" variant="outline" className="px-3" aria-label="Search submissions">
             <Search className="w-4 h-4" />
           </Button>
         </form>
@@ -449,7 +450,7 @@ export function AicteReviewPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-slate-900">
-                    {detailItem ? detailItem.institution_name : "Review Item Details"}
+                    {detailItem ? detailItem.institution_name : "Review item details"}
                   </h2>
                   {detailItem && (
                     <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
@@ -514,7 +515,7 @@ export function AicteReviewPage() {
                   <div className="space-y-4">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4 text-red-600" />
-                      Exception Flags & Written Justifications ({detailItem.flags.length})
+                      Exception flags and written justifications ({detailItem.flags.length})
                     </h3>
 
                     {detailItem.flags.map((fl) => (
@@ -605,7 +606,7 @@ export function AicteReviewPage() {
                     <div className="space-y-3 pt-3 border-t border-slate-200">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
                         <MessageSquare className="w-4 h-4 text-blue-600" />
-                        Clarification Thread ({detailItem.queries.length})
+                        Clarification thread ({detailItem.queries.length})
                       </h3>
                       <div className="space-y-3">
                         {detailItem.queries.map((q) => (

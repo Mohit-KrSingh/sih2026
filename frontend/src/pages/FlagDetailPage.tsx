@@ -216,12 +216,12 @@ export function FlagDetailPage() {
               <div className="flex items-center gap-2">
                 <Link to={`/college/students/${flag.student.id}`}>
                   <Button variant="outline" size="sm">
-                    View Student Record
+                    View student record
                   </Button>
                 </Link>
                 <Link to={`/college/students/${flag.student.id}/edit`}>
                   <Button variant="primary" size="sm" className="flex items-center gap-1">
-                    <Edit className="w-3.5 h-3.5" /> Correct Data
+                    <Edit className="w-3.5 h-3.5" /> Correct student data
                   </Button>
                 </Link>
               </div>
@@ -244,7 +244,7 @@ export function FlagDetailPage() {
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
             <FileCheck className="w-5 h-5 text-blue-600" />
-            <h2 className="text-base font-bold text-slate-900">Regulatory Justifications</h2>
+            <h2 className="text-base font-bold text-slate-900">Regulatory justifications</h2>
           </div>
           <span className="text-xs text-slate-500">
             {flag.justifications.length} {flag.justifications.length === 1 ? "submission" : "submissions"}
@@ -361,7 +361,7 @@ export function FlagDetailPage() {
               </div>
 
               <Button type="submit" variant="primary" size="sm" disabled={submitting}>
-                {submitting ? "Submitting..." : "Submit Justification"}
+                {submitting ? "Submitting..." : "Submit justification"}
               </Button>
             </div>
           </form>

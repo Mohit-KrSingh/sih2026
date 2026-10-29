@@ -134,7 +134,7 @@ export function AicteAuditPage() {
               <h4 className="font-bold text-sm">
                 {verificationResult.verified
                   ? "Cryptographic SHA-256 Hash Chain Verified Intact"
-                  : "Tamper Detected in State Ledger"}
+                  : "Tamper detected in state ledger"}
               </h4>
               <p className="text-xs mt-0.5 text-slate-600">
                 {verificationResult.verified
@@ -319,6 +319,7 @@ export function AicteAuditPage() {
               size="sm"
               variant="outline"
               disabled={page === 0}
+              aria-label="Go to previous page"
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
               Previous
@@ -327,6 +328,7 @@ export function AicteAuditPage() {
               size="sm"
               variant="outline"
               disabled={(page + 1) * limit >= total}
+              aria-label="Go to next page"
               onClick={() => setPage((p) => p + 1)}
             >
               Next
@@ -343,7 +345,7 @@ export function AicteAuditPage() {
               <div>
                 <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                   <Fingerprint className="w-4 h-4 text-indigo-700" />
-                  Audit Record #{selectedLog.id} Detail
+                  Audit record #{selectedLog.id} detail
                 </h3>
                 <p className="text-xs text-slate-500 font-mono mt-0.5">
                   Action: {selectedLog.action} &bull; Entity: {selectedLog.entity} (#{selectedLog.entity_id})
@@ -352,6 +354,7 @@ export function AicteAuditPage() {
               <button
                 type="button"
                 onClick={() => setSelectedLog(null)}
+                aria-label="Close dialog"
                 className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition"
               >
                 <X className="w-5 h-5" />

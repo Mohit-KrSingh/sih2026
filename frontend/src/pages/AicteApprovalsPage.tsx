@@ -191,6 +191,7 @@ export function AicteApprovalsPage() {
         <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg text-xs font-medium w-full sm:w-auto">
           <button
             type="button"
+            aria-label="Filter by all claims"
             onClick={() => setStatusFilter("all")}
             className={`px-3 py-1.5 rounded-md transition-colors ${
               statusFilter === "all"
@@ -202,6 +203,7 @@ export function AicteApprovalsPage() {
           </button>
           <button
             type="button"
+            aria-label="Filter by pending claims"
             onClick={() => setStatusFilter("pending")}
             className={`px-3 py-1.5 rounded-md transition-colors ${
               statusFilter === "pending" || statusFilter === "pending_approval"
@@ -213,6 +215,7 @@ export function AicteApprovalsPage() {
           </button>
           <button
             type="button"
+            aria-label="Filter by approved claims"
             onClick={() => setStatusFilter("approved")}
             className={`px-3 py-1.5 rounded-md transition-colors ${
               statusFilter === "approved"
@@ -224,6 +227,7 @@ export function AicteApprovalsPage() {
           </button>
           <button
             type="button"
+            aria-label="Filter by rejected claims"
             onClick={() => setStatusFilter("rejected")}
             className={`px-3 py-1.5 rounded-md transition-colors ${
               statusFilter === "rejected"
@@ -356,6 +360,7 @@ export function AicteApprovalsPage() {
               <button
                 type="button"
                 onClick={() => setSelectedRequest(null)}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-600 p-1 rounded-lg text-sm"
               >
                 ✕
@@ -407,7 +412,11 @@ export function AicteApprovalsPage() {
                 </div>
 
                 <div className="flex justify-end pt-2">
-                  <Button variant="primary" onClick={() => setSelectedRequest(null)}>
+                  <Button
+                    variant="primary"
+                    aria-label="Close dialog"
+                    onClick={() => setSelectedRequest(null)}
+                  >
                     Done
                   </Button>
                 </div>
@@ -471,7 +480,7 @@ export function AicteApprovalsPage() {
                 {/* Approve Form View */}
                 {modalMode === "approve" && (
                   <form onSubmit={handleApprove} className="space-y-4 border-t border-slate-200 pt-3">
-                    <h4 className="text-sm font-bold text-slate-900">Approve Activation Claim</h4>
+                    <h4 className="text-sm font-bold text-slate-900">Approve activation claim</h4>
                     <p className="text-xs text-slate-500">
                       Approval activates the college account and issues a primary administrator credential.
                     </p>
@@ -514,7 +523,7 @@ export function AicteApprovalsPage() {
                 {/* Reject Form View */}
                 {modalMode === "reject" && (
                   <form onSubmit={handleReject} className="space-y-4 border-t border-slate-200 pt-3">
-                    <h4 className="text-sm font-bold text-red-800">Reject Activation Claim</h4>
+                    <h4 className="text-sm font-bold text-red-800">Reject activation claim</h4>
                     <p className="text-xs text-slate-500">
                       Provide a clear reason for rejection. This will be visible to the institution in their claim tracker.
                     </p>

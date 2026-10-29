@@ -214,6 +214,7 @@ export function CollegeLoginPage() {
           <div className="space-y-1.5">
             <button
               type="button"
+              aria-label="Fill demo credentials for Pune Institute (clean stage)"
               onClick={() => quickFill("admin@piaet-pune.edu.in")}
               className="w-full text-left p-2 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-elevated hover:border-current transition flex justify-between items-center"
             >
@@ -226,6 +227,7 @@ export function CollegeLoginPage() {
 
             <button
               type="button"
+              aria-label="Fill demo credentials for Mumbai Institute (exceptions stage)"
               onClick={() => quickFill("admin@mmit-mumbai.ac.in")}
               className="w-full text-left p-2 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-elevated hover:border-current transition flex justify-between items-center"
             >
@@ -238,6 +240,7 @@ export function CollegeLoginPage() {
 
             <button
               type="button"
+              aria-label="Fill demo credentials for Nagpur College (draft stage)"
               onClick={() => quickFill("admin@ngec-nagpur.gov.in")}
               className="w-full text-left p-2 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-elevated hover:border-current transition flex justify-between items-center"
             >
@@ -250,6 +253,7 @@ export function CollegeLoginPage() {
 
             <button
               type="button"
+              aria-label="Fill demo credentials for TCS Verifier"
               onClick={() => quickFill("verifier@tcs-verifications.com")}
               className="w-full text-left p-2 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-elevated hover:border-current transition flex justify-between items-center"
             >

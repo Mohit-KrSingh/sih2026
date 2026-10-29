@@ -175,7 +175,7 @@ export function VerifierHistoryPage() {
             Refresh
           </Button>
           <Link to="/verifier/search">
-            <Button size="sm" variant="primary" leftIcon={<Plus className="w-4 h-4" />}>
+            <Button size="sm" variant="primary" aria-label="Start new verification search" leftIcon={<Plus className="w-4 h-4" />}>
               New verification
             </Button>
           </Link>
@@ -190,6 +190,7 @@ export function VerifierHistoryPage() {
         {filterTabs.map((tab) => (
           <button
             key={tab.value}
+            aria-label={`Filter by ${tab.label}`}
             onClick={() => setStatusFilter(tab.value)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               statusFilter === tab.value
@@ -214,7 +215,7 @@ export function VerifierHistoryPage() {
             <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
               <Search className="w-5 h-5" />
             </div>
-            <h3 className="text-sm font-bold text-slate-800">No Consent Requests Found</h3>
+            <h3 className="text-sm font-bold text-slate-800">No consent requests found</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
               There are no verification requests matching your selected filter.
             </p>
@@ -294,6 +295,7 @@ export function VerifierHistoryPage() {
               </div>
               <button
                 onClick={() => setSelectedRecord(null)}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-700 p-1 rounded-md"
               >
                 <X className="w-5 h-5" />
@@ -334,7 +336,7 @@ export function VerifierHistoryPage() {
             </div>
 
             <div className="flex justify-end pt-2">
-              <Button size="sm" variant="outline" onClick={() => setSelectedRecord(null)}>
+              <Button size="sm" variant="outline" aria-label="Close dialog" onClick={() => setSelectedRecord(null)}>
                 Close
               </Button>
             </div>

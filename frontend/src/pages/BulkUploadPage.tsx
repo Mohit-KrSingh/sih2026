@@ -982,7 +982,7 @@ export function BulkUploadPage() {
                                     type="button"
                                     onClick={() => toggleRowExpanded(r.row_number)}
                                     className="cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary rounded"
-                                    aria-label={`Error ${errCount}`}
+                                    aria-label={`View ${errCount} error flags`}
                                   >
                                     <FlagBadge level="error" count={errCount} />
                                   </button>
@@ -992,7 +992,7 @@ export function BulkUploadPage() {
                                     type="button"
                                     onClick={() => toggleRowExpanded(r.row_number)}
                                     className="cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary rounded"
-                                    aria-label={`Exception ${excCount}`}
+                                    aria-label={`View ${excCount} exception flags`}
                                   >
                                     <FlagBadge level="exception" count={excCount} />
                                   </button>
@@ -1002,7 +1002,7 @@ export function BulkUploadPage() {
                                     type="button"
                                     onClick={() => toggleRowExpanded(r.row_number)}
                                     className="cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary rounded"
-                                    aria-label={`Warning ${warnCount}`}
+                                    aria-label={`View ${warnCount} warning flags`}
                                   >
                                     <FlagBadge level="warning" count={warnCount} />
                                   </button>
@@ -1012,7 +1012,7 @@ export function BulkUploadPage() {
                                     type="button"
                                     onClick={() => toggleRowExpanded(r.row_number)}
                                     className="cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary rounded"
-                                    aria-label={`Info ${infoCount}`}
+                                    aria-label={`View ${infoCount} info flags`}
                                   >
                                     <FlagBadge level="info" count={infoCount} />
                                   </button>
@@ -1066,6 +1066,7 @@ export function BulkUploadPage() {
                                       size="sm"
                                       variant="tertiary"
                                       title="Open full edit form"
+                                      aria-label="Open edit form"
                                     >
                                       Form
                                     </Button>
@@ -1150,7 +1151,7 @@ export function BulkUploadPage() {
           <div className="p-4 border-b ux4g-border-neutral-subtle flex items-center justify-between">
             <h2 className="text-sm font-semibold ux4g-text-neutral-primary">Historical Bulk Uploads</h2>
             <Button size="sm" variant="outline" onClick={() => setActiveTab("upload")}>
-              New Upload
+              Upload new file
             </Button>
           </div>
 
@@ -1240,7 +1241,7 @@ export function BulkUploadPage() {
                           onClick={() => handleDownloadErrors(h.id)}
                           title="Download error file for this upload"
                         >
-                          Errors
+                          Download errors
                         </Button>
                       </TableCell>
                     </TableRow>

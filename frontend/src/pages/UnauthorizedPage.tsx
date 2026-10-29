@@ -28,7 +28,7 @@ export function UnauthorizedPage() {
         <span className="text-xs font-semibold uppercase tracking-wider text-red-600 font-mono">
           HTTP 403 Forbidden
         </span>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Access Restricted</h1>
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Access restricted</h1>
         <p className="text-sm text-slate-600 max-w-sm mx-auto">
           Your current account role does not have authorization to view this section of the portal.
         </p>

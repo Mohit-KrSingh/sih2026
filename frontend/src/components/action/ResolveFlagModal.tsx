@@ -63,7 +63,7 @@ export function ResolveFlagModal({
           <div>
             <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              Administrative Flag Resolution
+              Administrative flag resolution
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
               Flag ID: <span className="font-mono">#{flagId}</span> &bull; Rule: <span className="font-mono font-medium">{ruleCode}</span>
@@ -72,6 +72,7 @@ export function ResolveFlagModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close dialog"
             className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition"
           >
             <X className="w-5 h-5" />
@@ -81,7 +82,7 @@ export function ResolveFlagModal({
         {success ? (
           <div className="p-8 text-center space-y-3">
             <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
-            <h4 className="font-bold text-slate-900 text-lg">Flag Status Updated</h4>
+            <h4 className="font-bold text-slate-900 text-lg">Flag status updated</h4>
             <p className="text-xs text-slate-500 max-w-xs mx-auto">
               Flag has been {action === "resolve" ? "resolved" : "dismissed"}. The student status has been updated in the central registry.
             </p>

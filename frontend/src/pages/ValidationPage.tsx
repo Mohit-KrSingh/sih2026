@@ -242,7 +242,7 @@ export function ValidationPage() {
               size="sm"
               className="flex items-center gap-2"
             >
-              Final Submit Gate
+              Go to final submit gate
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
@@ -370,7 +370,7 @@ export function ValidationPage() {
           {summary.can_submit ? (
             <Link to="/college/submit" className="flex-shrink-0">
               <Button size="sm" variant="primary" className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-2">
-                Proceed to Final Submit
+                Proceed to final submit
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -396,6 +396,7 @@ export function ValidationPage() {
             ].map((tab) => (
               <button
                 key={tab.id}
+                aria-label={`Filter by ${tab.label}`}
                 onClick={() => setSelectedLevel(tab.id)}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap ${
                   selectedLevel === tab.id
@@ -433,6 +434,7 @@ export function ValidationPage() {
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
+                  aria-label="Clear search input"
                   className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -477,7 +479,7 @@ export function ValidationPage() {
         ) : !data || data.items.length === 0 ? (
           <div className="p-10">
             <EmptyState
-              title="No Validation Flags Found"
+              title="No validation flags found"
               description="No flags match your current filter criteria. Great job on clean data!"
             />
           </div>
@@ -656,6 +658,7 @@ export function ValidationPage() {
               </div>
               <button
                 onClick={handleCloseModal}
+                aria-label="Close dialog"
                 className="text-slate-400 hover:text-slate-600 rounded-lg p-1 transition"
               >
                 <X className="w-5 h-5" />
@@ -711,6 +714,7 @@ export function ValidationPage() {
                               <button
                                 type="button"
                                 onClick={() => handleDeleteJustification(j.id)}
+                                aria-label="Delete justification"
                                 className="text-red-500 hover:text-red-700 p-1 transition"
                                 title="Delete justification"
                               >
@@ -789,6 +793,7 @@ export function ValidationPage() {
                         <button
                           type="button"
                           onClick={() => setSelectedDocument(null)}
+                          aria-label="Remove uploaded document"
                           className="text-slate-400 hover:text-red-500 p-1"
                         >
                           <X className="w-4 h-4" />
@@ -830,6 +835,7 @@ export function ValidationPage() {
                   <Button
                     type="button"
                     variant="outline"
+                    aria-label="Cancel and close dialog"
                     onClick={handleCloseModal}
                     disabled={isSubmitting}
                   >

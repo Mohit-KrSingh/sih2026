@@ -534,7 +534,7 @@ export function SeatDeclarationsPage() {
       </div>
 
       {/* Info notice about AICTE ownership, draft autosave, and Request a correction */}
-      <Alert variant="info" title="Automated Draft Persistence & AICTE Data Ownership">
+      <Alert variant="info" title="Automated draft persistence and AICTE data ownership">
         <p className="leading-relaxed">
           Approved intake and supernumerary quotas are owned strictly by AICTE (marked with a lock icon and "Set by AICTE"). Seat declarations are autosaved as drafts as you type. If an approved intake number is incorrect, you can{" "}
           <Link
@@ -553,7 +553,7 @@ export function SeatDeclarationsPage() {
           <div className="flex items-center gap-2">
             <Icon name="domain" size="sm" color="primary" aria-hidden="true" />
             <h2 className="font-bold ux4g-text-neutral-primary text-sm">
-              Course Intake & Seat Declaration Table
+              Course intake and seat declaration table
             </h2>
           </div>
           <span className="text-xs ux4g-text-neutral-secondary">
@@ -784,6 +784,7 @@ export function SeatDeclarationsPage() {
                             variant="outline"
                             onClick={() => toggleExpand(row.course_id)}
                             className="p-1 h-7 w-7 rounded-full inline-flex items-center justify-center"
+                            aria-label={`Toggle category counts for ${row.course_name}`}
                             title="Toggle Category Counts (NRI, OCI, Foreign National)"
                           >
                             <Icon
