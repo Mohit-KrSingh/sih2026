@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 
 Write-Host "=== Running Backend Tests (pytest) ==="
 $env:PYTHONPATH = (Resolve-Path "backend").Path
-$py = Resolve-Path ".venv\Scripts\python.exe"
+$py = if (Test-Path ".venv\Scripts\python.exe") { (Resolve-Path ".venv\Scripts\python.exe").Path } else { "python" }
 & $py -m pytest backend/tests
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Backend tests failed!"

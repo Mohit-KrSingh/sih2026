@@ -4,7 +4,7 @@ $ErrorActionPreference = "Stop"
 Write-Host "=== Seeding Database and Generating Demo Data (T03) ==="
 $backendDir = (Resolve-Path "backend").Path
 $env:PYTHONPATH = $backendDir
-$py = Resolve-Path ".venv\Scripts\python.exe"
+$py = if (Test-Path ".venv\Scripts\python.exe") { (Resolve-Path ".venv\Scripts\python.exe").Path } else { "python" }
 
 & $py -m app.seed
 if ($LASTEXITCODE -ne 0) {
