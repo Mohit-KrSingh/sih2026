@@ -42,6 +42,7 @@ import { ReviewItemDetailPage } from "./pages/ReviewItemDetailPage";
 import { SubmissionDetailPage } from "./pages/SubmissionDetailPage";
 import { StaffManagementPage } from "./pages/StaffManagementPage";
 import { AicteVerifiersPage } from "./pages/AicteVerifiersPage";
+import { DevComponentsPage } from "./pages/DevComponentsPage";
 import type { Role } from "./types/auth";
 
 const COLLEGE_ROLES: Role[] = ["college_admin", "college_staff", "college_viewer"];
@@ -99,6 +100,10 @@ export function AppRoutes() {
             <UnauthorizedPage />
           </PublicLayout>
         }
+      />
+      <Route
+        path="/dev/components"
+        element={<DevComponentsPage />}
       />
 
       {/* Guest-only Login Routes */}
