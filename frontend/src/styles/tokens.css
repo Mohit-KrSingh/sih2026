@@ -1,0 +1,90 @@
+/**
+ * EduTrace Design System Tokens
+ *
+ * All EduTrace design tokens strictly alias UX4G Design System 3.0 tokens (--ux4g-*).
+ * Raw hex, rgb, or hsl values are never used here or anywhere in application code.
+ */
+
+:root {
+  /* ==========================================================================
+     Typography & Font Family
+     ========================================================================== */
+  --edutrace-font-family: var(--ux4g-font-family-base, "Noto Sans", system-ui, sans-serif);
+  --edutrace-font-family-display: var(--ux4g-font-family-display, "Noto Sans Display", "Noto Sans", sans-serif);
+
+  /* ==========================================================================
+     Brand Palette Aliases (UX4G Primary & Secondary Ramps)
+     ========================================================================== */
+  --edutrace-brand-primary: var(--ux4g-color-primary-600);
+  --edutrace-brand-primary-hover: var(--ux4g-color-primary-700);
+  --edutrace-brand-primary-active: var(--ux4g-color-primary-800);
+  --edutrace-brand-primary-surface: var(--ux4g-color-primary-50);
+  --edutrace-brand-primary-border: var(--ux4g-color-primary-200);
+
+  --edutrace-brand-secondary: var(--ux4g-color-secondary-600);
+  --edutrace-brand-secondary-hover: var(--ux4g-color-secondary-700);
+  --edutrace-brand-secondary-active: var(--ux4g-color-secondary-800);
+  --edutrace-brand-secondary-surface: var(--ux4g-color-secondary-50);
+
+  /* ==========================================================================
+     Validation Flag Tokens (SPEC §19, REBRAND_TASKS Decision 6)
+     ========================================================================== */
+  /* Error: Red filled */
+  --edutrace-flag-error-bg: var(--ux4g-color-red-600);
+  --edutrace-flag-error-text: var(--ux4g-color-neutral-0);
+  --edutrace-flag-error-border: var(--ux4g-color-red-600);
+  --edutrace-flag-error-subtle-bg: var(--ux4g-color-red-50);
+  --edutrace-flag-error-subtle-text: var(--ux4g-text-status-error, var(--ux4g-color-red-800));
+
+  /* Exception: Red outlined */
+  --edutrace-flag-exception-bg: var(--ux4g-color-neutral-0);
+  --edutrace-flag-exception-text: var(--ux4g-text-status-error, var(--ux4g-color-red-800));
+  --edutrace-flag-exception-border: var(--ux4g-color-red-600);
+  --edutrace-flag-exception-subtle-bg: var(--ux4g-color-red-50);
+
+  /* Warning: Orange */
+  --edutrace-flag-warning-bg: var(--ux4g-color-orange-600);
+  --edutrace-flag-warning-text: var(--ux4g-color-neutral-0);
+  --edutrace-flag-warning-border: var(--ux4g-color-orange-600);
+  --edutrace-flag-warning-subtle-bg: var(--ux4g-color-orange-50);
+  --edutrace-flag-warning-subtle-text: var(--ux4g-text-status-warning, var(--ux4g-color-orange-800));
+
+  /* Info: Neutral grey per SPEC §19 and REBRAND_TASKS Decision 6 */
+  --edutrace-flag-info-bg: var(--ux4g-color-neutral-600);
+  --edutrace-flag-info-text: var(--ux4g-color-neutral-0);
+  --edutrace-flag-info-border: var(--ux4g-color-neutral-600);
+  --edutrace-flag-info-subtle-bg: var(--ux4g-color-neutral-100);
+  --edutrace-flag-info-subtle-text: var(--ux4g-text-neutral-primary, var(--ux4g-color-neutral-900));
+
+  /* ==========================================================================
+     Surfaces & Neutral Hierarchy
+     ========================================================================== */
+  --edutrace-surface-page: var(--ux4g-bg-neutral-elevated, var(--ux4g-color-neutral-0));
+  --edutrace-surface-card: var(--ux4g-bg-neutral-elevated, var(--ux4g-color-neutral-0));
+  --edutrace-surface-soft: var(--ux4g-bg-neutral-soft, var(--ux4g-color-neutral-100));
+  --edutrace-surface-subtle: var(--ux4g-bg-neutral-subtle, var(--ux4g-color-neutral-200));
+
+  --edutrace-text-primary: var(--ux4g-text-neutral-primary, var(--ux4g-color-neutral-900));
+  --edutrace-text-secondary: var(--ux4g-text-neutral-secondary, var(--ux4g-color-neutral-700));
+  --edutrace-text-tertiary: var(--ux4g-text-neutral-tertiary, var(--ux4g-color-neutral-500));
+  --edutrace-text-inverse: var(--ux4g-text-neutral-inverse, var(--ux4g-color-neutral-0));
+
+  --edutrace-border-subtle: var(--ux4g-color-neutral-200);
+  --edutrace-border-default: var(--ux4g-color-neutral-300);
+  --edutrace-border-strong: var(--ux4g-color-neutral-500);
+
+  /* Focus and Accessibility */
+  --edutrace-focus-outline: var(--ux4g-color-primary-600);
+}
+
+[data-theme="dark"] {
+  --edutrace-flag-exception-bg: var(--ux4g-color-neutral-950);
+  --edutrace-flag-exception-text: var(--ux4g-color-red-300);
+  --edutrace-flag-warning-subtle-bg: var(--ux4g-color-neutral-800);
+  --edutrace-flag-warning-subtle-text: var(--ux4g-color-orange-300);
+  --edutrace-flag-error-subtle-bg: var(--ux4g-color-neutral-800);
+  --edutrace-flag-error-subtle-text: var(--ux4g-color-red-300);
+  --edutrace-flag-info-subtle-bg: var(--ux4g-color-neutral-800);
+  --edutrace-flag-info-subtle-text: var(--ux4g-color-neutral-100);
+  --edutrace-focus-outline: var(--ux4g-color-primary-300);
+}
