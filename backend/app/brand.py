@@ -9,3 +9,7 @@ SHORT_DESCRIPTION = (
 SUPPORT_EMAIL = "support@edutrace.ac.in"
 GRIEVANCE_EMAIL = "grievance@edutrace.ac.in"
 GRIEVANCE_OFFICER = "Data Protection & Grievance Redressal Officer"
+DEMO_MODE_NOTICE = (
+    "Demo mode: APAAR registry is simulated. EduTrace is a prototype and not an "
+    "official government service."
+)
