@@ -47,7 +47,7 @@ export function HomePage() {
           National platform for AICTE-approved institutions to upload APAAR-keyed student data,
           automatically detect over-admissions & duplicate enrolments, and offer privacy-first cryptographic verification.
         </p>
-        <p className="text-xs sm:text-sm text-slate-500 max-w-2xl mx-auto bg-slate-100 py-2 px-4 rounded-lg border border-slate-200 leading-normal">
+        <p className="text-xs sm:text-sm text-slate-700 max-w-2xl mx-auto bg-slate-100 py-2 px-4 rounded-lg border border-slate-200 leading-normal">
           <strong>What is an APAAR ID?</strong> {APAAR_EXPLAINER}
         </p>
       </section>
@@ -153,14 +153,14 @@ export function HomePage() {
             <p className="text-xs text-slate-500">Live connectivity check with backend engine and persistence layers</p>
           </div>
           {loadingHealth ? (
-            <span className="text-xs text-slate-400">Pinging backend...</span>
+            <span className="text-xs text-slate-600">Pinging backend...</span>
           ) : health ? (
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
               <span className="text-xs font-semibold text-emerald-700 uppercase" data-testid="overall-status">
                 {health.status}
               </span>
-              <span className="text-xs text-slate-400 font-mono">v{health.version}</span>
+              <span className="text-xs text-slate-600 font-mono">v{health.version}</span>
             </div>
           ) : (
             <span className="text-xs text-rose-600 font-medium">Backend unreachable</span>
