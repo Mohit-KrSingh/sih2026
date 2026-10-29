@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sample ERP Integration Client for AICTE APAAR System.
+"""Sample ERP Integration Client for AICTE EduTrace System.
 
 SPEC.md Section 17 & TASKS.md T36:
 - Authenticates with scoped API keys (X-API-Key or Authorization: Bearer).
@@ -27,7 +27,7 @@ def make_request(
     data: dict[str, Any] | None = None,
 ) -> tuple[int, dict[str, Any], dict[str, str]]:
     """Helper to perform HTTP requests using Python standard library."""
-    req_headers = {"User-Agent": "APAAR-ERP-Client/1.0", "Accept": "application/json"}
+    req_headers = {"User-Agent": "EduTrace-ERP-Client/1.0", "Accept": "application/json"}
     if headers:
         req_headers.update(headers)
 
@@ -183,7 +183,7 @@ def run_erp_demo(
 ) -> None:
     """Execute end-to-end ERP synchronization demonstration."""
     print("=" * 70)
-    print("AICTE APAAR - External ERP Integration Client (SPEC 17 / T36)")
+    print("AICTE EduTrace - External ERP Integration Client (SPEC 17 / T36)")
     print("=" * 70)
 
     # 1. Acquire API key if not supplied
@@ -271,7 +271,7 @@ def run_erp_demo(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Sample ERP Client for AICTE APAAR Integration")
+    parser = argparse.ArgumentParser(description="Sample ERP Client for AICTE EduTrace Integration")
     parser.add_argument("--url", default="http://127.0.0.1:8000", help="Base API URL")
     parser.add_argument("--key", default=None, help="Pre-generated API key")
     parser.add_argument("--email", default="admin@ngec-nagpur.gov.in", help="College admin email")

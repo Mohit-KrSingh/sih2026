@@ -547,7 +547,7 @@ def test_rules_doc_generator() -> None:
     """Test generating docs/RULES.md from the registry and metadata catalogue."""
     content = generate_rules_doc()
 
-    assert "# APAAR Validation Rules Catalogue" in content
+    assert "# EduTrace Validation Rules Catalogue" in content
     assert "INTAKE_EXCEEDED" in content
     assert "DUP_APAAR_IN_FILE" in content
     assert "APAAR_REQUIRED" in content

@@ -79,14 +79,14 @@ def generate_rules_doc(output_path: str | Path | None = None) -> str:
         level_counts[l_val] = level_counts.get(l_val, 0) + 1
 
     lines: list[str] = [
-        "# APAAR Validation Rules Catalogue",
+        "# EduTrace Validation Rules Catalogue",
         "",
         "> Automated generation from rule registry and contract specifications.",
         "> Source of truth: `SPEC.md` Section 9.3 & 9.4.",
         "",
         "## 1. Overview and Architecture",
         "",
-        "The APAAR Student Data Validation Engine provides unified, automated validation",
+        "The EduTrace Student Data Validation Engine provides unified, automated validation",
         "across all channels (single student entry, CSV bulk upload, and automated API).",
         "",
         "### 1.1 Validation Scopes & Execution Order",

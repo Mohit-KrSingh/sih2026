@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { PRODUCT_NAME } from "../../brand";
 
 export function Footer() {
   return (
@@ -6,7 +7,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-3 text-slate-300">
-            <span className="font-semibold text-white">APAAR Verification Engine</span>
+            <span className="font-semibold text-white">{PRODUCT_NAME} Verification Engine</span>
             <span>&bull;</span>
             <span>All India Council for Technical Education (AICTE)</span>
           </div>

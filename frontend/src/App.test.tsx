@@ -26,7 +26,7 @@ describe("App & Public Foundation", () => {
     render(<App />);
 
     // Header brand
-    expect(screen.getAllByText("APAAR").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("EduTrace").length).toBeGreaterThan(0);
 
     // SPEC.md Section 1 & 19: Four entry cards on home page
     expect(screen.getAllByText("Activate College").length).toBeGreaterThan(0);

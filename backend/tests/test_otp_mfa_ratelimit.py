@@ -269,7 +269,7 @@ def test_totp_generation_and_validation():
     assert len(secret) == 32
 
     uri = get_totp_uri(secret, "admin@example.edu")
-    assert uri.startswith("otpauth://totp/AICTE%20APAAR:admin%40example.edu")
+    assert uri.startswith("otpauth://totp/AICTE%20EduTrace:admin%40example.edu")
     assert f"secret={secret}" in uri
 
     # Valid current TOTP code

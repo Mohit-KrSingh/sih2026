@@ -6,6 +6,7 @@ import { Input } from "../components/ui/Input";
 import { ErrorState } from "../components/ui/ErrorState";
 import { Building2, KeyRound, ShieldCheck } from "lucide-react";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { PRODUCT_NAME } from "../brand";
 
 export function CollegeLoginPage() {
   useDocumentTitle("College Portal Login");
@@ -243,7 +244,7 @@ export function CollegeLoginPage() {
       )}
 
       <div className="text-center text-xs text-slate-500 space-y-1">
-        <p>Has your institution not been activated on APAAR yet?</p>
+        <p>Has your institution not been activated on {PRODUCT_NAME} yet?</p>
         <Link to="/activate" className="font-semibold text-blue-700 hover:underline">
           Claim AICTE Institution ID & Activate
         </Link>

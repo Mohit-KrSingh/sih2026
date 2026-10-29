@@ -234,7 +234,7 @@ export const ApiKeyManagementPage: React.FC = () => {
         <EmptyState
           icon={<Key className="w-12 h-12 text-gray-400" />}
           title="No API Keys Generated Yet"
-          description="Generate an API key to connect your college ERP or student information system directly with AICTE APAAR."
+          description="Generate an API key to connect your college ERP or student information system directly with AICTE EduTrace."
           actionLabel="Generate First API Key"
           onAction={() => setIsCreateModalOpen(true)}
         />

@@ -270,7 +270,7 @@ def setup_mfa(
     return MfaSetupResponse(
         secret=secret,
         provisioning_uri=uri,
-        issuer="AICTE APAAR",
+        issuer="AICTE EduTrace",
         account_email=current_user.email,
     )
 

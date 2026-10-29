@@ -3,7 +3,9 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { RoleBadge } from "../ui/Badge";
 import { Button } from "../ui/Button";
-import { LogOut, Menu, ShieldCheck, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
+import { PRODUCT_NAME } from "../../brand";
+import { EduTraceIcon } from "../brand/EduTraceLogo";
 
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -37,11 +39,11 @@ export function Navbar() {
           {/* Logo & Brand */}
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-10 h-10 rounded-lg bg-blue-700 flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:bg-blue-600 transition">
-              <ShieldCheck className="w-6 h-6 text-amber-300" />
+              <EduTraceIcon size={22} className="text-amber-300" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-bold text-lg tracking-tight text-white">APAAR</span>
+                <span className="font-bold text-lg tracking-tight text-white">{PRODUCT_NAME}</span>
                 <span className="text-xs px-2 py-0.5 rounded bg-blue-800/80 text-blue-200 border border-blue-700 font-medium">
                   Central Portal
                 </span>

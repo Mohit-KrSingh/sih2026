@@ -560,7 +560,8 @@ def test_declaration_otp_and_submit_workflow(client: TestClient, db_session: Ses
     )
     assert outbox_msg is not None
     # Code is embedded in the outbox message body: "Your APAAR verification OTP code is: XXXXXX"
-    prefix = "Your APAAR verification OTP code is: "
+    # Code is embedded in the outbox message body: "Your EduTrace verification OTP code is: XXXXXX"
+    prefix = "Your EduTrace verification OTP code is: "
     otp_code = outbox_msg.body.split(prefix)[1].split(".")[0].strip()
     assert len(otp_code) == 6
 

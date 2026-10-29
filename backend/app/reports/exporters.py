@@ -53,7 +53,7 @@ class NumberedCanvas(canvas.Canvas):
 
         # Footer: Notice on left, page count on right
         footer_text = (
-            "APAAR Portal - Official Regulatory Report | Demo Mode (AICTE SIH 2026) | "
+            "EduTrace Portal - Official Regulatory Report | Demo Mode (AICTE SIH 2026) | "
             "Confidential & Privacy Protected under DPDP Principles"
         )
         self.drawString(36, 20, footer_text)

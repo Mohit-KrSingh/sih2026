@@ -51,6 +51,7 @@ data/
 *.rdb
 dump.rdb
 storage/uploads/
+storage/test_tmp/
 tools/
 .tools/
 

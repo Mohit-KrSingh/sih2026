@@ -278,7 +278,7 @@ def get_ed25519_public_key() -> dict[str, str]:
         "issuer": "AICTE Central Repository",
         "description": (
             "Public verification key for validating student academic record credentials "
-            "issued under the Smart India Hackathon APAAR platform."
+            "issued under the Smart India Hackathon EduTrace platform."
         ),
     }
 
