@@ -10,6 +10,10 @@ import {
   RoleBadge,
   Tag,
   Alert,
+  SubmitGateAlert,
+  LockedDataAlert,
+  SuspendedApprovalAlert,
+  DemoModeAlert,
   ToastProvider,
   useToast,
   Tooltip,
@@ -199,7 +203,7 @@ function DevComponentsContent() {
         {/* =================================================================== */}
         {/* 3. Core: Badges, FlagBadges & Tags */}
         {/* =================================================================== */}
-        <section className="ux4g-bg-neutral-elevated p-6 rounded-xl border ux4g-border-neutral-subtle space-y-4">
+        <section data-testid="showcase-badges" className="ux4g-bg-neutral-elevated p-6 rounded-xl border ux4g-border-neutral-subtle space-y-4">
           <h2 className="text-lg font-bold border-b pb-2 ux4g-text-neutral-primary">
             3. Core: Badges, FlagBadge (SPEC §19) & Tags
           </h2>
@@ -216,7 +220,7 @@ function DevComponentsContent() {
               </div>
             </div>
 
-            <div>
+            <div data-testid="showcase-flag-badges">
               <p className="text-xs font-semibold ux4g-text-neutral-tertiary uppercase mb-2">
                 FlagBadge (SPEC §19 / DECISIONS.md Difference 6)
               </p>
@@ -257,7 +261,7 @@ function DevComponentsContent() {
         {/* =================================================================== */}
         {/* 4. Core: Alerts, Toasts & Tooltips */}
         {/* =================================================================== */}
-        <section className="ux4g-bg-neutral-elevated p-6 rounded-xl border ux4g-border-neutral-subtle space-y-4">
+        <section data-testid="showcase-alerts" className="ux4g-bg-neutral-elevated p-6 rounded-xl border ux4g-border-neutral-subtle space-y-4">
           <h2 className="text-lg font-bold border-b pb-2 ux4g-text-neutral-primary">
             4. Core: Alerts, Toasts & Tooltips
           </h2>
@@ -275,6 +279,28 @@ function DevComponentsContent() {
               <Alert variant="error" title="Validation Blocker" onDismiss={() => {}}>
                 Submit gate blocked: 3 open format errors require resolution.
               </Alert>
+            </div>
+
+            <div className="pt-2 space-y-3">
+              <p className="text-xs font-semibold ux4g-text-neutral-tertiary uppercase">
+                Specialized Alerts (Submit Gate, Locked Data, Suspended Approval, Demo Mode — R08)
+              </p>
+              <div className="space-y-3">
+                <SubmitGateAlert canSubmit={true} />
+                <SubmitGateAlert
+                  canSubmit={false}
+                  openErrorsCount={2}
+                  unjustifiedExceptionsCount={1}
+                  blockers={["APAAR_FORMAT on row 4", "INTAKE_EXCEEDED on B.Tech CSE"]}
+                />
+                <LockedDataAlert academicYear="2026-27" receiptNo="REC-2026-9812" />
+                <SuspendedApprovalAlert
+                  status="suspended"
+                  institutionName="Apex Institute of Technology"
+                  reason="Statutory accreditation compliance review in progress"
+                />
+                <DemoModeAlert />
+              </div>
             </div>
 
             <div className="pt-2 flex items-center gap-6">

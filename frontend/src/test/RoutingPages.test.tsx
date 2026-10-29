@@ -190,12 +190,12 @@ describe("T43: Separate Pages, Real URLs, Detail Views & Navigation", () => {
     // Assert student details load
     await waitFor(() => {
       expect(screen.getByText("Aaditya Patil")).toBeInTheDocument();
+      expect(document.title).toContain("Aaditya Patil - Student Record");
     });
     expect(screen.getByText("999988887777")).toBeInTheDocument();
     expect(screen.getByText("Back to Student Directory")).toBeInTheDocument();
     expect(screen.getByText("Validation Flags for this Student")).toBeInTheDocument();
     expect(screen.getByText("EXC_OVER_INTAKE")).toBeInTheDocument();
-    expect(document.title).toContain("Aaditya Patil - Student Record");
   });
 
   it("renders FlagDetailPage with rule details, fix guidance, and back link to flags list", async () => {
