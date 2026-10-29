@@ -40,3 +40,4 @@ export * from "./EmptyState";
 export * from "./Spinner";
 export * from "./Skeleton";
 export * from "./Progress";
+export * from "./AccessibilityPanel";

@@ -88,3 +88,111 @@
   --edutrace-flag-info-subtle-text: var(--ux4g-color-neutral-100);
   --edutrace-focus-outline: var(--ux4g-color-primary-300);
 }
+
+/* ==========================================================================
+   Accessibility Toolkit: Text Sizing (R05)
+   Normal (100% / 16px), Large (112.5% / 18px), Extra Large (125% / 20px)
+   ========================================================================== */
+html[data-text-size="normal"] {
+  font-size: 100%;
+}
+
+html[data-text-size="large"] {
+  font-size: 112.5%;
+}
+
+html[data-text-size="x-large"] {
+  font-size: 125%;
+}
+
+/* ==========================================================================
+   Accessibility Toolkit: High Contrast Mode (R05)
+   Enhances border visibility, text contrast, and surface separation.
+   Strictly aliases UX4G neutral tokens.
+   ========================================================================== */
+html[data-contrast="high"] {
+  --edutrace-border-subtle: var(--ux4g-color-neutral-800);
+  --edutrace-border-default: var(--ux4g-color-neutral-950);
+  --edutrace-border-strong: var(--ux4g-color-neutral-950);
+  --edutrace-text-secondary: var(--ux4g-color-neutral-900);
+  --edutrace-focus-outline: var(--ux4g-color-neutral-950);
+}
+
+html[data-contrast="high"][data-theme="dark"] {
+  --edutrace-border-subtle: var(--ux4g-color-neutral-200);
+  --edutrace-border-default: var(--ux4g-color-neutral-0);
+  --edutrace-border-strong: var(--ux4g-color-neutral-0);
+  --edutrace-text-secondary: var(--ux4g-color-neutral-100);
+  --edutrace-focus-outline: var(--ux4g-color-neutral-0);
+}
+
+html[data-contrast="high"] button,
+html[data-contrast="high"] input,
+html[data-contrast="high"] select,
+html[data-contrast="high"] textarea {
+  border-width: 2px !important;
+}
+
+/* ==========================================================================
+   Accessibility Toolkit: Underline Links (R05)
+   Forces persistent underlines on non-button hyperlink elements.
+   ========================================================================== */
+html[data-underline-links="true"] a:not([class*="ux4g-btn"]):not([role="button"]) {
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+}
+
+/* ==========================================================================
+   Accessibility Toolkit: Reduced Motion (R05)
+   Disables non-essential animations, transitions, and smooth scrolling.
+   ========================================================================== */
+html[data-reduced-motion="true"] *,
+html[data-reduced-motion="true"] *::before,
+html[data-reduced-motion="true"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ==========================================================================
+   Focus Treatment & Minimum Target Sizes (R05 / WCAG 2.1 AA)
+   - Focus ring visible on every interactive element, never suppressed.
+   - Minimum target size 24px baseline, 44px on coarse pointers (touch).
+   ========================================================================== */
+:focus-visible {
+  outline: 2px solid var(--edutrace-focus-outline) !important;
+  outline-offset: 2px !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="switch"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--edutrace-focus-outline) !important;
+  outline-offset: 2px !important;
+}
+
+button,
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea,
+[role="button"],
+[role="switch"] {
+  min-height: 24px;
+}
+
+@media (pointer: coarse) {
+  button,
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea,
+  [role="button"],
+  [role="switch"] {
+    min-height: 44px;
+  }
+}
