@@ -1317,7 +1317,8 @@ def submit_activation_claim(
         recipient="approvals@aicte-india.org",
         body=(
             f"New college activation request #{activation_req.id} submitted for "
-            f"{inst.aicte_id} - {inst.name} by signatory {activation_req.signatory_name}."
+            f"{inst.aicte_id} - {inst.name} on EduTrace by "
+            f"signatory {activation_req.signatory_name}."
         ),
     )
 
@@ -1451,7 +1452,8 @@ def approve_activation_request(
         channel="email",
         recipient=target_email,
         body=(
-            f"Congratulations! Your college account for '{inst.name}' has been approved by AICTE. "
+            f"Congratulations! Your college account for '{inst.name}' "
+            "has been approved by AICTE on EduTrace. "
             f"Your primary administrator email is '{target_email}'. "
             "Please log in and configure your two-factor authentication (MFA)."
         ),
@@ -1527,7 +1529,8 @@ def reject_activation_request(
         channel="email",
         recipient=inst.official_email,
         body=(
-            f"Your activation request for '{inst.name}' ({inst.aicte_id}) was rejected by AICTE. "
+            f"Your activation request for '{inst.name}' ({inst.aicte_id}) "
+            "on EduTrace was rejected by AICTE. "
             f"Reason: {reason}"
         ),
     )

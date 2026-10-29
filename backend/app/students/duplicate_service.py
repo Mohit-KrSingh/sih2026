@@ -134,13 +134,13 @@ def notify_duplicate_enrolment(
             otp_sender.send_notification(
                 channel="email",
                 recipient=inst_a.official_email,
-                message=notif_a.payload_json["message"],
+                body=notif_a.payload_json["message"],
             )
         if inst_b and inst_b.official_email:
             otp_sender.send_notification(
                 channel="email",
                 recipient=inst_b.official_email,
-                message=notif_b.payload_json["message"],
+                body=notif_b.payload_json["message"],
             )
     except Exception:
         pass

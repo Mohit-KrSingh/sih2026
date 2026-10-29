@@ -7,9 +7,8 @@ import io
 from typing import Any
 
 import openpyxl
-from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl.utils import get_column_letter
-from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.pdfgen import canvas
@@ -22,7 +21,27 @@ from reportlab.platypus import (
     TableStyle,
 )
 
+from app.brand import PRODUCT_NAME
+from app.reports.fonts import get_font_names, register_noto_fonts
 from app.reports.schemas import ReportData
+from app.reports.tokens import (
+    NEUTRAL_100,
+    NEUTRAL_200,
+    NEUTRAL_300,
+    NEUTRAL_500,
+    NEUTRAL_700,
+    NEUTRAL_900,
+    PRIMARY_50,
+    PRIMARY_100,
+    PRIMARY_600,
+    PRIMARY_800,
+    WHITE,
+    XLSX_CARD_FILL,
+    XLSX_HEADER_FILL,
+    XLSX_SUBHEADER_FILL,
+    XLSX_TOTALS_FILL,
+    XLSX_ZEBRA_FILL,
+)
 
 # Numbered Canvas for "Page X of Y" in ReportLab
 
@@ -48,12 +67,13 @@ class NumberedCanvas(canvas.Canvas):
 
     def draw_page_decorations(self, page_count: int) -> None:
         self.saveState()
-        self.setFont("Helvetica", 8)
-        self.setFillColor(colors.HexColor("#718096"))
+        fonts = get_font_names()
+        self.setFont(fonts["regular"], 8)
+        self.setFillColor(NEUTRAL_500)
 
-        # Footer: Notice on left, page count on right
+        # Footer: Demo data notice on left, page count on right (REBRAND_TASKS R14)
         footer_text = (
-            "EduTrace Portal - Official Regulatory Report | Demo Mode (AICTE SIH 2026) | "
+            f"Demo data • {PRODUCT_NAME} Platform • Simulated APAAR Registry • "
             "Confidential & Privacy Protected under DPDP Principles"
         )
         self.drawString(36, 20, footer_text)
@@ -61,7 +81,7 @@ class NumberedCanvas(canvas.Canvas):
         self.drawRightString(self._pagesize[0] - 36, 20, page_str)
 
         # Thin rule above footer
-        self.setStrokeColor(colors.HexColor("#E2E8F0"))
+        self.setStrokeColor(NEUTRAL_200)
         self.setLineWidth(0.5)
         self.line(36, 32, self._pagesize[0] - 36, 32)
 
@@ -77,7 +97,7 @@ def export_to_csv(data: ReportData) -> bytes:
     writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
 
     # Header comments / Title metadata
-    writer.writerow([f"# {data.title}"])
+    writer.writerow([f"# {PRODUCT_NAME} - {data.title}"])
     writer.writerow([f"# Subtitle: {data.subtitle}"])
     writer.writerow([f"# Academic Year: {data.academic_year}"])
     writer.writerow([f"# Generated At: {data.generated_at}"])
@@ -120,28 +140,28 @@ def export_to_csv(data: ReportData) -> bytes:
 
 
 def export_to_xlsx(data: ReportData) -> bytes:
-    """Generate styled OpenPyXL workbook with official palette and formatting."""
+    """Generate styled OpenPyXL workbook with official UX4G token palette and formatting."""
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = data.report_type.value[:31]  # Excel sheet title limit is 31 chars
 
-    # Palette
-    navy_header_fill = PatternFill(start_color="1B365D", end_color="1B365D", fill_type="solid")
-    table_header_fill = PatternFill(start_color="2B6CB0", end_color="2B6CB0", fill_type="solid")
-    zebra_light_fill = PatternFill(start_color="F7FAFC", end_color="F7FAFC", fill_type="solid")
-    totals_fill = PatternFill(start_color="EDF2F7", end_color="EDF2F7", fill_type="solid")
-    card_fill = PatternFill(start_color="EBF8FF", end_color="EBF8FF", fill_type="solid")
+    # Palette aliased from UX4G tokens
+    brand_header_fill = XLSX_HEADER_FILL
+    table_header_fill = XLSX_SUBHEADER_FILL
+    zebra_light_fill = XLSX_ZEBRA_FILL
+    totals_fill = XLSX_TOTALS_FILL
+    card_fill = XLSX_CARD_FILL
 
     font_title = Font(name="Calibri", size=15, bold=True, color="FFFFFF")
-    font_subtitle = Font(name="Calibri", size=10, italic=True, color="4A5568")
+    font_subtitle = Font(name="Calibri", size=10, italic=True, color="404040")
     font_tbl_header = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
-    font_data = Font(name="Calibri", size=10, color="2D3748")
-    font_totals = Font(name="Calibri", size=10, bold=True, color="1A202C")
-    font_card_val = Font(name="Calibri", size=12, bold=True, color="2B6CB0")
-    font_card_lbl = Font(name="Calibri", size=9, color="718096")
+    font_data = Font(name="Calibri", size=10, color="171717")
+    font_totals = Font(name="Calibri", size=10, bold=True, color="171717")
+    font_card_val = Font(name="Calibri", size=12, bold=True, color="4A2BC2")
+    font_card_lbl = Font(name="Calibri", size=9, color="737373")
 
-    thin_border_side = Side(style="thin", color="CBD5E0")
-    double_border_side = Side(style="double", color="1A202C")
+    thin_border_side = Side(style="thin", color="D9D9D9")
+    double_border_side = Side(style="double", color="171717")
     thin_border = Border(
         left=thin_border_side,
         right=thin_border_side,
@@ -157,11 +177,11 @@ def export_to_xlsx(data: ReportData) -> bytes:
 
     num_cols = max(len(data.columns), 4)
 
-    # 1. Main Title Banner
+    # 1. Main Title Banner with EduTrace brand name
     ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=num_cols)
-    cell_title = ws.cell(row=1, column=1, value=f"AICTE - {data.title}")
+    cell_title = ws.cell(row=1, column=1, value=f"{PRODUCT_NAME} - {data.title}")
     cell_title.font = font_title
-    cell_title.fill = navy_header_fill
+    cell_title.fill = brand_header_fill
     cell_title.alignment = Alignment(horizontal="left", vertical="center", indent=1)
     ws.row_dimensions[1].height = 32
 
@@ -253,7 +273,7 @@ def export_to_xlsx(data: ReportData) -> bytes:
     if data.notes:
         for note in data.notes:
             c = ws.cell(row=current_row, column=1, value=f"* {note}")
-            c.font = Font(name="Calibri", size=9, italic=True, color="718096")
+            c.font = Font(name="Calibri", size=9, italic=True, color="737373")
             current_row += 1
 
     # Auto-adjust column widths
@@ -278,7 +298,13 @@ def export_to_xlsx(data: ReportData) -> bytes:
 
 
 def export_to_pdf(data: ReportData) -> bytes:
-    """Generate high-fidelity PDF report adhering to AICTE official styling."""
+    """Generate high-fidelity PDF report adhering to EduTrace UX4G token styling."""
+    register_noto_fonts()
+    fonts = get_font_names()
+    font_reg = fonts["regular"]
+    font_bold = fonts["bold"]
+    font_italic = fonts["italic"]
+
     buf = io.BytesIO()
 
     # Use landscape A4 for reports with >= 6 columns, portrait otherwise
@@ -301,48 +327,64 @@ def export_to_pdf(data: ReportData) -> bytes:
 
     styles = getSampleStyleSheet()
 
-    # Custom styles
-    title_style = ParagraphStyle(
-        "AicteTitle",
+    # Custom typography styles strictly aliasing UX4G semantic tokens & Noto Sans
+    brand_style = ParagraphStyle(
+        "EduTraceBrand",
         parent=styles["Normal"],
-        fontName="Helvetica-Bold",
-        fontSize=15,
-        leading=18,
-        textColor=colors.HexColor("#1B365D"),
+        fontName=font_bold,
+        fontSize=16,
+        leading=19,
+        textColor=PRIMARY_600,
+    )
+    brand_sub_style = ParagraphStyle(
+        "EduTraceBrandSub",
+        parent=styles["Normal"],
+        fontName=font_reg,
+        fontSize=7.5,
+        leading=9.5,
+        textColor=NEUTRAL_500,
+    )
+    title_style = ParagraphStyle(
+        "ReportTitle",
+        parent=styles["Normal"],
+        fontName=font_bold,
+        fontSize=13,
+        leading=16,
+        textColor=NEUTRAL_900,
     )
     subtitle_style = ParagraphStyle(
-        "AicteSubTitle",
+        "ReportSubTitle",
         parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=9,
-        leading=12,
-        textColor=colors.HexColor("#4A5568"),
+        fontName=font_reg,
+        fontSize=8,
+        leading=11,
+        textColor=NEUTRAL_700,
     )
     meta_style = ParagraphStyle(
-        "AicteMeta",
+        "ReportMeta",
         parent=styles["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_reg,
         fontSize=8,
         leading=10,
-        textColor=colors.HexColor("#2B6CB0"),
+        textColor=NEUTRAL_700,
         alignment=2,  # Right aligned
     )
     tbl_header_style = ParagraphStyle(
         "TblHeader",
         parent=styles["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=8,
         leading=10,
-        textColor=colors.white,
+        textColor=WHITE,
         alignment=1,  # Center aligned
     )
     tbl_cell_style = ParagraphStyle(
         "TblCell",
         parent=styles["Normal"],
-        fontName="Helvetica",
+        fontName=font_reg,
         fontSize=7.5,
         leading=9,
-        textColor=colors.HexColor("#2D3748"),
+        textColor=NEUTRAL_900,
     )
     tbl_cell_right_style = ParagraphStyle(
         "TblCellRight",
@@ -352,10 +394,10 @@ def export_to_pdf(data: ReportData) -> bytes:
     tbl_total_style = ParagraphStyle(
         "TblTotal",
         parent=styles["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=8,
         leading=10,
-        textColor=colors.HexColor("#1A202C"),
+        textColor=NEUTRAL_900,
     )
     tbl_total_right_style = ParagraphStyle(
         "TblTotalRight",
@@ -365,28 +407,31 @@ def export_to_pdf(data: ReportData) -> bytes:
     card_label_style = ParagraphStyle(
         "CardLabel",
         parent=styles["Normal"],
-        fontName="Helvetica",
+        fontName=font_reg,
         fontSize=7.5,
         leading=9,
-        textColor=colors.HexColor("#718096"),
+        textColor=NEUTRAL_700,
         alignment=1,
     )
     card_value_style = ParagraphStyle(
         "CardValue",
         parent=styles["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=11,
         leading=13,
-        textColor=colors.HexColor("#2B6CB0"),
+        textColor=PRIMARY_600,
         alignment=1,
     )
 
     story: list[Any] = []
 
-    # 1. Official Header
+    # 1. EduTrace Wordmark Header (No official emblem or unauthorized government seals)
     header_data = [
         [
-            Paragraph(f"<b>AICTE - {data.title}</b>", title_style),
+            [
+                Paragraph(f"<b>{PRODUCT_NAME}</b>", brand_style),
+                Paragraph("Student Data Management &amp; Verification System", brand_sub_style),
+            ],
             Paragraph(
                 f"Academic Year: <b>{data.academic_year}</b><br/>"
                 f"Generated: {data.generated_at}",
@@ -407,9 +452,20 @@ def export_to_pdf(data: ReportData) -> bytes:
         )
     )
     story.append(header_table)
+    story.append(Spacer(1, 4))
+    story.append(
+        HRFlowable(
+            width="100%",
+            thickness=1.5,
+            color=PRIMARY_600,
+            spaceBefore=0,
+            spaceAfter=6,
+        )
+    )
 
-    # Subtitle
-    story.append(Spacer(1, 3))
+    # 2. Report Title & Subtitle
+    story.append(Paragraph(f"<b>{data.title}</b>", title_style))
+    story.append(Spacer(1, 2))
     filter_desc = ""
     if data.filters_applied:
         f_list = [f"{k}: {v}" for k, v in data.filters_applied.items() if v]
@@ -417,23 +473,13 @@ def export_to_pdf(data: ReportData) -> bytes:
             filter_desc = f" | Filters: {', '.join(f_list)}"
     story.append(
         Paragraph(
-            f"{data.subtitle}{filter_desc} &bull; "
-            "All India Council for Technical Education (Ministry of Education)",
+            f"{data.subtitle}{filter_desc}",
             subtitle_style,
         )
     )
-    story.append(Spacer(1, 6))
-    story.append(
-        HRFlowable(
-            width="100%",
-            thickness=1.5,
-            color=colors.HexColor("#1B365D"),
-            spaceBefore=0,
-            spaceAfter=8,
-        )
-    )
+    story.append(Spacer(1, 8))
 
-    # 2. Summary Metric Boxes (if any)
+    # 3. Summary Metric Boxes (if any)
     if data.summary_boxes:
         num_boxes = min(len(data.summary_boxes), 5)
         card_w = usable_width / num_boxes
@@ -445,9 +491,9 @@ def export_to_pdf(data: ReportData) -> bytes:
         summary_table.setStyle(
             TableStyle(
                 [
-                    ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F0F4F8")),
-                    ("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#CBD5E0")),
-                    ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E0")),
+                    ("BACKGROUND", (0, 0), (-1, -1), PRIMARY_50),
+                    ("BOX", (0, 0), (-1, -1), 1, NEUTRAL_300),
+                    ("INNERGRID", (0, 0), (-1, -1), 0.5, NEUTRAL_300),
                     ("TOPPADDING", (0, 0), (-1, -1), 4),
                     ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
                     ("ALIGN", (0, 0), (-1, -1), "CENTER"),
@@ -458,9 +504,8 @@ def export_to_pdf(data: ReportData) -> bytes:
         story.append(summary_table)
         story.append(Spacer(1, 10))
 
-    # 3. Main Data Table
+    # 4. Main Data Table
     num_cols = len(data.columns)
-    # Estimate proportional column widths
     col_width = usable_width / num_cols
 
     # Prepare table elements wrapped in Paragraph for autowrap
@@ -497,22 +542,22 @@ def export_to_pdf(data: ReportData) -> bytes:
     pdf_table = Table(table_content, colWidths=[col_width] * num_cols, repeatRows=1)
 
     table_style_list = [
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1B365D")),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("BACKGROUND", (0, 0), (-1, 0), PRIMARY_600),
+        ("TEXTCOLOR", (0, 0), (-1, 0), WHITE),
         ("ALIGN", (0, 0), (-1, 0), "CENTER"),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("TOPPADDING", (0, 0), (-1, -1), 3),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
         ("LEFTPADDING", (0, 0), (-1, -1), 4),
         ("RIGHTPADDING", (0, 0), (-1, -1), 4),
-        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E0")),
+        ("GRID", (0, 0), (-1, -1), 0.5, NEUTRAL_300),
     ]
 
     # Alternating row colors
     for r_idx in range(1, len(data.rows) + 1):
         if r_idx % 2 == 0:
             table_style_list.append(
-                ("BACKGROUND", (0, r_idx), (-1, r_idx), colors.HexColor("#F7FAFC"))
+                ("BACKGROUND", (0, r_idx), (-1, r_idx), NEUTRAL_100)
             )
 
     # Totals row style
@@ -524,21 +569,21 @@ def export_to_pdf(data: ReportData) -> bytes:
                     "BACKGROUND",
                     (0, total_row_idx),
                     (-1, total_row_idx),
-                    colors.HexColor("#EDF2F7"),
+                    PRIMARY_100,
                 ),
                 (
                     "LINEABOVE",
                     (0, total_row_idx),
                     (-1, total_row_idx),
                     1,
-                    colors.HexColor("#2D3748"),
+                    PRIMARY_600,
                 ),
                 (
                     "LINEBELOW",
                     (0, total_row_idx),
                     (-1, total_row_idx),
                     1.5,
-                    colors.HexColor("#1B365D"),
+                    PRIMARY_800,
                 ),
             ]
         )
@@ -546,23 +591,19 @@ def export_to_pdf(data: ReportData) -> bytes:
     pdf_table.setStyle(TableStyle(table_style_list))
     story.append(pdf_table)
 
-    # 4. Notes
+    # 5. Notes
     if data.notes:
         story.append(Spacer(1, 8))
+        note_style = ParagraphStyle(
+            "NoteStyle",
+            parent=styles["Normal"],
+            fontName=font_italic,
+            fontSize=7.5,
+            leading=10,
+            textColor=NEUTRAL_500,
+        )
         for note in data.notes:
-            story.append(
-                Paragraph(
-                    f"&bull; <i>{note}</i>",
-                    ParagraphStyle(
-                        "NoteStyle",
-                        parent=styles["Normal"],
-                        fontName="Helvetica-Oblique",
-                        fontSize=7.5,
-                        leading=10,
-                        textColor=colors.HexColor("#718096"),
-                    ),
-                )
-            )
+            story.append(Paragraph(f"&bull; <i>{note}</i>", note_style))
 
     doc.build(story, canvasmaker=NumberedCanvas)
     return buf.getvalue()
