@@ -1,7 +1,4 @@
-"""FastAPI routes for AICTE Review Queue and College Clarification Queries.
-
-SPEC.md Section 10 & 12, TASKS.md T25.
-"""
+"""FastAPI routes for AICTE Review Queue and College Clarification Queries."""
 
 from __future__ import annotations
 
@@ -39,9 +36,7 @@ from app.review.schemas import (
     ReviewItemListResponse,
 )
 
-# ---------------------------------------------------------------------------
 # AICTE Review Queue Endpoints (AICTE Officers & Admins only)
-# ---------------------------------------------------------------------------
 router = APIRouter(prefix="/review", tags=["AICTE Review Queue"])
 
 
@@ -141,9 +136,7 @@ def download_review_document(
     )
 
 
-# ---------------------------------------------------------------------------
 # College Clarification Queries Endpoints (Institution Scoped)
-# ---------------------------------------------------------------------------
 college_queries_router = APIRouter(
     prefix="/institutions/{institution_id}/queries", tags=["College Clarification Queries"]
 )

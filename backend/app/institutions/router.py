@@ -1,12 +1,4 @@
-"""FastAPI Router for institutions, courses, intake, and corrections.
-
-SPEC.md Section 6 & TASKS.md T07:
-- Colleges never edit AICTE-owned data (intake, courses, approval status, contacts).
-- AICTE officers can change intake, courses, and approval status with full history and audit.
-- Mock AICTE master sync endpoint.
-- Correction requests: college creates, AICTE resolves.
-- Suspended/withdrawn/expired approval blocks uploads (403 Forbidden).
-"""
+"""FastAPI Router for institutions, courses, intake, and corrections."""
 
 from datetime import UTC, datetime
 from typing import Annotated, Any
@@ -90,9 +82,7 @@ activation_otp_limiter = RateLimiter(
 )
 
 
-# =========================================================================
 # College Activation Endpoints (Spec 11, TASKS.md T08)
-# =========================================================================
 
 
 @router.post(
@@ -374,9 +364,7 @@ def reject_activation(
     )
 
 
-# =========================================================================
 # AICTE Master Sync & Global Correction Queue (Static Paths First)
-# =========================================================================
 
 
 @router.post(
@@ -449,9 +437,7 @@ def resolve_correction_request(
     return CorrectionRequestResponse.model_validate(req)
 
 
-# =========================================================================
 # Institution Listing and Detail
-# =========================================================================
 
 
 @router.get(
@@ -554,9 +540,7 @@ def update_institution_approval_status(
     return InstitutionResponse.model_validate(inst)
 
 
-# =========================================================================
 # Course Endpoints
-# =========================================================================
 
 
 @router.get(
@@ -640,9 +624,7 @@ def update_course(
     return CourseResponse.model_validate(course)
 
 
-# =========================================================================
 # Intake & Intake History Endpoints
-# =========================================================================
 
 
 @router.get(
@@ -705,9 +687,7 @@ def get_intake_history(
     return [CourseIntakeHistoryResponse.model_validate(h) for h in history]
 
 
-# =========================================================================
 # Correction Requests (Colleges create, view own)
-# =========================================================================
 
 
 @router.post(
@@ -780,9 +760,7 @@ def get_correction_request_detail(
     return CorrectionRequestResponse.model_validate(req)
 
 
-# =========================================================================
 # Upload Gate (Enforcing Suspended Approval Blocks Uploads)
-# =========================================================================
 
 
 @router.post(
@@ -807,9 +785,7 @@ def create_upload_session(
     return UploadResponse.model_validate(upload)
 
 
-# =========================================================================
 # Staff Management Endpoints (Spec 5, 6, 11, TASKS.md T09)
-# =========================================================================
 
 
 @router.post(
@@ -937,9 +913,7 @@ def delete_institution_staff(
     return {"status": "success", "message": f"Staff user {user_id} deactivated"}
 
 
-# =========================================================================
 # Contact or Head Change Requests (Spec 6, 11)
-# =========================================================================
 
 
 @router.post(
@@ -972,9 +946,7 @@ def request_contact_change(
     return CorrectionRequestResponse.model_validate(req)
 
 
-# =========================================================================
 # Final Submit Gate (Spec 5, 10, TASKS.md T09)
-# =========================================================================
 
 
 @router.post(
@@ -1001,9 +973,7 @@ def submit_student_data_gate(
     }
 
 
-# =========================================================================
 # Institutional Notifications (Spec 7, TASKS.md T16, T24)
-# =========================================================================
 
 
 @router.get(
@@ -1122,5 +1092,4 @@ def mark_all_institution_notifications_read(
     res = db.execute(stmt)
     db.commit()
     return {"status": "success", "marked_read_count": res.rowcount}
-
 

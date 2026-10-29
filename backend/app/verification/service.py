@@ -457,9 +457,7 @@ def generate_student_certificate_service(
     return pdf_bytes, filename
 
 
-# ============================================================================
 # Verifier Onboarding Service Logic (SPEC.md Section 14, TASKS.md T33)
-# ============================================================================
 
 
 def register_verifier(
@@ -677,9 +675,7 @@ def get_verifier_for_user(db: Session, user: User) -> Verifier:
     return verifier
 
 
-# ============================================================================
 # Consent Engine Lifecycle Logic (SPEC.md Section 14, TASKS.md T33)
-# ============================================================================
 
 
 def create_consent_request(

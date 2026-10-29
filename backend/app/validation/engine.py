@@ -187,4 +187,3 @@ def validate_submission(*args: Any, **kwargs: Any) -> Any:
     from app.validation.service import validate_submission as _validate_submission
 
     return _validate_submission(*args, **kwargs)
-

@@ -1,14 +1,4 @@
-"""Submission promotion to Central Repository, cross-college re-checks, and SSE dispatch.
-
-Spec: Section 10, 12 & TASKS.md T24:
-- On submit:
-  1. Student status updates: is_locked=True, status="submitted" (promoted to central repository).
-  2. Seat declarations: locked.
-  3. Cross-college rules re-run with all data across all colleges.
-  4. Notifications dispatched to affected colleges.
-  5. Server-Sent Events (SSE) published for submissions, duplicates, and review items.
-  6. Review items created in review_items table for all exception-level flags.
-"""
+"""Submission promotion to Central Repository, cross-college re-checks, and SSE dispatch."""
 
 from __future__ import annotations
 
@@ -61,9 +51,7 @@ def promote_submission_and_run_cross_checks(
     institution_id = submission.institution_id
     academic_year = submission.academic_year
 
-    # -------------------------------------------------------------------------
     # 1. Promote and lock active student records
-    # -------------------------------------------------------------------------
     students = list(
         db.scalars(
             select(Student)
@@ -91,9 +79,7 @@ def promote_submission_and_run_cross_checks(
             if s.apaar_id and len(str(s.apaar_id).strip()) == 12:
                 apaar_ids.append(str(s.apaar_id).strip())
 
-    # -------------------------------------------------------------------------
     # 2. Lock institutional seat declarations & link validation flags
-    # -------------------------------------------------------------------------
     inst_course_ids = {s.course_id for s in students if s.course_id is not None}
     student_ids = [s.id for s in students]
 
@@ -129,9 +115,7 @@ def promote_submission_and_run_cross_checks(
 
     db.flush()
 
-    # -------------------------------------------------------------------------
     # 3. Cross-college duplicate re-checks across all institutions
-    # -------------------------------------------------------------------------
     duplicates_detected_count = 0
     notifications_dispatched_count = 0
 
@@ -327,9 +311,7 @@ def promote_submission_and_run_cross_checks(
 
     db.flush()
 
-    # -------------------------------------------------------------------------
     # 4. Review items created for exceptions
-    # -------------------------------------------------------------------------
     exception_flags = list(
         db.scalars(
             select(ValidationFlag).where(
@@ -384,9 +366,7 @@ def promote_submission_and_run_cross_checks(
     else:
         submission.status = SubmissionState.SUBMITTED.value
 
-    # -------------------------------------------------------------------------
     # 4b. Issue verified records on clean submission (SPEC.md Section 14, TASKS.md T32)
-    # -------------------------------------------------------------------------
     verified_records_issued = 0
     if not exception_flags:
         from app.verification.service import issue_verified_records_for_submission
@@ -399,9 +379,7 @@ def promote_submission_and_run_cross_checks(
         )
         verified_records_issued = len(issued_records)
 
-    # -------------------------------------------------------------------------
     # 5. Publish SSE event for successful submission promotion
-    # -------------------------------------------------------------------------
     inst_name = (
         submission.institution.name
         if submission.institution
@@ -434,9 +412,7 @@ def promote_submission_and_run_cross_checks(
 
     db.flush()
 
-    # -------------------------------------------------------------------------
     # 7. Evaluate and persist multi-dimensional anomaly detection scores
-    # -------------------------------------------------------------------------
     anomalies_flagged_count = 0
     try:
         anomaly_scores = evaluate_and_store_anomalies(db=db, academic_year=academic_year)

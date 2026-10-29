@@ -1,14 +1,4 @@
-"""Shared helpers for anomaly detection validation rules and feature extraction.
-
-Spec: Section 9.3 & TASKS.md T27.
-Extracts metrics and multi-dimensional course features:
-- year-over-year enrolment growth
-- NRI/OCI/foreign student share
-- supernumerary admission share
-- date of birth clustering
-- sequential APAAR ID runs
-- same admission day concentration
-"""
+"""Shared helpers for anomaly detection validation rules and feature extraction."""
 
 from __future__ import annotations
 

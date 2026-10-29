@@ -1,13 +1,4 @@
-"""FastAPI router for regulatory reports and data exports.
-
-Spec: Section 17 & TASKS.md T31:
-- All reports in section 17 as CSV, XLSX, and PDF.
-- Filters: state, course, year.
-- Strict RBAC:
-  - AICTE roles can download all national reports and any college report.
-  - College roles can download only their own submission and accreditation snapshot (IDOR checked).
-  - Deny by default: every route has an explicit role requirement.
-"""
+"""FastAPI router for regulatory reports and data exports."""
 
 from __future__ import annotations
 
@@ -38,9 +29,7 @@ institution_reports_router = APIRouter(
 )
 
 
-# ---------------------------------------------------------------------------
 # Helper: File Download Response
-# ---------------------------------------------------------------------------
 
 
 def make_download_response(content: bytes, media_type: str, filename: str) -> Response:
@@ -55,9 +44,7 @@ def make_download_response(content: bytes, media_type: str, filename: str) -> Re
     )
 
 
-# ---------------------------------------------------------------------------
 # National AICTE Reports (AICTE Only)
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -185,9 +172,7 @@ def download_year_over_year_trends(
     return make_download_response(content, media_type, filename)
 
 
-# ---------------------------------------------------------------------------
 # College & Institutional Reports (AICTE or Scoped College User)
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -238,9 +223,7 @@ def download_college_submission(
     return make_download_response(content, media_type, filename)
 
 
-# ---------------------------------------------------------------------------
 # Preview Endpoint (JSON) for Frontend Interactive Tables
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -330,9 +313,7 @@ def preview_report(
     )
 
 
-# ---------------------------------------------------------------------------
 # Institution-Scoped Convenience Routes (For College UI)
-# ---------------------------------------------------------------------------
 
 
 @institution_reports_router.get(

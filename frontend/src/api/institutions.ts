@@ -133,9 +133,7 @@ export interface DevOutboxMessage {
   created_at: string;
 }
 
-// ---------------------------------------------------------------------------
 // Activation API Methods
-// ---------------------------------------------------------------------------
 
 export async function initiateActivation(aicteId: string): Promise<ActivationInitiateResponse> {
   return api.post<ActivationInitiateResponse>("/api/v1/institutions/activation/initiate", {
@@ -174,9 +172,7 @@ export async function getActivationStatus(aicteId: string): Promise<ActivationSt
   );
 }
 
-// ---------------------------------------------------------------------------
 // AICTE Approvals Queue Methods
-// ---------------------------------------------------------------------------
 
 export async function listActivationRequests(
   status?: string,
@@ -216,9 +212,7 @@ export async function rejectActivation(
   );
 }
 
-// ---------------------------------------------------------------------------
 // Institutions & Intake Management Methods
-// ---------------------------------------------------------------------------
 
 export async function listInstitutions(params?: {
   state?: string;
@@ -342,4 +336,3 @@ export async function markAllNotificationsRead(
     {},
   );
 }
-

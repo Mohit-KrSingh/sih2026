@@ -1,8 +1,4 @@
-"""Validation rule: DUP_ENROLNO_IN_COURSE.
-
-Same enrolment number twice in one course and year.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: DUP_ENROLNO_IN_COURSE."""
 
 from __future__ import annotations
 

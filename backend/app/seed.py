@@ -1,17 +1,4 @@
-"""Database seed script and demo data generator.
-
-SPEC.md section 18 & TASKS.md T03:
-- Populates 30 AICTE-approved institutions across 8 states.
-- Populates approved courses and intake per academic year (2025-26 and 2026-27).
-- Populates Mock APAAR Registry with ~8,500 simulated identities.
-- Seeds academic year 2025-26 as accepted history (~3,000 students) passing validation cleanly.
-- Seeds academic year 2026-27 with mixed states (clean, draft, exceptions).
-- Plants anomalies: sudden enrolment jump, DOB cluster, sequential APAAR IDs,
-  cross-college duplicate.
-- Seeds demo accounts (aicte_admin, aicte_officer, 3 college_admins at different stages, verifier).
-- Generates 4 demo CSVs in demo/ directory (clean, messy, overintake, cross_college_dupe).
-- Idempotent: running repeatedly will not duplicate or error.
-"""
+"""Database seed script and demo data generator."""
 
 import csv
 import random

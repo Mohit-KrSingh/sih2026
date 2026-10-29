@@ -1,10 +1,4 @@
-"""Redis-backed One-Time Password (OTP) service.
-
-SPEC.md section 11 & TASKS.md T05:
-- OTP in Redis with 5-minute expiry and 5 attempts.
-- Maximum 5 attempts before lockout / invalidation.
-- Connects to OtpSender interface to dispatch notifications/OTPs.
-"""
+"""Redis-backed One-Time Password (OTP) service."""
 
 import hmac
 import json

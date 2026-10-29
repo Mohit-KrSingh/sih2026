@@ -189,9 +189,7 @@ def delete_justification(
     )
 
 
-# ---------------------------------------------------------------------------
 # Submission Lifecycle and Submit Gate Endpoints (SPEC.md Section 10 & TASKS.md T23)
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -278,4 +276,3 @@ def get_submission_receipt(
         institution_id=institution_id,
         academic_year=academic_year,
     )
-

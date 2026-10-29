@@ -109,9 +109,7 @@ class InstitutionSeatDeclarationResponse(BaseModel):
     courses: list[CourseSummaryResponse]
 
 
-# =========================================================================
 # Student Record Schemas (Spec 8.2, 9.4, TASKS.md T20)
-# =========================================================================
 
 
 class StudentValidationFlag(BaseModel):
@@ -246,9 +244,7 @@ class StudentListResponse(BaseModel):
     stats: StudentListStats
 
 
-# =========================================================================
 # Bulk Upload Schemas (Spec 8.2, 9.4, 13 & TASKS.md T21)
-# =========================================================================
 
 
 class UploadSummary(BaseModel):
@@ -320,5 +316,4 @@ class UploadHistoryResponse(BaseModel):
 
     items: list[UploadHistoryItem]
     total: int
-
 

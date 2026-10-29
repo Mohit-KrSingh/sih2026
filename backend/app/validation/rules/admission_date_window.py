@@ -1,8 +1,4 @@
-"""Validation rule: ADMISSION_DATE_WINDOW.
-
-Admission date outside the admission window for that year.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: ADMISSION_DATE_WINDOW."""
 
 from __future__ import annotations
 

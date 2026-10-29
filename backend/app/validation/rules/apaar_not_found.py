@@ -1,8 +1,4 @@
-"""Validation rule: APAAR_NOT_FOUND.
-
-ID does not exist in the registry.
-Spec: Section 9.3.
-"""
+"""Validation rule: APAAR_NOT_FOUND."""
 
 from __future__ import annotations
 

@@ -1,8 +1,4 @@
-"""Validation rule: NAME_FORMAT.
-
-Name has digits or illegal characters.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: NAME_FORMAT."""
 
 from __future__ import annotations
 

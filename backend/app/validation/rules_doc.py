@@ -1,8 +1,4 @@
-"""Rules documentation generator.
-
-Spec: Section 9.3, 9.4 & TASKS.md T18:
-`make rules-doc` generates `docs/RULES.md` from the registry.
-"""
+"""Rules documentation generator."""
 
 from __future__ import annotations
 

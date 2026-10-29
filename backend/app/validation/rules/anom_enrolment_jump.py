@@ -1,8 +1,4 @@
-"""Validation rule: ANOM_ENROLMENT_JUMP.
-
-Enrolment up more than a threshold (default 30%) against last year. Audience: aicte.
-Spec: Section 9.3 & TASKS.md T27.
-"""
+"""Validation rule: ANOM_ENROLMENT_JUMP."""
 
 from __future__ import annotations
 

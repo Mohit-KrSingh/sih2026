@@ -1,10 +1,4 @@
-"""Export engines for CSV, XLSX, and PDF reports.
-
-Spec: Section 17 & TASKS.md T31:
-- CSV: UTF-8 with BOM for universal Excel compatibility.
-- XLSX: Styled openpyxl workbook with official branding, formatting, auto-column widths, and totals.
-- PDF: ReportLab document with AICTE official header, summary cards, and pagination.
-"""
+"""Export engines for CSV, XLSX, and PDF reports."""
 
 from __future__ import annotations
 
@@ -30,9 +24,7 @@ from reportlab.platypus import (
 
 from app.reports.schemas import ReportData
 
-# ---------------------------------------------------------------------------
 # Numbered Canvas for "Page X of Y" in ReportLab
-# ---------------------------------------------------------------------------
 
 
 class NumberedCanvas(canvas.Canvas):
@@ -76,9 +68,7 @@ class NumberedCanvas(canvas.Canvas):
         self.restoreState()
 
 
-# ---------------------------------------------------------------------------
 # CSV Exporter
-# ---------------------------------------------------------------------------
 
 
 def export_to_csv(data: ReportData) -> bytes:
@@ -126,9 +116,7 @@ def export_to_csv(data: ReportData) -> bytes:
     return csv_text.encode("utf-8-sig")
 
 
-# ---------------------------------------------------------------------------
 # XLSX Exporter
-# ---------------------------------------------------------------------------
 
 
 def export_to_xlsx(data: ReportData) -> bytes:
@@ -286,9 +274,7 @@ def export_to_xlsx(data: ReportData) -> bytes:
     return buf.getvalue()
 
 
-# ---------------------------------------------------------------------------
 # PDF Exporter (ReportLab)
-# ---------------------------------------------------------------------------
 
 
 def export_to_pdf(data: ReportData) -> bytes:

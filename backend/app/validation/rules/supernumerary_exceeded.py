@@ -1,9 +1,4 @@
-"""Validation rule: SUPERNUMERARY_EXCEEDED.
-
-Supernumerary admitted is above the supernumerary seats AICTE allows.
-Message states the exact overshoot.
-Spec: Section 9.3, 10.
-"""
+"""Validation rule: SUPERNUMERARY_EXCEEDED."""
 
 from __future__ import annotations
 

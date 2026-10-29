@@ -1,8 +1,4 @@
-"""Mock implementation of OtpSender.
-
-SPEC.md section 18 and TASKS.md:
-Mock OTP writes to dev_outbox; a dev-only route lists it.
-"""
+"""Mock implementation of OtpSender."""
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session

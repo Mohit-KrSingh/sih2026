@@ -217,4 +217,3 @@ class SubmissionReceiptResponse(BaseModel):
     courses_count: int
     justified_exceptions_count: int
     is_locked: bool = True
-

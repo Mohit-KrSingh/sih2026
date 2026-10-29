@@ -1,11 +1,4 @@
-"""TOTP MFA utilities for administrative roles.
-
-SPEC.md section 11 & 16, TASKS.md T05:
-- TOTP for admin roles (college_admin, aicte_admin, aicte_officer).
-- Generation of TOTP base32 secret and provisioning URI.
-- Verification with configurable time window.
-- Intermediate token handling for 2-step MFA login flow.
-"""
+"""TOTP MFA utilities for administrative roles."""
 
 from datetime import UTC, datetime, timedelta
 from typing import Any

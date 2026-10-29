@@ -1,8 +1,4 @@
-"""Validation rule: SEAT_TYPE_NOT_APPROVED.
-
-Supernumerary seat in a course with no supernumerary seats allowed.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: SEAT_TYPE_NOT_APPROVED."""
 
 from __future__ import annotations
 

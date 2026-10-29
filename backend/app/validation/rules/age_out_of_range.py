@@ -1,8 +1,4 @@
-"""Validation rule: AGE_OUT_OF_RANGE.
-
-Age outside the course-level band (defaults: UG 15-30, PG 19-45, Diploma 14-30, PGDM 19-45).
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: AGE_OUT_OF_RANGE."""
 
 from __future__ import annotations
 

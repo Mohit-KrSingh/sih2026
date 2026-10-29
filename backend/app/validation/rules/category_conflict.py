@@ -1,8 +1,4 @@
-"""Validation rule: CATEGORY_CONFLICT.
-
-NRI and foreign national both Yes.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: CATEGORY_CONFLICT."""
 
 from __future__ import annotations
 

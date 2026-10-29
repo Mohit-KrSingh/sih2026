@@ -1,8 +1,4 @@
-"""Validation rule: ANOM_DOB_CLUSTER.
-
-Many students share one date of birth (default 5 or more). Audience: aicte.
-Spec: Section 9.3 & TASKS.md T27.
-"""
+"""Validation rule: ANOM_DOB_CLUSTER."""
 
 from __future__ import annotations
 

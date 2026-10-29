@@ -198,9 +198,7 @@ export async function deleteStudent(
   );
 }
 
-// =========================================================================
 // Bulk Upload Types & Functions (Spec 8.2, 9.4, 13 & TASKS.md T21)
-// =========================================================================
 
 export interface UploadSummary {
   total_rows: number;
@@ -349,4 +347,3 @@ export async function downloadErrorCsv(
   }
   return res.text();
 }
-

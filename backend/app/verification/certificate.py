@@ -1,10 +1,4 @@
-"""Degree Certificate PDF Generator with side-by-side College ID, APAAR ID, and QR code.
-
-Spec: Section 17 & TASKS.md T35:
-- Sample degree certificate with college student ID and APAAR ID side by side and the QR code.
-- Endpoint for institutions; scanning the QR leads to the verify flow.
-- Verified under Ed25519 cryptographic signing and DPDP data minimisation principles.
-"""
+"""Degree Certificate PDF Generator with side-by-side College ID, APAAR ID, and QR code."""
 
 from __future__ import annotations
 

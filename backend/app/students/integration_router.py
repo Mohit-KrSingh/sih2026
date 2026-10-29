@@ -1,12 +1,4 @@
-"""External Integration API for Student Data Synchronization (ERP / SIS Integration).
-
-SPEC.md Section 17 & TASKS.md T36:
-- OpenAPI docs at /docs with complete JSON examples.
-- Institution systems authenticate with scoped API keys (hashed, rotatable).
-- Push students as JSON with the same pure validation engine and flag rules as CSV uploads.
-- Header: Idempotency-Key prevents duplicate submissions and replays cached results.
-- Returns detailed validation summary and row-level flags with fix hints.
-"""
+"""External Integration API for Student Data Synchronization (ERP / SIS Integration)."""
 
 from __future__ import annotations
 
@@ -29,9 +21,7 @@ from app.students.schemas import UploadResultResponse
 router = APIRouter(prefix="/integration", tags=["Integration API (ERP / SIS)"])
 
 
-# =========================================================================
 # Schemas & OpenAPI Examples
-# =========================================================================
 
 
 class IntegrationStudentItem(BaseModel):
@@ -162,9 +152,7 @@ class IntegrationIdentityResponse(BaseModel):
     scopes: list[str]
 
 
-# =========================================================================
 # Endpoints
-# =========================================================================
 
 
 @router.get(

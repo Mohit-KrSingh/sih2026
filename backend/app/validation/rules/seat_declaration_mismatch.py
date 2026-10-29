@@ -1,8 +1,4 @@
-"""Validation rule: SEAT_DECLARATION_MISMATCH.
-
-Declared counts differ from the uploaded student list. Blocks submit; the college fixes either side.
-Spec: Section 8.1, 9.3, 10.
-"""
+"""Validation rule: SEAT_DECLARATION_MISMATCH."""
 
 from __future__ import annotations
 

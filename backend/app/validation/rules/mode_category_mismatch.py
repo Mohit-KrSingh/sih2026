@@ -1,8 +1,4 @@
-"""Validation rule: MODE_CATEGORY_MISMATCH.
-
-NRI/OCI/foreign student not admitted through the NRI/OCI/foreign quota, or the reverse.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: MODE_CATEGORY_MISMATCH."""
 
 from __future__ import annotations
 

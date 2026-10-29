@@ -1,13 +1,4 @@
-"""Analytics service for AICTE real-time monitoring and reporting.
-
-Spec: Section 10, 12 & TASKS.md T28:
-- Direct database aggregation matching exact integer counts.
-- Overview oversight metrics, state and course discipline breakdowns.
-- Submission progress tracking across all AICTE-approved institutions.
-- Compliance monitoring and red-list tracking (overshoot seats and over-intake colleges).
-- Hierarchical drilldown: State -> College -> Course -> Flagged Students.
-- Action tools: official AICTE notices and flag resolution with hash-chained audit logs.
-"""
+"""Analytics service for AICTE real-time monitoring and reporting."""
 
 from __future__ import annotations
 
@@ -57,9 +48,7 @@ from app.students import duplicate_service
 logger = logging.getLogger(__name__)
 
 
-# ---------------------------------------------------------------------------
 # Helper: Academic Year Flag Scope
-# ---------------------------------------------------------------------------
 
 
 def get_academic_year_flag_ids_stmt(academic_year: str):
@@ -93,9 +82,7 @@ def get_academic_year_flag_ids_stmt(academic_year: str):
     return union(sub_flags, stu_flags, crs_flags)
 
 
-# ---------------------------------------------------------------------------
 # Overview Metrics
-# ---------------------------------------------------------------------------
 
 
 def get_overview_metrics(
@@ -295,9 +282,7 @@ def get_overview_metrics(
     )
 
 
-# ---------------------------------------------------------------------------
 # State Breakdown
-# ---------------------------------------------------------------------------
 
 
 def get_by_state(
@@ -519,9 +504,7 @@ def get_by_state(
     )
 
 
-# ---------------------------------------------------------------------------
 # Course Breakdown
-# ---------------------------------------------------------------------------
 
 
 def get_by_course(
@@ -649,9 +632,7 @@ def get_by_course(
     )
 
 
-# ---------------------------------------------------------------------------
 # Submission Progress Tracking
-# ---------------------------------------------------------------------------
 
 
 def get_submission_progress(
@@ -802,9 +783,7 @@ def get_submission_progress(
     )
 
 
-# ---------------------------------------------------------------------------
 # Compliance Monitoring and Red List
-# ---------------------------------------------------------------------------
 
 
 def get_compliance_list(
@@ -942,9 +921,7 @@ def get_compliance_list(
     )
 
 
-# ---------------------------------------------------------------------------
 # Drilldown (State -> College -> Course -> Flagged Students)
-# ---------------------------------------------------------------------------
 
 
 def get_drilldown(
@@ -955,9 +932,7 @@ def get_drilldown(
     course_id: int | None = None,
 ) -> DrilldownResponse:
     """Hierarchical drilldown supporting State -> College -> Course -> Students navigation."""
-    # -----------------------------------------------------------------------
     # Level 4: Students in specific course
-    # -----------------------------------------------------------------------
     if course_id is not None and institution_id is not None:
         course = db.get(Course, course_id)
         institution = db.get(Institution, institution_id)
@@ -1030,9 +1005,7 @@ def get_drilldown(
             students=student_items,
         )
 
-    # -----------------------------------------------------------------------
     # Level 3: Courses in specific college
-    # -----------------------------------------------------------------------
     if institution_id is not None:
         institution = db.get(Institution, institution_id)
         if not institution:
@@ -1176,9 +1149,7 @@ def get_drilldown(
             courses=course_items,
         )
 
-    # -----------------------------------------------------------------------
     # Level 2: Colleges in specific state
-    # -----------------------------------------------------------------------
     if state is not None:
         institutions = list(
             db.scalars(
@@ -1280,9 +1251,7 @@ def get_drilldown(
             colleges=college_items,
         )
 
-    # -----------------------------------------------------------------------
     # Level 1: National (All states)
-    # -----------------------------------------------------------------------
     state_res = get_by_state(db=db, academic_year=academic_year)
     state_summaries = [
         DrilldownStateSummary(
@@ -1303,9 +1272,7 @@ def get_drilldown(
     )
 
 
-# ---------------------------------------------------------------------------
 # Action Tools (Notice dispatch and flag resolution)
-# ---------------------------------------------------------------------------
 
 
 def send_institution_notice(

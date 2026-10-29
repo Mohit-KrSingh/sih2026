@@ -1,8 +1,4 @@
-"""Validation rule: ANOM_SUPERNUM_SHARE.
-
-Supernumerary share unusually high (default over 15%). Audience: aicte.
-Spec: Section 9.3 & TASKS.md T27.
-"""
+"""Validation rule: ANOM_SUPERNUM_SHARE."""
 
 from __future__ import annotations
 

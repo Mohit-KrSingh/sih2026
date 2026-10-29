@@ -171,4 +171,3 @@ def decrypt_dob(encrypted: str) -> date:
             return date.fromisoformat(encrypted)
         except Exception as e:
             raise ValueError(f"Cannot decrypt date of birth: {encrypted}") from e
-

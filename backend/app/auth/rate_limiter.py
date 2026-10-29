@@ -1,10 +1,4 @@
-"""Redis-backed sliding window rate limiter.
-
-SPEC.md section 14 & 16, TASKS.md T05:
-- Rate limits on login, OTP and verify endpoints.
-- Returns HTTP 429 Too Many Requests with Retry-After header.
-- Atomic sliding window counter using Redis sorted sets (ZSET).
-"""
+"""Redis-backed sliding window rate limiter."""
 
 import time
 import uuid

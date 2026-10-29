@@ -1,7 +1,4 @@
-"""Validation engine package for APAAR Student Data Management and Verification.
-
-Spec: Section 9.1, 9.2, 9.3, 9.4.
-"""
+"""Validation engine package for APAAR Student Data Management and Verification."""
 
 import app.validation.rules  # noqa: F401  # Auto-registers all rule modules
 from app.validation.apaar_lookup import get_apaar_cache

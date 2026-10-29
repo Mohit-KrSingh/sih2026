@@ -168,9 +168,7 @@ def get_intake_history(
     )
 
 
-# =========================================================================
 # AICTE-Owned Mutations (AICTE Officers Only)
-# =========================================================================
 
 
 def create_course(
@@ -539,9 +537,7 @@ def update_institution_info(
     return inst
 
 
-# =========================================================================
 # Mock AICTE Master Sync
-# =========================================================================
 
 
 def sync_master_data(
@@ -708,9 +704,7 @@ def sync_master_data(
     )
 
 
-# =========================================================================
 # Correction Requests (Colleges create, AICTE resolves)
-# =========================================================================
 
 
 def create_correction_request(
@@ -917,9 +911,7 @@ def resolve_correction_request(
     return req
 
 
-# =========================================================================
 # Upload Gate / Approval Status Enforcement
-# =========================================================================
 
 
 def check_institution_can_upload(institution: Institution) -> None:
@@ -979,9 +971,7 @@ def create_upload_session(
     return upload
 
 
-# =========================================================================
 # Activation Management (Spec 11, TASKS.md T08)
-# =========================================================================
 
 ACTIVATION_TOKEN_EXPIRE_MINUTES = 30
 
@@ -1609,9 +1599,7 @@ def get_activation_status(db: Session, aicte_id: str) -> ActivationStatusRespons
     )
 
 
-# =========================================================================
 # Staff Management (Spec 5, 6, 11, TASKS.md T09)
-# =========================================================================
 
 
 def create_staff(
@@ -1849,9 +1837,7 @@ def delete_staff(
     )
 
 
-# =========================================================================
 # Contact or Head Change Requests (Spec 6, 11)
-# =========================================================================
 
 
 def create_contact_change_request(

@@ -1,8 +1,4 @@
-"""Validation rule: ANOM_SAME_ADMISSION_DAY.
-
-Large share of students admitted on one day (default over 60%). Audience: aicte.
-Spec: Section 9.3 & TASKS.md T27.
-"""
+"""Validation rule: ANOM_SAME_ADMISSION_DAY."""
 
 from __future__ import annotations
 

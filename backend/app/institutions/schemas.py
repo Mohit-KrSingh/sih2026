@@ -208,9 +208,7 @@ class UploadResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-# =========================================================================
 # Activation Schemas (Spec 11, TASKS.md T08)
-# =========================================================================
 
 
 class ActivationInitiateRequest(BaseModel):
@@ -318,9 +316,7 @@ class ActivationStatusResponse(BaseModel):
     latest_request_id: int | None = None
 
 
-# =========================================================================
 # Staff Management Schemas (Spec 5, 6, 11, TASKS.md T09)
-# =========================================================================
 
 
 class StaffCreateRequest(BaseModel):

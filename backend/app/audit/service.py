@@ -1,11 +1,4 @@
-"""Hash-chained, tamper-evident audit logging service.
-
-SPEC.md section 15 & 16, TASKS.md T06:
-- Append-only, hash-chained: each row stores prev_hash and hash = SHA256(prev_hash + canonical row).
-- Verify-chain function that recomputes the chain and reports the first broken row.
-- APAAR IDs are masked in audit logs.
-- Advisory lock serialization in PostgreSQL guarantees race-free chain extension.
-"""
+"""Hash-chained, tamper-evident audit logging service."""
 
 import hashlib
 import json

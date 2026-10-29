@@ -1,9 +1,4 @@
-"""Logging configuration with automatic APAAR ID redaction/masking.
-
-SPEC.md Section 16 & TASKS.md T37:
-- Mask APAAR IDs in logs: Ensure 12-digit APAAR IDs are redacted to '********1234'
-  across all standard library log records, arguments, and formatted strings.
-"""
+"""Logging configuration with automatic APAAR ID redaction/masking."""
 
 import logging
 import re

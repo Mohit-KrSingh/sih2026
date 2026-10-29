@@ -1,8 +1,4 @@
-"""Validation rule: ANOM_NRI_SHARE.
-
-NRI/OCI/foreign share unusually high (default over 25%). Audience: aicte.
-Spec: Section 9.3 & TASKS.md T27.
-"""
+"""Validation rule: ANOM_NRI_SHARE."""
 
 from __future__ import annotations
 

@@ -1,8 +1,4 @@
-"""Validation rule: DUP_APAAR_IN_FILE.
-
-Same APAAR ID appears twice in the upload or the college's records for that year.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: DUP_APAAR_IN_FILE."""
 
 from __future__ import annotations
 

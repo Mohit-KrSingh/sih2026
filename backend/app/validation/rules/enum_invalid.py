@@ -1,8 +1,4 @@
-"""Validation rule: ENUM_INVALID.
-
-Value not in the allowed list (gender, category, seat type, mode, Yes/No).
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: ENUM_INVALID."""
 
 from __future__ import annotations
 

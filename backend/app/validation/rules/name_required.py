@@ -1,8 +1,4 @@
-"""Validation rule: NAME_REQUIRED.
-
-Name missing.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: NAME_REQUIRED."""
 
 from __future__ import annotations
 

@@ -1,9 +1,4 @@
-"""Validation rule: DUP_ACTIVE_OTHER_COLLEGE.
-
-APAAR ID is active at another AICTE college this academic year.
-Both colleges notified. Resolved when one marks student withdrawn or transferred.
-Spec: Section 9.3, 10.
-"""
+"""Validation rule: DUP_ACTIVE_OTHER_COLLEGE."""
 
 from __future__ import annotations
 

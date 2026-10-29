@@ -1,11 +1,4 @@
-"""Duplicate enrolment management, cross-college notifications, and flag resolution.
-
-Spec: Section 9.3, 10, 12 & TASKS.md T16, T24, T28:
-- Cross-college rules query by apaar_id and year using the index.
-- Marking a student withdrawn or transferred at one college resolves the flag at both.
-- Notify both colleges upon detection and resolution.
-- Provide AICTE duplicate records overview query.
-"""
+"""Duplicate enrolment management, cross-college notifications, and flag resolution."""
 
 from __future__ import annotations
 

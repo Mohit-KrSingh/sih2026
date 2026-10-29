@@ -1,15 +1,4 @@
-"""Student bulk upload processing, CSV/Excel parsing, draft persistence, and validation execution.
-
-Spec: Section 8.2, 9.4, 13 & TASKS.md T21:
-- Template download (exact column headers in lowercase).
-- Upload endpoint (reject only unreadable files).
-- Parse with pandas (supports CSV, TSV, Excel).
-- Save all rows as drafts without discarding data.
-- Re-upload updates matching records (same college, course, year, APAAR ID).
-- Run pure validation engine across all rows and persist flags.
-- Upload history and error file export (row, field, code, level, message, fix hint).
-- Hash-chained audit logging and IDOR protection.
-"""
+"""Student bulk upload processing, parsing, draft persistence, and validation."""
 
 from __future__ import annotations
 

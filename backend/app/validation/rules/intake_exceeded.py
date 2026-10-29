@@ -1,8 +1,4 @@
-"""Validation rule: INTAKE_EXCEEDED.
-
-Regular admitted is above approved intake. Message states the exact overshoot.
-Spec: Section 9.3, 10.
-"""
+"""Validation rule: INTAKE_EXCEEDED."""
 
 from __future__ import annotations
 

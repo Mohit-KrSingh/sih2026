@@ -1,9 +1,4 @@
-"""Security middlewares for HTTP headers, strict CORS, and request body limits.
-
-SPEC.md Section 16 & TASKS.md T37:
-- Security headers (HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy).
-- Request body size limits (reject payloads > 15MB with HTTP 413 Payload Too Large).
-"""
+"""Security middlewares for HTTP headers, strict CORS, and request body limits."""
 
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse

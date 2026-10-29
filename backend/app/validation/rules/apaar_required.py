@@ -1,8 +1,4 @@
-"""Validation rule: APAAR_REQUIRED.
-
-APAAR ID missing.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: APAAR_REQUIRED."""
 
 from __future__ import annotations
 

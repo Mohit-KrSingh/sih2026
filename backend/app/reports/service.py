@@ -1,16 +1,4 @@
-"""Core reporting engine for the 7 official AICTE reports.
-
-Spec: Section 17 & TASKS.md T31:
-1. Enrolment by state and course
-2. Seat utilisation (admitted vs intake)
-3. Colleges with exceptions
-4. Duplicate enrolments
-5. Year-over-year trends
-6. Accreditation snapshot for one college
-7. A college's own submission report
-
-Strict rule: Totals must match direct database counts.
-"""
+"""Core reporting engine for the 7 official AICTE reports."""
 
 from __future__ import annotations
 
@@ -55,9 +43,7 @@ def mask_apaar(apaar_id: str | None) -> str:
     return f"XXXX-{cleaned[-4:]}" if len(cleaned) >= 4 else "XXXX"
 
 
-# ---------------------------------------------------------------------------
 # 1. Enrolment by State and Course
-# ---------------------------------------------------------------------------
 
 
 def generate_enrolment_by_state_course(
@@ -265,9 +251,7 @@ def generate_enrolment_by_state_course(
     )
 
 
-# ---------------------------------------------------------------------------
 # 2. Seat Utilisation (Admitted vs Intake)
-# ---------------------------------------------------------------------------
 
 
 def generate_seat_utilisation(
@@ -457,9 +441,7 @@ def generate_seat_utilisation(
     )
 
 
-# ---------------------------------------------------------------------------
 # 3. Colleges with Exceptions
-# ---------------------------------------------------------------------------
 
 
 def generate_colleges_with_exceptions(
@@ -621,9 +603,7 @@ def generate_colleges_with_exceptions(
     )
 
 
-# ---------------------------------------------------------------------------
 # 4. Duplicate Enrolments
-# ---------------------------------------------------------------------------
 
 
 def generate_duplicate_enrolments(
@@ -766,9 +746,7 @@ def generate_duplicate_enrolments(
     )
 
 
-# ---------------------------------------------------------------------------
 # 5. Year-over-Year Trends
-# ---------------------------------------------------------------------------
 
 
 def generate_year_over_year_trends(
@@ -1017,9 +995,7 @@ def generate_year_over_year_trends(
     )
 
 
-# ---------------------------------------------------------------------------
 # 6. Accreditation Snapshot for One College
-# ---------------------------------------------------------------------------
 
 
 def generate_accreditation_snapshot(
@@ -1256,9 +1232,7 @@ def generate_accreditation_snapshot(
     )
 
 
-# ---------------------------------------------------------------------------
 # 7. College's Own Submission Report
-# ---------------------------------------------------------------------------
 
 
 def generate_college_submission_report(
@@ -1428,9 +1402,7 @@ def generate_college_submission_report(
     )
 
 
-# ---------------------------------------------------------------------------
 # Dispatcher / File Generation
-# ---------------------------------------------------------------------------
 
 
 def generate_report(

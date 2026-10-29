@@ -1,18 +1,4 @@
-"""Machine learning anomaly detection service using IsolationForest.
-
-Spec: Section 9.3 & TASKS.md T27:
-- Extracts 6-dimensional college-course features:
-  1. year-over-year growth (yoy_growth)
-  2. international/NRI quota share (nri_share)
-  3. supernumerary quota share (supernum_share)
-  4. date of birth cluster ratio (dob_cluster_ratio)
-  5. admission-day concentration (admission_day_concentration)
-  6. APAAR sequence runs (max_apaar_sequence_run)
-- Fits IsolationForest on college-course feature matrices.
-- Flags anomalous multi-dimensional admission profiles.
-- Persists scores and features to PostgreSQL anomaly_scores table.
-- Generates plain-English explanations of detected deviations.
-"""
+"""Machine learning anomaly detection service using IsolationForest."""
 
 from __future__ import annotations
 

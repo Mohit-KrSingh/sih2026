@@ -1,8 +1,4 @@
-"""Validation rule: ADMISSION_YEAR_MISMATCH.
-
-Admission date does not fall in the stated academic year.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: ADMISSION_YEAR_MISMATCH."""
 
 from __future__ import annotations
 

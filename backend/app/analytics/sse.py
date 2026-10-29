@@ -1,10 +1,4 @@
-"""Server-Sent Events (SSE) publishing, Redis pub/sub integration, and event streaming.
-
-Spec: Section 3, 10, 12 & TASKS.md T24, T28:
-- Real-time updates for AICTE dashboards via Server-Sent Events.
-- Publishes submission, duplicate detection, and review item events.
-- Redis-backed broadcast with resilient in-memory fallback buffer.
-"""
+"""Server-Sent Events (SSE) publishing, Redis pub/sub integration, and event streaming."""
 
 from __future__ import annotations
 

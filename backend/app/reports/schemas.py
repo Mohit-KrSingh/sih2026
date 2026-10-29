@@ -1,16 +1,4 @@
-"""Pydantic schemas and dataclasses for reports generation.
-
-Spec: Section 17 & TASKS.md T31:
-- Formats: CSV, XLSX, PDF.
-- 7 Core Reports:
-  1. Enrolment by state and course
-  2. Seat utilisation (admitted vs intake)
-  3. Colleges with exceptions
-  4. Duplicate enrolments
-  5. Year-over-year trends
-  6. Accreditation snapshot for one college
-  7. College's own submission report
-"""
+"""Pydantic schemas and dataclasses for reports generation."""
 
 from __future__ import annotations
 

@@ -1,13 +1,4 @@
-"""Pydantic schemas for analytics, duplicate listings, anomaly scores, and SSE event feeds.
-
-Spec: Section 10, 12 & TASKS.md T24, T27, T28:
-- Overview metrics, state and course aggregations.
-- Submission progress tracking across institutions.
-- Compliance monitoring and red-list tracking (over-intake).
-- Hierarchical drill-down: state -> college -> course -> flagged students.
-- Action tools (send notice, resolve/dismiss flags).
-- Live Server-Sent Events (SSE).
-"""
+"""Pydantic schemas for analytics, duplicate listings, anomaly scores, and SSE event feeds."""
 
 from __future__ import annotations
 
@@ -16,9 +7,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-# ---------------------------------------------------------------------------
 # Duplicate Enrolment Schemas (T24)
-# ---------------------------------------------------------------------------
 
 
 class DuplicateInstitutionDetail(BaseModel):
@@ -69,9 +58,7 @@ class DuplicateListResponse(BaseModel):
     items: list[DuplicateRecordResponse]
 
 
-# ---------------------------------------------------------------------------
 # Anomaly Score Schemas (T27)
-# ---------------------------------------------------------------------------
 
 
 class AnomalyScoreItem(BaseModel):
@@ -102,9 +89,7 @@ class AnomalyScoreListResponse(BaseModel):
     items: list[AnomalyScoreItem]
 
 
-# ---------------------------------------------------------------------------
 # Server-Sent Events (SSE) Schemas
-# ---------------------------------------------------------------------------
 
 
 class SSEEventPayload(BaseModel):
@@ -116,9 +101,7 @@ class SSEEventPayload(BaseModel):
     timestamp: str
 
 
-# ---------------------------------------------------------------------------
 # Overview Metrics Schemas (T28)
-# ---------------------------------------------------------------------------
 
 
 class SubmissionProgressOverview(BaseModel):
@@ -152,9 +135,7 @@ class OverviewMetricsResponse(BaseModel):
     status_breakdown: dict[str, int]
 
 
-# ---------------------------------------------------------------------------
 # State and Course Breakdown Schemas (T28)
-# ---------------------------------------------------------------------------
 
 
 class StateMetricsItem(BaseModel):
@@ -209,9 +190,7 @@ class CourseMetricsListResponse(BaseModel):
     items: list[CourseMetricsItem]
 
 
-# ---------------------------------------------------------------------------
 # Submission Progress Tracking Schemas (T28)
-# ---------------------------------------------------------------------------
 
 
 class InstitutionSubmissionProgressItem(BaseModel):
@@ -247,9 +226,7 @@ class SubmissionProgressResponse(BaseModel):
     items: list[InstitutionSubmissionProgressItem]
 
 
-# ---------------------------------------------------------------------------
 # Compliance Monitoring and Red List Schemas (T28)
-# ---------------------------------------------------------------------------
 
 
 class ComplianceViolationItem(BaseModel):
@@ -290,9 +267,7 @@ class ComplianceListResponse(BaseModel):
     items: list[ComplianceViolationItem]
 
 
-# ---------------------------------------------------------------------------
 # Drilldown Schemas (State -> College -> Course -> Flagged Students) (T28)
-# ---------------------------------------------------------------------------
 
 
 class DrilldownStateSummary(BaseModel):
@@ -385,9 +360,7 @@ class DrilldownResponse(BaseModel):
     students: list[DrilldownStudentItem] | None = None
 
 
-# ---------------------------------------------------------------------------
 # Action Tools Schemas (T28)
-# ---------------------------------------------------------------------------
 
 
 class SendNoticeRequest(BaseModel):

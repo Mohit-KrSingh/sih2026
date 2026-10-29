@@ -1,7 +1,4 @@
-"""Pydantic v2 schemas for AICTE Review Queue and College Clarification Queries.
-
-SPEC.md Section 10 & 12, TASKS.md T25.
-"""
+"""Pydantic v2 schemas for AICTE Review Queue and College Clarification Queries."""
 
 from __future__ import annotations
 

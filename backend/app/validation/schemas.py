@@ -1,9 +1,4 @@
-"""Pydantic schemas for rule configuration and customization.
-
-Spec: Section 9.2, 9.3, 12:
-- Levels and params can be overridden per rule from rule_config (AICTE admin screen).
-- Runtime policy modifications without code deployment.
-"""
+"""Pydantic schemas for rule configuration and customization."""
 
 from __future__ import annotations
 

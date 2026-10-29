@@ -1141,4 +1141,3 @@ def get_submission_receipt(
         justified_exceptions_count=justified_count,
         is_locked=True,
     )
-

@@ -1,8 +1,4 @@
-"""Validation rule: APAAR_DOB_MISMATCH.
-
-Date of birth differs from the registry.
-Spec: Section 9.3.
-"""
+"""Validation rule: APAAR_DOB_MISMATCH."""
 
 from __future__ import annotations
 

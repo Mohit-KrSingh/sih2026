@@ -181,9 +181,7 @@ def get_institution_scope(
     )
 
 
-# =========================================================================
 # Integration API Key Authentication Dependencies (Spec 17, TASKS.md T36)
-# =========================================================================
 
 
 def get_api_key_header(
@@ -234,4 +232,3 @@ def require_api_key_scope(
         return auth
 
     return scope_checker
-

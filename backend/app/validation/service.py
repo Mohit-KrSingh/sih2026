@@ -1,11 +1,4 @@
-"""Validation engine high-level integration services and persistence entry points.
-
-Spec: Section 9.1, 9.2, 9.3, 9.4 & TASKS.md T18:
-- validate_rows, validate_course, validate_submission entry points.
-- Persist flags with row/student/course/submission references.
-- Idempotent re-run keeping valid justifications.
-- High performance evaluation.
-"""
+"""Validation engine high-level integration services and persistence entry points."""
 
 from __future__ import annotations
 

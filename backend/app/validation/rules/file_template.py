@@ -1,8 +1,4 @@
-"""Validation rule: FILE_TEMPLATE.
-
-Wrong or missing columns. File rejected, nothing saved.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: FILE_TEMPLATE."""
 
 from __future__ import annotations
 

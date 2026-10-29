@@ -1,8 +1,4 @@
-"""Validation rule: COUNTRY_REQUIRED.
-
-Foreign national is Yes but country is empty.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: COUNTRY_REQUIRED."""
 
 from __future__ import annotations
 

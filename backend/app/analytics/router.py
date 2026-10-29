@@ -1,16 +1,4 @@
-"""FastAPI router for AICTE analytics, duplicate monitoring, anomalies, and SSE.
-
-Spec: Section 10, 12 & TASKS.md T24, T27, T28:
-- Overview oversight metrics, state and course aggregations.
-- Submission progress tracking across institutions.
-- Compliance monitoring and red-list tracking (over-intake).
-- Hierarchical drill-down: state -> college -> course -> flagged students.
-- Action tools (send notice, resolve/dismiss flags).
-- Live Server-Sent Events (SSE) event stream for live dashboard updates.
-- Centralized duplicate enrolments query across all colleges.
-- IsolationForest anomaly detection scores and deviation monitoring.
-- Historical event inspection for AICTE officers and admins.
-"""
+"""FastAPI router for AICTE analytics, duplicate monitoring, anomalies, and SSE."""
 
 from __future__ import annotations
 
@@ -47,9 +35,7 @@ from app.students import duplicate_service
 router = APIRouter(prefix="/analytics", tags=["AICTE Analytics & Monitoring"])
 
 
-# ---------------------------------------------------------------------------
 # Overview Metrics
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -66,9 +52,7 @@ def get_overview_metrics(
     return analytics_service.get_overview_metrics(db=db, academic_year=academic_year)
 
 
-# ---------------------------------------------------------------------------
 # State and Course Breakdown
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -103,9 +87,7 @@ def get_metrics_by_course(
     return analytics_service.get_by_course(db=db, academic_year=academic_year, level=level)
 
 
-# ---------------------------------------------------------------------------
 # Submission Progress Tracking
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -131,9 +113,7 @@ def get_submission_progress(
     )
 
 
-# ---------------------------------------------------------------------------
 # Compliance Monitoring and Red List
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -157,9 +137,7 @@ def get_compliance_list(
     )
 
 
-# ---------------------------------------------------------------------------
 # Hierarchical Drilldown
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -188,9 +166,7 @@ def get_drilldown(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e)) from e
 
 
-# ---------------------------------------------------------------------------
 # Action Tools
-# ---------------------------------------------------------------------------
 
 
 @router.post(
@@ -245,9 +221,7 @@ def resolve_flag_action(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e)) from e
 
 
-# ---------------------------------------------------------------------------
 # Cross-College Duplicate Enrolments
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -281,9 +255,7 @@ def get_duplicate_enrolments(
     )
 
 
-# ---------------------------------------------------------------------------
 # Machine Learning Anomaly Detection Scores
-# ---------------------------------------------------------------------------
 
 
 @router.get(
@@ -351,9 +323,7 @@ def get_anomaly_scores(
     )
 
 
-# ---------------------------------------------------------------------------
 # Server-Sent Events (SSE) Live Event Stream
-# ---------------------------------------------------------------------------
 
 
 @router.get(

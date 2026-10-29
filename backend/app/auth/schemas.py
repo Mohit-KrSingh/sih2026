@@ -140,9 +140,7 @@ class OtpVerifyResponse(BaseModel):
     message: str
 
 
-# =========================================================================
 # Password Reset Schemas (Spec 11, TASKS.md T09)
-# =========================================================================
 
 
 class PasswordResetRequest(BaseModel):

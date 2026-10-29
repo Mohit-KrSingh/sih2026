@@ -1,10 +1,4 @@
-"""Audit log API endpoints: search, query filtering, and cryptographic chain verification.
-
-SPEC.md section 15, TASKS.md T06:
-- AICTE roles only.
-- GET /api/v1/audit with filters.
-- GET /api/v1/audit/verify-chain recomputes the chain and reports the first broken row.
-"""
+"""Audit log API endpoints: search, query filtering, and cryptographic chain verification."""
 
 from datetime import datetime
 from typing import Annotated

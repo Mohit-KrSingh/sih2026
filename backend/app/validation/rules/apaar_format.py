@@ -1,8 +1,4 @@
-"""Validation rule: APAAR_FORMAT.
-
-Not exactly 12 digits.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: APAAR_FORMAT."""
 
 from __future__ import annotations
 

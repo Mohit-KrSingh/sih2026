@@ -1,34 +1,4 @@
-"""Verification API router: verification search, QR codes, public key, revocation,
-verifier onboarding, student consent engine, and minimal disclosure record access.
-
-SPEC.md section 14 & 16, TASKS.md T32 & T33:
-- Public rate-limited verification endpoint: `/api/v1/verification/verify?vid=...`.
-- Public rate-limited record proof lookup: `/api/v1/verification/records/{vid}`.
-- Public rate-limited QR PNG generator: `/api/v1/verification/records/{vid}/qr`.
-- Public Ed25519 verify key endpoint: `/api/v1/verification/public-key`.
-- Credential revocation endpoint with RBAC and institutional IDOR checks:
-  `POST /api/v1/verification/records/{vid}/revoke`.
-- Student verification details for college & AICTE portal:
-  `GET /api/v1/verification/students/{student_id}`.
-- Verifier onboarding & AICTE admin approvals:
-  `POST /api/v1/verification/verifiers/register`,
-  `GET /api/v1/verification/verifiers`,
-  `GET /api/v1/verification/verifiers/me`,
-  `GET /api/v1/verification/verifiers/{verifier_id}`,
-  `PATCH /api/v1/verification/verifiers/{verifier_id}/approve`,
-  `PATCH /api/v1/verification/verifiers/{verifier_id}/revoke`.
-- Verifier consent requests & minimal disclosure access:
-  `POST /api/v1/verification/consent-requests`,
-  `GET /api/v1/verification/consent-requests`,
-  `GET /api/v1/verification/consent-requests/{request_id}`,
-  `GET /api/v1/verification/consent-requests/{request_id}/record`.
-- Student consent portal:
-  `POST /api/v1/verification/student/otp/send`,
-  `POST /api/v1/verification/student/otp/verify`,
-  `GET /api/v1/verification/student/records`,
-  `GET /api/v1/verification/student/consent-requests`,
-  `POST /api/v1/verification/student/consent-requests/{request_id}/decide`.
-"""
+"""Verification API router: verification search, QR codes, public key, revocation,"""
 
 import io
 import uuid
@@ -97,9 +67,7 @@ verify_rate_limiter = RateLimiter(
 )
 
 
-# ============================================================================
 # Helpers
-# ============================================================================
 
 
 def create_student_token(apaar_id: str, student_name: str | None = None) -> str:
@@ -183,9 +151,7 @@ def _map_consent_response(cr: ConsentRequest) -> ConsentRequestResponse:
     )
 
 
-# ============================================================================
 # Existing Models (T32)
-# ============================================================================
 
 
 class RevokeRecordRequest(BaseModel):
@@ -207,9 +173,7 @@ class PublicRecordResponse(BaseModel):
     issued_by: str = "AICTE Central Repository"
 
 
-# ============================================================================
 # Public Verification Endpoints (T32)
-# ============================================================================
 
 
 @router.get(
@@ -466,9 +430,7 @@ def get_student_certificate_from_verification(
     )
 
 
-# ============================================================================
 # Verifier Onboarding & AICTE Admin Review Endpoints (T33)
-# ============================================================================
 
 
 @router.post(
@@ -600,9 +562,7 @@ def revoke_verifier_endpoint(
     return VerifierResponse.model_validate(verifier)
 
 
-# ============================================================================
 # Verifier Consent Request & Record Access Endpoints (T33)
-# ============================================================================
 
 
 @router.post(
@@ -718,9 +678,7 @@ def read_consented_record_endpoint(
     return ConsentedStudentRecordResponse.model_validate(data)
 
 
-# ============================================================================
 # Student Consent Portal Endpoints (T33)
-# ============================================================================
 
 
 @router.post(

@@ -1,8 +1,4 @@
-"""Validation rule: DUP_SAME_COURSE_OTHER_COLLEGE.
-
-Same APAAR ID in the same course and year at another college.
-Spec: Section 9.3, 10.
-"""
+"""Validation rule: DUP_SAME_COURSE_OTHER_COLLEGE."""
 
 from __future__ import annotations
 

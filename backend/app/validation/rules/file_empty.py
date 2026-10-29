@@ -1,8 +1,4 @@
-"""Validation rule: FILE_EMPTY.
-
-No data rows. File rejected.
-Spec: Section 9.3.
-"""
+"""Validation rule: FILE_EMPTY."""
 
 from __future__ import annotations
 

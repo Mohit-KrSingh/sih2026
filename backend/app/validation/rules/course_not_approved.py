@@ -1,8 +1,4 @@
-"""Validation rule: COURSE_NOT_APPROVED.
-
-Course or branch not approved for this college.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: COURSE_NOT_APPROVED."""
 
 from __future__ import annotations
 

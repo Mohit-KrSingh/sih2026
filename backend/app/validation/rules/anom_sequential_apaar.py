@@ -1,8 +1,4 @@
-"""Validation rule: ANOM_SEQUENTIAL_APAAR.
-
-Long runs of sequential APAAR IDs (default 10 or more). Audience: aicte.
-Spec: Section 9.3 & TASKS.md T27.
-"""
+"""Validation rule: ANOM_SEQUENTIAL_APAAR."""
 
 from __future__ import annotations
 

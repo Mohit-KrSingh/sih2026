@@ -1,13 +1,4 @@
-"""Pydantic schemas for verifier onboarding, student consent engine, and minimal disclosure records.
-
-SPEC.md section 14 & TASKS.md T33:
-- Verifier onboarding: organisation registers, AICTE admin approves.
-- Consent requests: verifier initiates, 24-hour expiry, scope limited to minimal fields, single use.
-- Student portal: lists colleges holding record, pending requests, approve or deny.
-- Consented record view: strictly minimal fields (institution, course, years,
-  status, verification ID, "verified by AICTE").
-- Never DOB, category, or contacts.
-"""
+"""Pydantic schemas for verifier onboarding and student consent."""
 
 from __future__ import annotations
 
@@ -16,9 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-# ============================================================================
 # Verifier Onboarding Schemas
-# ============================================================================
 
 
 class VerifierRegisterRequest(BaseModel):
@@ -86,9 +75,7 @@ class VerifierStatusUpdateRequest(BaseModel):
     )
 
 
-# ============================================================================
 # Consent Request Schemas
-# ============================================================================
 
 
 class ConsentRequestCreate(BaseModel):
@@ -145,9 +132,7 @@ class ConsentDecisionRequest(BaseModel):
     )
 
 
-# ============================================================================
 # Student Portal Schemas
-# ============================================================================
 
 
 class StudentOtpRequest(BaseModel):
@@ -214,9 +199,7 @@ class StudentRecordsListResponse(BaseModel):
     total: int
 
 
-# ============================================================================
 # Minimal Disclosure Consented Record Schema
-# ============================================================================
 
 
 class ConsentedStudentRecordResponse(BaseModel):

@@ -48,9 +48,7 @@ router = APIRouter(tags=["Seat Declarations & Student Management"])
 college_staff_guard = require_college_staff
 
 
-# =========================================================================
 # Seat Declarations & Course Summary Endpoints (Spec 8.1, 13, TASKS.md T19)
-# =========================================================================
 
 
 @router.get(
@@ -151,9 +149,7 @@ def batch_save_seat_declarations(
     )
 
 
-# =========================================================================
 # Single Student Entry & Directory Endpoints (Spec 8.2, 9.4, TASKS.md T20)
-# =========================================================================
 
 
 @router.get(
@@ -192,9 +188,7 @@ def list_students(
     )
 
 
-# =========================================================================
 # Bulk Upload & Evaluation Endpoints (Spec 8.2, 9.4, 13, TASKS.md T21)
-# =========================================================================
 
 
 @router.get(

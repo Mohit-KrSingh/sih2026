@@ -1,12 +1,4 @@
-"""Institutional API Key Lifecycle, Hashing, Authentication, and Scopes.
-
-SPEC.md Section 17 & TASKS.md T36:
-- Scoped API keys (stored hashed with SHA-256, rotatable) managed from /college/api-keys.
-- Institution systems authenticate with scoped API keys.
-- Supported scopes: students:write, students:read, courses:read.
-- Enforces institution active status check (403 on suspended/withdrawn/expired).
-- Hash-chained audit logging for key lifecycle events (create, rotate, revoke).
-"""
+"""Institutional API Key Lifecycle, Hashing, Authentication, and Scopes."""
 
 from __future__ import annotations
 
@@ -40,9 +32,7 @@ DEFAULT_SCOPES: list[str] = [
 ]
 
 
-# =========================================================================
 # Schemas
-# =========================================================================
 
 
 class ApiKeyCreateRequest(BaseModel):
@@ -101,9 +91,7 @@ class ApiKeyListResponse(BaseModel):
     total: int
 
 
-# =========================================================================
 # Security & Hashing Helpers
-# =========================================================================
 
 
 def generate_raw_key() -> str:
@@ -145,9 +133,7 @@ def to_api_key_response(key: ApiKey) -> ApiKeyResponse:
     )
 
 
-# =========================================================================
 # Service Functions
-# =========================================================================
 
 
 def create_api_key(

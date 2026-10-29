@@ -1,8 +1,4 @@
-"""Validation rule: FILE_TOO_LARGE.
-
-Over the row limit (default 10,000). File rejected.
-Spec: Section 9.3.
-"""
+"""Validation rule: FILE_TOO_LARGE."""
 
 from __future__ import annotations
 

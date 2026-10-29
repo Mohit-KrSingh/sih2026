@@ -1,13 +1,4 @@
-"""Student management service: CRUD operations, validation execution, and directory search.
-
-Spec: Section 8.2, 9.4, 13 & TASKS.md T20:
-- Grouped student entry (Identity, Admission, Category).
-- 'Check and save' runs validation engine immediately and returns flags; saved as draft either way.
-- Country field conditionally handled for foreign nationals.
-- Edit and delete draft records with locking protection.
-- Student list with filtering by academic year, course, status, flag level, and search.
-- Hash-chained audit logging and IDOR protection.
-"""
+"""Student management service: CRUD operations, validation execution, and directory search."""
 
 from __future__ import annotations
 

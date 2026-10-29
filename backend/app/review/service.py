@@ -1,7 +1,4 @@
-"""Business logic and database operations for AICTE Review Queue and College Queries.
-
-Spec: Section 10 & 12, TASKS.md T25.
-"""
+"""Business logic and database operations for AICTE Review Queue and College Queries."""
 
 from __future__ import annotations
 

@@ -1,11 +1,4 @@
-"""Institutional API Key Management Endpoints.
-
-SPEC.md Section 17 & TASKS.md T36:
-- Scoped API keys (hashed, rotatable) managed from /college/api-keys.
-- Only college_admin (or AICTE supervisors) can create, rotate, and revoke keys.
-- College staff can view configured keys.
-- Hash-chained audit logging for every lifecycle event.
-"""
+"""Institutional API Key Management Endpoints."""
 
 from typing import Annotated
 

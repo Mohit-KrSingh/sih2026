@@ -1,8 +1,4 @@
-"""Validation rule: DOB_INVALID.
-
-Not a valid date, or in the future.
-Spec: Section 8.2, 9.3.
-"""
+"""Validation rule: DOB_INVALID."""
 
 from __future__ import annotations
 

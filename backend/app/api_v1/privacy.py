@@ -1,13 +1,4 @@
-"""DPDP-aligned privacy policy and data minimisation specification endpoint.
-
-Spec: Section 2 & 16 & TASKS.md T38:
-- Stored fields reviewed against data minimisation.
-- DPDP Act (2023) alignment (consent, purpose limitation, minimisation).
-- Prohibited fields matrix (zero Aadhaar, parents, address, photo, income, marks).
-- Cryptographic privacy safeguards (DOB encryption at rest, APAAR log masking).
-- Complete consent records specification.
-- Statutory Data Protection Officer (DPO) grievance contact details.
-"""
+"""DPDP-aligned privacy policy and data minimisation specification endpoint."""
 
 from __future__ import annotations
 

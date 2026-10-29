@@ -122,9 +122,7 @@ export interface DevOutboxMessage {
   created_at: string;
 }
 
-// ============================================================================
 // Public Verification & Proof Lookups (T32)
-// ============================================================================
 
 export async function verifyCredential(vid: string): Promise<VerificationResult> {
   return api.get<VerificationResult>(
@@ -156,9 +154,7 @@ export async function revokeVerificationRecord(
   });
 }
 
-// ============================================================================
 // Verifier Portal APIs (T33 / T34)
-// ============================================================================
 
 export async function getMyVerifierProfile(): Promise<VerifierProfile> {
   return api.get<VerifierProfile>("/api/v1/verification/verifiers/me");
@@ -187,9 +183,7 @@ export async function getConsentedRecord(requestId: number): Promise<ConsentedSt
   return api.get<ConsentedStudentRecord>(`/api/v1/verification/consent-requests/${requestId}/record`);
 }
 
-// ============================================================================
 // Student Consent Portal APIs (T33 / T34)
-// ============================================================================
 
 export async function sendStudentOtp(apaarId: string): Promise<StudentOtpSendResponse> {
   return api.post<StudentOtpSendResponse>("/api/v1/verification/student/otp/send", {
@@ -228,18 +222,14 @@ export async function decideStudentConsent(
   );
 }
 
-// ============================================================================
 // Dev Outbox Inspection Helper (Demo Mode)
-// ============================================================================
 
 export async function getDevOutbox(recipient?: string): Promise<DevOutboxMessage[]> {
   const query = recipient ? `?recipient=${encodeURIComponent(recipient.trim())}` : "";
   return api.get<DevOutboxMessage[]>(`/api/v1/dev/outbox${query}`);
 }
 
-// ============================================================================
 // Degree Certificate PDF APIs (Spec 17, TASKS.md T35)
-// ============================================================================
 
 export function getStudentCertificateUrl(
   institutionId: number,
@@ -300,4 +290,3 @@ export async function downloadStudentPortalCertificate(
   document.body.removeChild(a);
   window.URL.revokeObjectURL(downloadUrl);
 }
-

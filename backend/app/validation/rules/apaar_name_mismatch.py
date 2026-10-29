@@ -1,8 +1,4 @@
-"""Validation rule: APAAR_NAME_MISMATCH.
-
-Fuzzy name match below threshold (default 85).
-Spec: Section 9.3.
-"""
+"""Validation rule: APAAR_NAME_MISMATCH."""
 
 from __future__ import annotations
 

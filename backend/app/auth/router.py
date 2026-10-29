@@ -461,9 +461,7 @@ def check_institution_permission(
     }
 
 
-# =========================================================================
 # Password Reset Endpoints (Spec 11, TASKS.md T09)
-# =========================================================================
 
 password_reset_req_limiter = RateLimiter(
     times=settings.RATE_LIMIT_OTP_PER_MINUTE,

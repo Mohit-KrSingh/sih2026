@@ -1,10 +1,4 @@
-"""FastAPI router for Validation Rule Configuration and Customization.
-
-Spec: Section 9.2, 9.3, 12 & TASKS.md T29:
-- Rule configuration screen for aicte_admin.
-- Runtime override of validation level, parameters, and enabled status.
-- Audit log entry for every rule configuration change.
-"""
+"""FastAPI router for Validation Rule Configuration and Customization."""
 
 from __future__ import annotations
 
