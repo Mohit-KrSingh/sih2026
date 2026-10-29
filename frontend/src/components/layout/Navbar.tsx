@@ -170,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
             aria-expanded={mobileMenuOpen}
-            className="p-2 rounded-md ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft focus:outline focus:outline-2"
+            className="min-h-[44px] min-w-[44px] p-2.5 rounded-md flex items-center justify-center ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft focus:outline focus:outline-2"
             style={{ outlineColor: "var(--edutrace-focus-outline)" }}
           >
             <Icon name={mobileMenuOpen ? "close" : "menu"} size="md" aria-hidden="true" />
@@ -185,35 +185,35 @@ export const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
+              className="block px-3 py-2 min-h-[44px] flex items-center rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
             >
               Home
             </Link>
             <Link
               to="/activate"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
+              className="block px-3 py-2 min-h-[44px] flex items-center rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
             >
               Activate College
             </Link>
             <Link
               to="/verify"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
+              className="block px-3 py-2 min-h-[44px] flex items-center rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
             >
               Verify Record
             </Link>
             <Link
               to="/student"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
+              className="block px-3 py-2 min-h-[44px] flex items-center rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
             >
               Student Portal
             </Link>
             <Link
               to="/privacy"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
+              className="block px-3 py-2 min-h-[44px] flex items-center rounded-md text-sm font-medium ux4g-text-neutral-primary hover:ux4g-bg-neutral-soft"
             >
               Privacy & DPDP
             </Link>

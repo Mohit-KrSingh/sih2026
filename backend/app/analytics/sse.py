@@ -30,8 +30,9 @@ _redis_listener_task: asyncio.Task[None] | None = None
 
 async def _listen_redis_pubsub() -> None:
     """Background listener that forwards Redis pub/sub events to local SSE queues."""
-    from app.config import get_settings
     import redis.asyncio as aioredis
+
+    from app.config import get_settings
 
     settings = get_settings()
     while True:
