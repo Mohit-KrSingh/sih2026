@@ -172,7 +172,7 @@ export const StudentFormPage: React.FC = () => {
     if (isViewer) return;
 
     if (!courseId) {
-      setErrorMessage("Please select an approved course");
+      setErrorMessage("Select an approved course before saving.");
       return;
     }
 

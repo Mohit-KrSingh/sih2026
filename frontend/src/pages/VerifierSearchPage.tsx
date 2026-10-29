@@ -73,7 +73,7 @@ export function VerifierSearchPage() {
     e.preventDefault();
     const cleanApaar = apaarId.trim();
     if (!/^\d{12}$/.test(cleanApaar)) {
-      setErrorMessage("Please enter a valid 12-digit APAAR identification number.");
+      setErrorMessage("Enter a valid 12-digit APAAR ID.");
       return;
     }
 

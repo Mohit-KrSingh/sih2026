@@ -71,7 +71,7 @@ export function StudentPortalPage() {
         `certificate_${rec.enrolment_no || rec.student_id}.pdf`
       );
     } catch (err) {
-      setErrorMessage((err as Error).message || "Failed to download degree certificate.");
+      setErrorMessage((err as Error).message || "Could not download degree certificate. Try again.");
     } finally {
       setDownloadingCertId(null);
     }
@@ -135,7 +135,7 @@ export function StudentPortalPage() {
     e.preventDefault();
     const cleanApaar = apaarId.trim();
     if (!/^\d{12}$/.test(cleanApaar)) {
-      setErrorMessage("Please enter a valid 12-digit APAAR identification number.");
+      setErrorMessage("Enter a valid 12-digit APAAR ID.");
       return;
     }
 
@@ -174,7 +174,7 @@ export function StudentPortalPage() {
     e.preventDefault();
     const cleanOtp = otp.trim();
     if (cleanOtp.length < 6) {
-      setErrorMessage("Please enter the 6-digit numeric OTP.");
+      setErrorMessage("Enter the 6-digit OTP.");
       return;
     }
 

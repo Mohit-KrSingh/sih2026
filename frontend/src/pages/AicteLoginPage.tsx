@@ -44,7 +44,7 @@ export function AicteLoginPage() {
         navigate(getTargetDashboard(res.user?.role), { replace: true });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to sign in. Please check your credentials.");
+      setError(err instanceof Error ? err.message : "Sign-in failed. Check your email and password.");
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +59,7 @@ export function AicteLoginPage() {
       await verifyMfa(mfaCode);
       navigate(getTargetDashboard(), { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid MFA verification code.");
+      setError(err instanceof Error ? err.message : "Invalid code. Enter the 6-digit code from your authenticator app.");
     } finally {
       setIsLoading(false);
     }

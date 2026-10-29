@@ -70,7 +70,7 @@ const REPORT_CATALOG: ReportMeta[] = [
     id: "college-submission",
     title: "College Student Submission Register",
     badge: "Roster",
-    description: "Comprehensive institutional student admission roster with official submission receipt.",
+    description: "Institutional student admission roster with official submission receipt.",
     requiresCollege: true,
   },
 ];
