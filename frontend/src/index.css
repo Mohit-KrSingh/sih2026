@@ -4,5 +4,5 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--ux4g-font-family-base, "Noto Sans", system-ui, sans-serif);
 }
