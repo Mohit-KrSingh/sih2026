@@ -164,9 +164,14 @@ We built this for a hackathon demo, so there are a few practical limits:
 ## Documentation Links
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture, sequence diagrams, and validation pipeline.
-- [docs/RULES.md](docs/RULES.md) - Full list of all 34 validation rules and severity levels.
+- [docs/RULES.md](docs/RULES.md) - Validation rules catalogue and severity levels.
 - [demo/DEMO.md](demo/DEMO.md) - Step-by-step evaluator click guide for all demo scenarios.
-- [docs/PS_COVERAGE.md](docs/PS_COVERAGE.md) - Problem statement requirements mapped to tests and demo steps.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
