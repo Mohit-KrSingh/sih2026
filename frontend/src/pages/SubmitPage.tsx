@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   AlertCircle,
-  AlertTriangle,
   ArrowRight,
   Check,
   CheckCircle2,
@@ -13,7 +12,6 @@ import {
   Lock,
   RefreshCw,
   Send,
-  ShieldAlert,
   ShieldCheck,
   Users,
 } from "lucide-react";
@@ -29,6 +27,7 @@ import type {
   SubmissionReceiptResponse,
 } from "../types/submissions";
 import { Badge, FlagBadge } from "../components/ui/Badge";
+import { SubmitGateAlert, LockedDataAlert } from "../components/ux4g";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -392,17 +391,16 @@ export function SubmitPage() {
               </div>
 
               {/* Notice regarding post-submission change requests */}
-              <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs text-amber-900">
-                <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold">Central Repository Locked</p>
-                  <p className="mt-0.5 text-amber-800">
-                    All student records for academic year {displayYear} are strictly locked and read-only.
-                    Any subsequent modifications or status transitions (e.g. Withdrawal, Branch Transfer) require
-                    a formal Change Request submitted through the AICTE Approvals portal.
-                  </p>
-                </div>
-              </div>
+              <LockedDataAlert
+                academicYear={displayYear}
+                title="Central Repository Locked"
+              >
+                <p className="text-xs">
+                  All student records for academic year {displayYear} are strictly locked and read-only.
+                  Any subsequent modifications or status transitions (e.g. Withdrawal, Branch Transfer) require
+                  a formal Change Request submitted through the AICTE Approvals portal.
+                </p>
+              </LockedDataAlert>
 
               {/* Navigation Actions */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -487,52 +485,44 @@ export function SubmitPage() {
           </div>
 
           {/* Gate Status Banner */}
-          {gateData.can_submit ? (
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 text-emerald-950 shadow-sm">
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
-                  <ShieldCheck className="h-6 w-6" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-base font-bold text-emerald-900">
-                    Submit Gate Passed: Ready for Final Submission
-                  </h3>
-                  <p className="text-sm text-emerald-800">
-                    {gateData.gate_reason}
-                  </p>
-                  <div className="pt-1">
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-full">
-                      Target Repository Status:{" "}
-                      {gateData.target_status === "submitted_with_exceptions"
-                        ? "Submitted with Exceptions"
-                        : "Submitted Clean"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-rose-200 bg-rose-50/80 p-5 text-rose-950 shadow-sm">
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-600 text-white shadow-sm">
-                  <ShieldAlert className="h-6 w-6" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-base font-bold text-rose-900">
-                    Submission Gate Blocked ({gateData.blockers.length} Blocker(s))
-                  </h3>
-                  <p className="text-sm text-rose-800">
-                    {gateData.gate_reason}
-                  </p>
-                  <p className="text-xs text-rose-700">
-                    Per AICTE verification guidelines (SPEC.md Section 10), final data submission
-                    is locked until all underlying data errors are resolved and compliance
-                    exceptions are officially justified.
-                  </p>
+          <SubmitGateAlert
+            canSubmit={gateData.can_submit}
+            openErrorsCount={gateData.open_errors_count}
+            unjustifiedExceptionsCount={gateData.unjustified_exceptions_count}
+            unjustifiedWarningsCount={gateData.unjustified_warnings_count}
+            title={
+              gateData.can_submit
+                ? "Submit Gate Passed: Ready for Final Submission"
+                : `Submission Gate Blocked (${gateData.blockers.length} Blocker(s))`
+            }
+          >
+            {gateData.can_submit ? (
+              <div className="space-y-1">
+                <p className="text-sm font-medium">
+                  {gateData.gate_reason}
+                </p>
+                <div className="pt-1">
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border border-current">
+                    Target Repository Status:{" "}
+                    {gateData.target_status === "submitted_with_exceptions"
+                      ? "Submitted with Exceptions"
+                      : "Submitted Clean"}
+                  </span>
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="space-y-1">
+                <p className="text-sm font-medium">
+                  {gateData.gate_reason}
+                </p>
+                <p className="text-xs opacity-90">
+                  Per AICTE verification guidelines (SPEC.md Section 10), final data submission
+                  is locked until all underlying data errors are resolved and compliance
+                  exceptions are officially justified.
+                </p>
+              </div>
+            )}
+          </SubmitGateAlert>
 
           {/* BLOCKERS TABLE (IF ANY EXIST) */}
           {gateData.blockers.length > 0 && (

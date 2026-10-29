@@ -4,9 +4,9 @@ import type { Role } from "../../types/auth";
 import { Icon } from "./Icon";
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: "primary" | "success" | "warning" | "danger" | "neutral" | "info";
+  variant?: "primary" | "success" | "warning" | "danger" | "neutral" | "info" | "outline";
   type?: "digit" | "icon" | "dot";
-  size?: "s" | "m" | "l";
+  size?: "s" | "m" | "l" | "sm" | "md";
 }
 
 /**
@@ -21,9 +21,14 @@ export const Badge: React.FC<BadgeProps> = ({
   children,
   ...props
 }) => {
+  const normalizedSize = size === "sm" ? "s" : size === "md" ? "m" : size;
+  const isOutline = variant === "outline";
+  const normalizedVariant = isOutline ? "neutral" : variant;
+  const outlineClass = isOutline ? "border ux4g-border-neutral-default bg-transparent" : "";
+
   return (
     <span
-      className={`ux4g-badge ux4g-badge-${type}-${variant} ux4g-badge-${size} ${className}`.trim()}
+      className={`ux4g-badge ux4g-badge-${type}-${normalizedVariant} ux4g-badge-${normalizedSize} ${outlineClass} ${className}`.trim()}
       {...props}
     >
       {children}
@@ -43,11 +48,12 @@ export interface FlagBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
  *
  * SPEC §19 and DECISIONS.md Difference 6:
  * - Error: Red filled with "Error" label
- * - Exception: Red outlined with "Exception" label
+ * - Exception: Red outlined with "Exception" label (2px border)
  * - Warning: Orange with "Warning" label
  * - Info: Neutral grey with "Info" label
  *
  * Exclusively uses EduTrace semantic token variables mapped to UX4G Design System.
+ * Ensures WCAG 2.1 AA >= 4.5:1 text contrast and accessibility without relying on color alone.
  */
 export const FlagBadge: React.FC<FlagBadgeProps> = ({
   level,
@@ -58,14 +64,14 @@ export const FlagBadge: React.FC<FlagBadgeProps> = ({
   style,
   ...props
 }) => {
-  const displayLabel =
-    label ||
-    {
-      error: "Error",
-      exception: "Exception",
-      warning: "Warning",
-      info: "Info",
-    }[level];
+  const defaultLabel = {
+    error: "Error",
+    exception: "Exception",
+    warning: "Warning",
+    info: "Info",
+  }[level];
+
+  const displayLabel = label || defaultLabel;
 
   const iconName = {
     error: "cancel",
@@ -106,9 +112,15 @@ export const FlagBadge: React.FC<FlagBadgeProps> = ({
     },
   };
 
+  const accessibleLabel = label
+    ? `${defaultLabel}: ${label}${count !== undefined ? ` (${count})` : ""}`
+    : `${displayLabel}${count !== undefined ? ` (${count})` : ""}`;
+
   return (
     <span
       data-testid={`flag-badge-${level}`}
+      data-level={level}
+      aria-label={accessibleLabel}
       className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${className}`.trim()}
       style={{
         ...levelStyles[level],
@@ -120,7 +132,7 @@ export const FlagBadge: React.FC<FlagBadgeProps> = ({
       {showIcon && <Icon name={iconName} size="xs" color="inherit" aria-hidden="true" />}
       <span>{displayLabel}</span>
       {count !== undefined && (
-        <span className="font-bold opacity-90">({count})</span>
+        <span className="font-bold">({count})</span>
       )}
     </span>
   );
@@ -131,7 +143,7 @@ export interface RoleBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 /**
- * Human-readable role badge for accounts.
+ * Human-readable role badge for accounts using UX4G tokens.
  */
 export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, className = "", style, ...props }) => {
   const roleLabels: Record<Role, string> = {
@@ -140,7 +152,7 @@ export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, className = "", styl
     college_viewer: "College Viewer",
     aicte_officer: "AICTE Officer",
     aicte_admin: "AICTE Admin",
-    verifier: "Verified Organisation",
+    verifier: "Verifier",
     student: "Student",
   };
 
@@ -149,30 +161,29 @@ export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, className = "", styl
 
   const badgeStyle: React.CSSProperties = {
     backgroundColor: isAicte
-      ? "var(--ux4g-color-primary-50)"
+      ? "var(--edutrace-brand-primary-surface)"
       : isVerifier
-      ? "var(--ux4g-color-secondary-50)"
-      : "var(--ux4g-color-neutral-100)",
+      ? "var(--edutrace-brand-secondary-surface)"
+      : "var(--ux4g-bg-neutral-soft)",
     color: isAicte
-      ? "var(--ux4g-color-primary-700)"
+      ? "var(--edutrace-brand-primary)"
       : isVerifier
-      ? "var(--ux4g-color-secondary-700)"
-      : "var(--ux4g-color-neutral-800)",
+      ? "var(--edutrace-brand-secondary)"
+      : "var(--edutrace-text-primary)",
     borderColor: isAicte
-      ? "var(--ux4g-color-primary-200)"
-      : isVerifier
-      ? "var(--ux4g-color-secondary-200)"
-      : "var(--ux4g-color-neutral-300)",
+      ? "var(--edutrace-brand-primary-border)"
+      : "var(--edutrace-border-subtle)",
     borderWidth: "1px",
     borderStyle: "solid",
-    ...style,
   };
 
   return (
     <span
-      data-testid={`role-badge-${role}`}
-      className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${className}`.trim()}
-      style={badgeStyle}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${className}`.trim()}
+      style={{
+        ...badgeStyle,
+        ...style,
+      }}
       {...props}
     >
       {roleLabels[role] || role}

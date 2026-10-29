@@ -24,7 +24,7 @@ export interface PortalSidebarProps {
  * PortalSidebar Component
  *
  * Implements SPEC §19 role-specific navigation for College, AICTE, and Verifier portals.
- * - Desktop: Semantic `<aside role="navigation" aria-label="Portal Sidebar Navigation">`
+ * - Desktop: Semantic `<nav aria-label="Portal Sidebar Navigation">`
  * - Mobile: Collapses into an expandable menu below 1024px.
  * - Semantic tokens and UX4G active states.
  */
@@ -199,8 +199,7 @@ export const PortalSidebar: React.FC<PortalSidebarProps> = ({ className = "" }) 
       )}
 
       {/* Desktop Persistent Sidebar */}
-      <aside
-        role="navigation"
+      <nav
         aria-label="Portal Sidebar Navigation"
         className={`w-64 shrink-0 hidden lg:block border-r ux4g-border-neutral-subtle ux4g-bg-neutral-elevated min-h-[calc(100vh-8rem)] p-4 ${className}`.trim()}
       >
@@ -266,7 +265,7 @@ export const PortalSidebar: React.FC<PortalSidebarProps> = ({ className = "" }) 
             </div>
           ))}
         </div>
-      </aside>
+      </nav>
     </>
   );
 };

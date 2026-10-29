@@ -21,9 +21,9 @@ describe("Shared UI Components", () => {
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveTextContent(/error/i);
       expect(badge).toHaveTextContent("3");
-      // Check red filled class
-      expect(badge.className).toContain("bg-red-100");
-      expect(badge.className).toContain("text-red-800");
+      expect(badge.style.backgroundColor).toBe("var(--edutrace-flag-error-bg)");
+      expect(badge.style.color).toBe("var(--edutrace-flag-error-text)");
+      expect(badge.style.borderColor).toBe("var(--edutrace-flag-error-border)");
     });
 
     it("renders exception badge with red outlined style", () => {
@@ -31,10 +31,10 @@ describe("Shared UI Components", () => {
       const badge = screen.getByTestId("flag-badge-exception");
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveTextContent(/exception/i);
-      // Check red outlined classes: border-2, border-red-500, bg-white
-      expect(badge.className).toContain("border-2");
-      expect(badge.className).toContain("border-red-500");
-      expect(badge.className).toContain("bg-white");
+      expect(badge.style.borderWidth).toBe("2px");
+      expect(badge.style.borderColor).toBe("var(--edutrace-flag-exception-border)");
+      expect(badge.style.backgroundColor).toBe("var(--edutrace-flag-exception-bg)");
+      expect(badge.style.color).toBe("var(--edutrace-flag-exception-text)");
     });
 
     it("renders warning badge with amber style", () => {
@@ -42,8 +42,9 @@ describe("Shared UI Components", () => {
       const badge = screen.getByTestId("flag-badge-warning");
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveTextContent(/warning/i);
-      expect(badge.className).toContain("bg-amber-100");
-      expect(badge.className).toContain("text-amber-900");
+      expect(badge.style.backgroundColor).toBe("var(--edutrace-flag-warning-bg)");
+      expect(badge.style.color).toBe("var(--edutrace-flag-warning-text)");
+      expect(badge.style.borderColor).toBe("var(--edutrace-flag-warning-border)");
     });
 
     it("renders info badge with grey style", () => {
@@ -51,8 +52,9 @@ describe("Shared UI Components", () => {
       const badge = screen.getByTestId("flag-badge-info");
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveTextContent(/info/i);
-      expect(badge.className).toContain("bg-slate-100");
-      expect(badge.className).toContain("text-slate-700");
+      expect(badge.style.backgroundColor).toBe("var(--edutrace-flag-info-bg)");
+      expect(badge.style.color).toBe("var(--edutrace-flag-info-text)");
+      expect(badge.style.borderColor).toBe("var(--edutrace-flag-info-border)");
     });
   });
 
