@@ -4,7 +4,7 @@ from collections.abc import Callable
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -17,12 +17,13 @@ from app.models import ApiKey, Institution, User
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/login",
     description="Bearer JWT token",
-    auto_error=True,
+    auto_error=False,
 )
 
 
 def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    token: Annotated[str | None, Depends(oauth2_scheme)],
+    request: Request,
     db: Annotated[Session, Depends(get_db)],
 ) -> User:
     """Validate bearer token and return authenticated active user.
@@ -37,8 +38,12 @@ def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
+    raw_token = token or request.query_params.get("token") or request.cookies.get("access_token")
+    if not raw_token:
+        raise credentials_exception
+
     try:
-        payload = decode_token(token)
+        payload = decode_token(raw_token)
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
