@@ -1,0 +1,67 @@
+"""Authentication package: Argon2 hashing, JWT tokens, RBAC dependencies."""
+
+from app.auth.allowlist import PUBLIC_ALLOWLIST
+from app.auth.dependencies import (
+    check_institution_access,
+    get_current_user,
+    get_institution_scope,
+    oauth2_scheme,
+    require_aicte_admin,
+    require_aicte_officer,
+    require_aicte_role,
+    require_aicte_user,
+    require_authenticated,
+    require_college_admin,
+    require_college_staff,
+    require_college_user,
+    require_college_viewer,
+    require_roles,
+    require_verifier,
+    verify_institution_access,
+)
+from app.auth.schemas import (
+    LoginRequest,
+    RefreshTokenRequest,
+    Role,
+    TokenResponse,
+    UserResponse,
+    UserSummary,
+)
+from app.auth.security import (
+    create_access_token,
+    create_refresh_token,
+    decode_token,
+    hash_password,
+    verify_password,
+)
+
+__all__ = [
+    "PUBLIC_ALLOWLIST",
+    "LoginRequest",
+    "RefreshTokenRequest",
+    "Role",
+    "TokenResponse",
+    "UserResponse",
+    "UserSummary",
+    "check_institution_access",
+    "create_access_token",
+    "create_refresh_token",
+    "decode_token",
+    "get_current_user",
+    "get_institution_scope",
+    "hash_password",
+    "oauth2_scheme",
+    "require_aicte_admin",
+    "require_aicte_officer",
+    "require_aicte_role",
+    "require_aicte_user",
+    "require_authenticated",
+    "require_college_admin",
+    "require_college_staff",
+    "require_college_user",
+    "require_college_viewer",
+    "require_roles",
+    "require_verifier",
+    "verify_institution_access",
+    "verify_password",
+]
