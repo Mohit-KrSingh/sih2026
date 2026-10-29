@@ -1,0 +1,18 @@
+apaar_id,name,dob,gender,course,branch,admission_year,enrolment_no,admission_date,admission_mode,seat_type,reservation_category,nri,oci,foreign_national,country
+,Amit Verma,2004-05-10,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-001,2026-07-15,State counselling,Regular,General,No,No,No,
+12345678901,Rohan Joshi,2004-05-10,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-002,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000030,,2004-05-10,Female,Computer Science and Engineering,Computer Science,2026-27,MESSY-003,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000031,Rahul123 Sharma,2004-05-10,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-004,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000032,Deepak Gupta,2099-01-01,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-005,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000033,Sunita Nair,2004-05-10,InvalidGender,Computer Science and Engineering,Computer Science,2026-27,MESSY-006,2026-07-15,State counselling,Regular,AlienCategory,No,No,No,
+300000000034,John Smith,2004-05-10,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-007,2026-07-15,NRI/OCI/foreign quota,Regular,General,No,No,Yes,
+300000000035,Manoj Tiwari,2004-05-10,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-008,2026-01-05,State counselling,Regular,General,No,No,No,
+888899990000,Kiran Rao,2004-05-10,Female,Computer Science and Engineering,Computer Science,2026-27,MESSY-009,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000050,Zachary Taylor,2004-08-12,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-010,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000051,Neha Sharma,2004-06-11,Female,Computer Science and Engineering,Computer Science,2026-27,MESSY-011,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000036,Tariq Mansoor,2004-05-10,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-012,2026-07-15,NRI/OCI/foreign quota,Regular,General,Yes,No,Yes,United Arab Emirates
+300000000037,Suresh Raina,2004-05-10,Male,Astrophysics & Space Flight,Aerospace,2026-27,MESSY-013,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000038,Govind Prasad,1955-03-10,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-014,2026-07-15,State counselling,Regular,General,No,No,No,
+300000000039,Pooja Hegde,2004-05-10,Female,Mechanical Engineering,Mechanical,2026-27,MESSY-015,2026-07-15,State counselling,Supernumerary,General,No,No,No,
+300000000040,Ananya Singhania,2004-05-10,Female,Computer Science and Engineering,Computer Science,2026-27,MESSY-016,2026-07-15,State counselling,Regular,General,Yes,No,No,
+300000000041,Harish Chandra,2004-05-10,Male,Computer Science and Engineering,Computer Science,2026-27,MESSY-017,2024-05-10,State counselling,Regular,General,No,No,No,
