@@ -212,7 +212,6 @@ export const AicteReportsPage: React.FC = () => {
               return (
                 <button
                   key={item.id}
-                  aria-label={`Select report ${item.title}`}
                   onClick={() => setSelectedReport(item.id)}
                   className={`w-full text-left p-3.5 transition flex flex-col gap-1 ${
                     isSelected
@@ -294,6 +293,7 @@ export const AicteReportsPage: React.FC = () => {
                   <select
                     value={filters.academic_year}
                     onChange={(e) => setFilters({ ...filters, academic_year: e.target.value })}
+                    aria-label="Academic Year"
                     className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                   >
                     <option value="2026-27">2026-27 (Current Active)</option>
@@ -318,6 +318,7 @@ export const AicteReportsPage: React.FC = () => {
                           state: e.target.value.includes("All") ? "" : e.target.value,
                         })
                       }
+                      aria-label="State / Territory"
                       className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
                     >
                       {STATES.map((s) => (
@@ -341,6 +342,7 @@ export const AicteReportsPage: React.FC = () => {
                       onChange={(e) =>
                         setFilters({ ...filters, institution_id: Number(e.target.value) })
                       }
+                      aria-label="Select Institution"
                       className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium truncate"
                     >
                       {institutions.map((inst) => (
@@ -416,7 +418,12 @@ export const AicteReportsPage: React.FC = () => {
                 Aggregating official repository records...
               </div>
             ) : preview ? (
-              <div className="overflow-x-auto max-h-[500px]">
+              <div
+                role="region"
+                tabIndex={0}
+                aria-label={`${activeMeta.title} data preview`}
+                className="overflow-x-auto max-h-[500px] focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              >
                 <table className="w-full text-xs text-left">
                   <thead className="bg-slate-800 text-white uppercase text-[10px] font-semibold sticky top-0 z-10">
                     <tr>

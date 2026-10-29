@@ -112,12 +112,12 @@ export function VerifyPage() {
           </div>
           <div className="flex items-center gap-2">
             <Link to="/verifier/search">
-              <Button size="s" variant="primary" aria-label="Open verifier search and consent" className="text-xs">
+              <Button size="s" variant="primary" className="text-xs">
                 Verifier Search &amp; Consent
               </Button>
             </Link>
             <Link to="/verifier/history">
-              <Button size="s" variant="outline" aria-label="View consent audit history" className="text-xs">
+              <Button size="s" variant="outline" className="text-xs">
                 Consent History
               </Button>
             </Link>

@@ -168,7 +168,7 @@ export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, className = "", styl
     color: isAicte
       ? "var(--edutrace-brand-primary)"
       : isVerifier
-      ? "var(--edutrace-brand-secondary)"
+      ? "var(--edutrace-brand-secondary-hover)"
       : "var(--edutrace-text-primary)",
     borderColor: isAicte
       ? "var(--edutrace-brand-primary-border)"

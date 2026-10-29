@@ -314,7 +314,6 @@ export function StudentPortalPage() {
           <div className="text-center pt-2">
             <button
               type="button"
-              aria-label="Use demo student ID 111122223333"
               onClick={() => setApaarId("111122223333")}
               className="text-xs ux4g-text-brand-primary underline hover:opacity-80 font-mono font-medium"
             >

@@ -219,6 +219,7 @@ export function ValidationPage() {
           <select
             value={academicYear}
             onChange={(e) => setAcademicYear(e.target.value)}
+            aria-label="Filter by academic year"
             className="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="2026-27">Academic Year 2026-27</option>
@@ -396,7 +397,6 @@ export function ValidationPage() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                aria-label={`Filter by ${tab.label}`}
                 onClick={() => setSelectedLevel(tab.id)}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition whitespace-nowrap ${
                   selectedLevel === tab.id
@@ -429,6 +429,7 @@ export function ValidationPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search APAAR, rule, text..."
+                aria-label="Search flags by APAAR, rule, or text"
                 className="w-full text-xs pl-9 pr-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               />
               {searchTerm && (
@@ -445,6 +446,7 @@ export function ValidationPage() {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
+              aria-label="Filter by flag status"
               className="text-xs border border-slate-300 rounded-lg px-2.5 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Statuses</option>
@@ -506,7 +508,7 @@ export function ValidationPage() {
                     <tr
                       key={flag.id}
                       className={`hover:bg-slate-50/80 transition ${
-                        flag.status === "resolved" ? "opacity-60 bg-slate-50/40" : ""
+                        flag.status === "resolved" ? "bg-slate-50/70 text-slate-600" : ""
                       }`}
                     >
                       {/* Level */}
