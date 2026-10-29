@@ -10,7 +10,7 @@ Write-Host ""
 
 $backendDir = (Resolve-Path "backend").Path
 $env:PYTHONPATH = $backendDir
-$py = Resolve-Path ".venv\Scripts\python.exe"
+$py = if (Test-Path ".venv\Scripts\python.exe") { (Resolve-Path ".venv\Scripts\python.exe").Path } else { "python" }
 
 & $py scripts/demo_reset.py
 if ($LASTEXITCODE -ne 0) {

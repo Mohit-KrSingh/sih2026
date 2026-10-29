@@ -105,7 +105,7 @@ try {
 
 if (-not $backendRunning) {
     Write-Host "Starting backend API server on port 8000..."
-    $pyPath = (Resolve-Path ".venv\Scripts\python.exe").Path
+    $pyPath = if (Test-Path ".venv\Scripts\python.exe") { (Resolve-Path ".venv\Scripts\python.exe").Path } else { "python" }
     $backendArgs = @("-m", "uvicorn", "app.main:app", "--app-dir", "backend", "--host", "0.0.0.0", "--port", "8000")
     Start-Process -FilePath $pyPath -ArgumentList $backendArgs -WindowStyle Hidden
     Start-Sleep -Seconds 3

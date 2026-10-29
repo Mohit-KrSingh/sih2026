@@ -2,7 +2,7 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "=== Linting Backend (ruff) ==="
-$ruff = Resolve-Path ".venv\Scripts\ruff.exe"
+$ruff = if (Test-Path ".venv\Scripts\ruff.exe") { (Resolve-Path ".venv\Scripts\ruff.exe").Path } else { "ruff" }
 & $ruff check backend
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Backend linting failed!"
