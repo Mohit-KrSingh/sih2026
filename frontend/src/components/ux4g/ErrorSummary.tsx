@@ -48,6 +48,8 @@ export const ErrorSummary: React.FC<ErrorSummaryProps> = ({
   return (
     <div
       ref={containerRef}
+      id="error-summary"
+      data-testid="error-summary"
       tabIndex={-1}
       role="alert"
       aria-labelledby="error-summary-heading"

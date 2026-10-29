@@ -217,7 +217,7 @@ export const PortalSidebar: React.FC<PortalSidebarProps> = ({ className = "" }) 
                     {user.email}
                   </p>
                   {user.institution_id && (
-                    <p className="text-[10px] ux4g-text-neutral-tertiary font-mono truncate">
+                    <p className="text-[10px] ux4g-text-neutral-secondary font-mono truncate">
                       ID: {user.institution_id}
                     </p>
                   )}
