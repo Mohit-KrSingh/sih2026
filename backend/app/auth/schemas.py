@@ -101,7 +101,7 @@ class MfaVerifyRequest(BaseModel):
 class MfaSetupResponse(BaseModel):
     secret: str = Field(..., description="Base32 TOTP secret key")
     provisioning_uri: str = Field(..., description="otpauth:// URI for authenticator apps")
-    issuer: str = "AICTE APAAR"
+    issuer: str = "AICTE EduTrace"
     account_email: str
 
 

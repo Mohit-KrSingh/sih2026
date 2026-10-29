@@ -1,6 +1,6 @@
-# APAAR Student Data Management and Verification System
+# EduTrace: Student Data Management and Verification System
 
-A student team project for the Smart India Hackathon AICTE problem statement: managing and verifying student records using the 12-digit APAAR ID.
+A student team project for the Smart India Hackathon AICTE problem statement: managing and verifying student records keyed by the 12-digit APAAR ID.
 
 > **Demo mode notice**: External dependencies (APAAR registry, AICTE master list, OTP delivery, identity verification, and file storage) are simulated in this build. We use mock interfaces for local testing and demo evaluation, with HTTP client stubs set up for real integration.
 

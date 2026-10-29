@@ -5,7 +5,7 @@ set -euo pipefail
 
 echo ""
 echo "================================================================"
-echo "  APAAR Platform - Resetting to Scripted Demo State (T40)      "
+echo "  EduTrace Platform - Resetting to Scripted Demo State (T40)      "
 echo "================================================================"
 echo ""
 

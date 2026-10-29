@@ -173,7 +173,7 @@ export const AicteReportsPage: React.FC = () => {
             <h1 className="text-2xl font-bold tracking-tight">National Reports & Data Exports</h1>
             <p className="text-sm text-blue-200 mt-1 max-w-2xl">
               Official regulatory exports in CSV, Microsoft Excel (XLSX), and high-resolution PDF formats.
-              Certified under the AICTE Approval Process Handbook (APH) and APAAR National Framework.
+              Certified under the AICTE Approval Process Handbook (APH) and EduTrace National Framework.
             </p>
           </div>
 

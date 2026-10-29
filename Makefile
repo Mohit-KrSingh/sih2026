@@ -1,4 +1,4 @@
-.PHONY: up down test lint seed demo rules-doc
+.PHONY: up down test lint seed demo rules-doc brand-check
 
 ifeq ($(OS),Windows_NT)
   SHELL := powershell.exe
@@ -10,6 +10,7 @@ ifeq ($(OS),Windows_NT)
   SEED_CMD := .\scripts\seed.ps1
   DEMO_CMD := .\scripts\demo.ps1
   RULES_DOC_CMD := .\scripts\rules_doc.ps1
+  BRAND_CHECK_CMD := .\scripts\brand_check.ps1
 else
   UP_CMD := ./scripts/up.sh
   DOWN_CMD := ./scripts/down.sh
@@ -18,6 +19,7 @@ else
   SEED_CMD := ./scripts/seed.sh
   DEMO_CMD := ./scripts/demo.sh
   RULES_DOC_CMD := ./scripts/rules_doc.sh
+  BRAND_CHECK_CMD := ./scripts/brand_check.sh
 endif
 
 up:
@@ -40,3 +42,6 @@ demo:
 
 rules-doc:
 	$(RULES_DOC_CMD)
+
+brand-check:
+	$(BRAND_CHECK_CMD)

@@ -3,6 +3,7 @@
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
+from app.brand import PRODUCT_NAME
 from app.integrations.interfaces import OtpSender, OutboxMessage
 from app.models import DevOutbox
 
@@ -17,7 +18,10 @@ class MockOtpSender(OtpSender):
     def send_otp(self, channel: str, recipient: str, code: str, context: str = "") -> bool:
         """Deliver mock OTP code to dev_outbox."""
         context_str = f" Context: {context}" if context else ""
-        body = f"Your APAAR verification OTP code is: {code}. Valid for 5 minutes.{context_str}"
+        body = (
+            f"Your {PRODUCT_NAME} verification OTP code is: {code}. "
+            f"Valid for 5 minutes.{context_str}"
+        )
         return self._record_message(channel=channel, recipient=recipient, body=body)
 
     def send_notification(self, channel: str, recipient: str, body: str) -> bool:

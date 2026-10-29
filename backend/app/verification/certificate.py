@@ -113,14 +113,14 @@ def draw_certificate_decorations(canvas_obj: canvas.Canvas, doc: SimpleDocTempla
     canvas_obj.rotate(28)
     canvas_obj.setFont("Helvetica-Bold", 42)
     canvas_obj.setFillColor(colors.HexColor("#F1F5F9"))  # Soft, faint watermark
-    canvas_obj.drawCentredString(0, 0, "APAAR • AICTE SECURE CREDENTIAL")
+    canvas_obj.drawCentredString(0, 0, "EDUTRACE • AICTE SECURE CREDENTIAL")
     canvas_obj.restoreState()
 
     # 6. Bottom Statutory & Demo Mode Notice
     canvas_obj.setFont("Helvetica", 6.5)
     canvas_obj.setFillColor(colors.HexColor("#64748B"))
     footer_text = (
-        "National Academic Identity & Verification Registry | AICTE APAAR Platform | "
+        "National Academic Identity & Verification Registry | AICTE EduTrace Platform | "
         "Tamper-Evident Ed25519 Cryptographic Proof | Demo Mode (SIH 2026)"
     )
     canvas_obj.drawCentredString(width / 2.0, 11, footer_text)
@@ -379,7 +379,7 @@ def generate_certificate_pdf(
         Paragraph(
             f"<b><font size='7' face='Courier-Bold' color='#0F2942'>{vr.verification_id}</font></b>"
             "<br/><b><font size='7' color='#0284C7'>Scan QR to verify credential</font></b><br/>"
-            "<font size='6' color='#64748B'>Ed25519 Cryptographic Proof • National APAAR</font>",
+            "<font size='6' color='#64748B'>Ed25519 Cryptographic Proof • National EduTrace</font>",
             style_center,
         ),
     ]

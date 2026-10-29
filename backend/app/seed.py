@@ -1702,7 +1702,7 @@ def seed_all(session: Session | None = None) -> dict[str, Any]:
         }
 
         print("\n" + "=" * 62)
-        print("                 APAAR PLATFORM SEED COMPLETE                 ")
+        print("                EDUTRACE PLATFORM SEED COMPLETE                ")
         print("=" * 62)
         print(
             f"Institutions:           {institutions_count:>5} "

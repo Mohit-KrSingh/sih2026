@@ -31,7 +31,7 @@ def generate_totp_secret() -> str:
 def get_totp_uri(
     secret: str,
     account_email: str,
-    issuer_name: str = "AICTE APAAR",
+    issuer_name: str = "AICTE EduTrace",
 ) -> str:
     """Generate the standard otpauth:// URI for authenticator apps."""
     totp = pyotp.TOTP(secret)

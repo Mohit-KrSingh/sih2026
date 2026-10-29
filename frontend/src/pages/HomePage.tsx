@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { getHealthApi, type HealthResponse } from "../api/health";
 import { Button } from "../components/ui/Button";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { APAAR_EXPLAINER, PRODUCT_NAME, TAGLINE } from "../brand";
 import {
   ArrowRight,
   Building2,
@@ -39,12 +40,15 @@ export function HomePage() {
           <span>AICTE Smart India Hackathon 2026 Initiative</span>
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-          One Student, One APAAR: <br className="hidden sm:inline" />
-          <span className="text-blue-700">Automated Validation & Intake Integrity</span>
+          {PRODUCT_NAME}: <br className="hidden sm:inline" />
+          <span className="text-blue-700">{TAGLINE}</span>
         </h1>
         <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
           National platform for AICTE-approved institutions to upload APAAR-keyed student data,
           automatically detect over-admissions & duplicate enrolments, and offer privacy-first cryptographic verification.
+        </p>
+        <p className="text-xs sm:text-sm text-slate-500 max-w-2xl mx-auto bg-slate-100 py-2 px-4 rounded-lg border border-slate-200 leading-normal">
+          <strong>What is an APAAR ID?</strong> {APAAR_EXPLAINER}
         </p>
       </section>
 

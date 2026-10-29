@@ -1,7 +1,7 @@
 [project]
-name = "apaar-backend"
+name = "edutrace-backend"
 version = "0.1.0"
-description = "APAAR Student Data Management and Verification System API"
+description = "EduTrace Student Data Management and Verification System API"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.0",
@@ -49,4 +49,4 @@ ignore = []
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-addopts = "--basetemp=.pytest_tmp"
+addopts = "--basetemp=storage/test_tmp"

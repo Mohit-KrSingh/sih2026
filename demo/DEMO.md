@@ -1,6 +1,6 @@
-# APAAR Platform - Scripted Demonstration Guide
+# EduTrace Platform - Scripted Demonstration Guide
 
-This guide walks evaluators and Smart India Hackathon judges through the complete capabilities of the **APAAR Student Data Management and Verification System**.
+This guide walks evaluators and Smart India Hackathon judges through the complete capabilities of the **EduTrace: Student Data Management and Verification System**.
 
 Every scenario in this document can be reproduced from scratch using the one-command reset:
 ```bash

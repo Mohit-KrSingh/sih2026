@@ -1,4 +1,4 @@
-# scripts/up.ps1 - Start the APAAR stack
+# scripts/up.ps1 - Start the EduTrace stack
 param (
     [switch]$Foreground
 )

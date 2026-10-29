@@ -1,0 +1,56 @@
+import React from "react";
+import { PRODUCT_NAME } from "../../brand";
+
+interface EduTraceLogoProps {
+  className?: string;
+  iconOnly?: boolean;
+  size?: number;
+}
+
+export const EduTraceIcon: React.FC<{ size?: number; className?: string }> = ({
+  size = 24,
+  className = "",
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width={size}
+    height={size}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+    <path d="M2 17h4l2.5-4 3 7 3-5 2.5 2H22" />
+  </svg>
+);
+
+export const EduTraceLogo: React.FC<EduTraceLogoProps> = ({
+  className = "",
+  iconOnly = false,
+  size = 24,
+}) => {
+  if (iconOnly) {
+    return <EduTraceIcon size={size} className={className} />;
+  }
+
+  return (
+    <div className={`inline-flex items-center gap-2.5 ${className}`}>
+      <div className="w-8 h-8 rounded-lg bg-blue-700 flex items-center justify-center text-white shadow-sm shrink-0">
+        <EduTraceIcon size={18} className="text-amber-300" />
+      </div>
+      <div className="leading-tight">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-lg tracking-tight text-white">{PRODUCT_NAME}</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-800/80 text-blue-200 border border-blue-700 font-medium">
+            Central Portal
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};

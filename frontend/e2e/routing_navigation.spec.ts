@@ -37,7 +37,7 @@ test.describe("T43: Real URLs, Navigation History, Tab Titles, and Protected Red
     await expect(page.locator("h1")).toContainText("Validation Flags");
 
     // 5. Verify browser tab title was updated
-    await expect(page).toHaveTitle(/Validation Flags \| APAAR/);
+    await expect(page).toHaveTitle(/Validation Flags \| EduTrace/);
   });
 
   test("browser back and forward move across at least 4 pages accurately", async ({
@@ -52,41 +52,41 @@ test.describe("T43: Real URLs, Navigation History, Tab Titles, and Protected Red
 
     // Page 1: Dashboard
     await expect(page).toHaveURL(/\/college\/dashboard/);
-    await expect(page).toHaveTitle(/College Portal Dashboard \| APAAR/);
+    await expect(page).toHaveTitle(/College Portal Dashboard \| EduTrace/);
 
     // Page 2: Seats & Intake
     await page.getByRole("link", { name: /Seats & Intake/i }).first().click();
     await page.waitForURL("**/college/seats");
     await expect(page).toHaveURL(/\/college\/seats/);
-    await expect(page).toHaveTitle(/Seat Declarations & Intake Quotas \| APAAR/);
+    await expect(page).toHaveTitle(/Seat Declarations & Intake Quotas \| EduTrace/);
 
     // Page 3: Students Directory
     await page.getByRole("link", { name: /^Students$/i }).first().click();
     await page.waitForURL("**/college/students");
     await expect(page).toHaveURL(/\/college\/students/);
-    await expect(page).toHaveTitle(/Student Directory \| APAAR/);
+    await expect(page).toHaveTitle(/Student Directory \| EduTrace/);
 
     // Page 4: Validation Flags
     await page.getByRole("link", { name: /Validation Flags/i }).first().click();
     await page.waitForURL("**/college/validation");
     await expect(page).toHaveURL(/\/college\/validation/);
-    await expect(page).toHaveTitle(/Validation Flags \| APAAR/);
+    await expect(page).toHaveTitle(/Validation Flags \| EduTrace/);
 
     // --- Back navigation test (4 pages backwards) ---
     // Back 1: from Validation Flags -> Students Directory
     await page.goBack();
     await expect(page).toHaveURL(/\/college\/students/);
-    await expect(page).toHaveTitle(/Student Directory \| APAAR/);
+    await expect(page).toHaveTitle(/Student Directory \| EduTrace/);
 
     // Back 2: from Students Directory -> Seats & Intake
     await page.goBack();
     await expect(page).toHaveURL(/\/college\/seats/);
-    await expect(page).toHaveTitle(/Seat Declarations & Intake Quotas \| APAAR/);
+    await expect(page).toHaveTitle(/Seat Declarations & Intake Quotas \| EduTrace/);
 
     // Back 3: from Seats & Intake -> Dashboard
     await page.goBack();
     await expect(page).toHaveURL(/\/college\/dashboard/);
-    await expect(page).toHaveTitle(/College Portal Dashboard \| APAAR/);
+    await expect(page).toHaveTitle(/College Portal Dashboard \| EduTrace/);
 
     // --- Forward navigation test (4 pages forward) ---
     // Forward 1: Dashboard -> Seats
@@ -123,14 +123,14 @@ test.describe("T43: Real URLs, Navigation History, Tab Titles, and Protected Red
     await expect(page).toHaveURL(/\/college\/seats/);
     await expect(page.locator("h1")).toContainText("Seat Declarations");
     await expect(page.getByText(collegeEmail).first()).toBeVisible();
-    await expect(page).toHaveTitle(/Seat Declarations & Intake Quotas \| APAAR/);
+    await expect(page).toHaveTitle(/Seat Declarations & Intake Quotas \| EduTrace/);
   });
 
   test("unknown URLs show not-found page with a link home", async ({ page }) => {
     await page.goto("/some-non-existent-page-url-404");
     await expect(page.locator("h1")).toContainText("Page Not Found");
     await expect(page.getByText("HTTP 404 Not Found")).toBeVisible();
-    await expect(page).toHaveTitle(/404 Page Not Found \| APAAR/);
+    await expect(page).toHaveTitle(/404 Page Not Found \| EduTrace/);
 
     // Click Return to home button
     await page.getByRole("button", { name: "Return to home" }).click();

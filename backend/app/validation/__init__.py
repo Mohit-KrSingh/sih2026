@@ -1,4 +1,4 @@
-"""Validation engine package for APAAR Student Data Management and Verification."""
+"""Validation engine package for EduTrace Student Data Management and Verification."""
 
 import app.validation.rules  # noqa: F401  # Auto-registers all rule modules
 from app.validation.apaar_lookup import get_apaar_cache

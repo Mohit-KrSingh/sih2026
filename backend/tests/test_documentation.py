@@ -124,7 +124,7 @@ def test_rules_doc_covers_all_registered_rules() -> None:
 
     content = rules_path.read_text(encoding="utf-8")
 
-    assert "# APAAR Validation Rules Catalogue" in content
+    assert "# EduTrace Validation Rules Catalogue" in content
     assert "cheap-checks-first" in content
 
     for rule_code in RULE_CATALOGUE:

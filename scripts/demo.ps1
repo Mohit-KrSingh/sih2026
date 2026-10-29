@@ -4,7 +4,7 @@ $ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
-Write-Host "  APAAR Platform - Resetting to Scripted Demo State (T40)      " -ForegroundColor Cyan
+Write-Host "  EduTrace Platform - Resetting to Scripted Demo State (T40)      " -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host ""
 

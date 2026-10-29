@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api_v1 import api_v1_router
+from app.brand import PRODUCT_NAME
 from app.config import get_settings
 from app.logging_config import setup_logging
 from app.middleware import RequestBodySizeLimiterMiddleware, SecurityHeadersMiddleware
@@ -12,8 +13,10 @@ setup_logging()
 settings = get_settings()
 
 app = FastAPI(
-    title="APAAR Student Data Management & Verification API",
-    description="Backend API for AICTE APAAR Student Data Management and Verification System",
+    title=f"{PRODUCT_NAME} Student Data Management & Verification API",
+    description=(
+        f"Backend API for AICTE {PRODUCT_NAME} Student Data Management and Verification System"
+    ),
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -57,7 +60,7 @@ app.include_router(api_v1_router)
 @app.get("/")
 def read_root():
     return {
-        "message": "APAAR Student Data Management and Verification API",
+        "message": f"{PRODUCT_NAME} Student Data Management and Verification API",
         "docs": "/docs",
         "health": "/api/v1/health",
         "version": "0.1.0",

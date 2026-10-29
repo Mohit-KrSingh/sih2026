@@ -1227,7 +1227,7 @@ def generate_accreditation_snapshot(
         totals_row=totals_row,
         notes=[
             f"Official Contact: {inst.official_email} | Head of Institution: {inst.head_name}",
-            "Certified under the AICTE Approval Process Handbook (APH) and APAAR Framework.",
+            "Certified under the AICTE Approval Process Handbook (APH) and EduTrace Platform.",
         ],
     )
 

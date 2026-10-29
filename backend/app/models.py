@@ -1,4 +1,4 @@
-"""SQLAlchemy 2.0 models for the APAAR Student Data Management and Verification System.
+"""SQLAlchemy 2.0 models for the EduTrace Student Data Management and Verification System.
 
 Defines all tables specified in SPEC.md section 7:
 1. users

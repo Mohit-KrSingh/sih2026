@@ -1,1 +1,1 @@
-# APAAR backend application
+# EduTrace backend application

@@ -715,7 +715,7 @@ export function ActivatePage() {
                   />
                   <label htmlFor="declaration-cb" className="text-slate-700 leading-relaxed cursor-pointer">
                     I solemnly declare that I am the duly designated institutional representative
-                    authorized to claim and manage APAAR student records for{" "}
+                    authorized to claim and manage student records for{" "}
                     <strong>{otpData.institution_name}</strong> in accordance with AICTE guidelines.
                   </label>
                 </div>

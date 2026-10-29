@@ -66,7 +66,7 @@ def reset_database(session: Session | None = None) -> None:
     else:
         db = session
 
-    print("=== APAAR Demo Reset ===")
+    print("=== EduTrace Demo Reset ===")
     print()
     print("-> Truncating all application tables...")
     try:
