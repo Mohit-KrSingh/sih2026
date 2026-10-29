@@ -48,6 +48,9 @@ import {
   TableRow,
   TableHead,
   TableCell,
+  TablePagination,
+  TableError,
+  TableSkeletonRows,
   EmptyState,
   Spinner,
   Skeleton,
@@ -607,34 +610,73 @@ function DevComponentsContent() {
             </div>
 
             <div className="md:col-span-2 space-y-2">
-              <p className="text-xs font-semibold ux4g-text-neutral-tertiary uppercase">UX4G Table</p>
-              <Table size="m" columnDividers zebra>
-                <TableHeader>
+              <p className="text-xs font-semibold ux4g-text-neutral-tertiary uppercase">
+                UX4G Table (Sticky Header, Sortable Columns, Row Focus & Pagination)
+              </p>
+              <Table size="m" columnDividers zebra stickyHeader maxHeight="240px" ariaLabel="Showcase table">
+                <TableHeader sticky>
                   <TableRow>
-                    <TableHead sortDirection="ascending">APAAR ID</TableHead>
-                    <TableHead>Student Name</TableHead>
+                    <TableHead sortable sortDirection="ascending" onSort={() => {}}>
+                      APAAR ID
+                    </TableHead>
+                    <TableHead sortable sortDirection="none" onSort={() => {}}>
+                      Student Name
+                    </TableHead>
                     <TableHead>Course</TableHead>
                     <TableHead>Seat Type</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="text-center">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
+                  <TableRow focusable>
                     <TableCell className="font-mono">999988887777</TableCell>
                     <TableCell className="font-medium">Aaditya Patil</TableCell>
                     <TableCell>B.Tech CSE</TableCell>
                     <TableCell>Regular</TableCell>
-                    <TableCell><FlagBadge level="error" count={1} /></TableCell>
+                    <TableCell className="text-center"><FlagBadge level="error" count={1} /></TableCell>
                   </TableRow>
-                  <TableRow>
+                  <TableRow focusable selected>
                     <TableCell className="font-mono">888877776666</TableCell>
                     <TableCell className="font-medium">Priya Sharma</TableCell>
                     <TableCell>B.Tech ECE</TableCell>
                     <TableCell>Supernumerary</TableCell>
-                    <TableCell><FlagBadge level="info" label="Clean" /></TableCell>
+                    <TableCell className="text-center"><FlagBadge level="info" label="Clean" /></TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
+              <TablePagination
+                currentPage={1}
+                totalPages={3}
+                totalItems={75}
+                pageSize={25}
+                onPageChange={() => {}}
+                onPageSizeChange={() => {}}
+                ariaLabel="Showcase table pagination"
+              />
+
+              <div className="pt-2 space-y-2">
+                <p className="text-xs font-semibold ux4g-text-neutral-tertiary uppercase">Table Error State</p>
+                <TableError
+                  title="Failed to load records"
+                  message="Could not reach central repository."
+                  onRetry={() => {}}
+                />
+              </div>
+
+              <div className="pt-2 space-y-2">
+                <p className="text-xs font-semibold ux4g-text-neutral-tertiary uppercase">Table Loading Skeleton</p>
+                <Table size="m">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Field 1</TableHead>
+                      <TableHead>Field 2</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableSkeletonRows columns={2} rows={2} />
+                  </TableBody>
+                </Table>
+              </div>
             </div>
 
             <div>

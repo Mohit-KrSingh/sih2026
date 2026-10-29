@@ -16,6 +16,10 @@ import {
   TableHead,
   TableCell,
   TableCaption,
+  TableEmptyState,
+  TableSkeletonRows,
+  TableError,
+  TablePagination,
   EmptyState,
   Spinner,
   Skeleton,
@@ -131,6 +135,168 @@ describe("UX4G Content Components", () => {
 
       expect(screen.getByText("Computer Science & Engineering")).toBeInTheDocument();
       expect(screen.getByText("AICTE Seat Allotment Table")).toBeInTheDocument();
+    });
+
+    it("renders scrollable region with role, aria-label, and tabIndex for mobile responsiveness", () => {
+      render(
+        <Table ariaLabel="Enrolment Records" stickyHeader maxHeight="400px">
+          <TableHeader sticky>
+            <TableRow>
+              <TableHead>ID</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>1</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      );
+
+      const region = screen.getByRole("region", { name: "Enrolment Records" });
+      expect(region).toBeInTheDocument();
+      expect(region).toHaveAttribute("tabindex", "0");
+      expect(region.className).toContain("overflow-x-auto");
+      expect(region.className).toContain("overflow-y-auto");
+    });
+
+    it("handles sortable column header interactions with click and keyboard", () => {
+      const handleSort = vi.fn();
+      render(
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead
+                sortable
+                sortDirection="descending"
+                onSort={handleSort}
+              >
+                Student Name
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Aaditya</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      );
+
+      const sortBtn = screen.getByRole("button", { name: /Student Name, sort none/i });
+      expect(sortBtn).toBeInTheDocument();
+
+      fireEvent.click(sortBtn);
+      expect(handleSort).toHaveBeenCalledTimes(1);
+
+      fireEvent.keyDown(sortBtn, { key: "Enter" });
+      expect(handleSort).toHaveBeenCalledTimes(2);
+
+      fireEvent.keyDown(sortBtn, { key: " " });
+      expect(handleSort).toHaveBeenCalledTimes(3);
+    });
+
+    it("renders focusable and selectable table rows", () => {
+      render(
+        <Table>
+          <TableBody>
+            <TableRow focusable selected data-testid="test-row">
+              <TableCell>Focused Row</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      );
+
+      const row = screen.getByTestId("test-row");
+      expect(row).toHaveAttribute("tabindex", "0");
+      expect(row).toHaveAttribute("aria-selected", "true");
+    });
+
+    it("renders TableEmptyState spanning columns", () => {
+      render(
+        <Table>
+          <TableBody>
+            <TableEmptyState
+              colSpan={5}
+              title="No Students Uploaded"
+              description="Upload a CSV to view rows here."
+            />
+          </TableBody>
+        </Table>
+      );
+
+      expect(screen.getByText("No Students Uploaded")).toBeInTheDocument();
+      expect(screen.getByText("Upload a CSV to view rows here.")).toBeInTheDocument();
+    });
+
+    it("renders TableSkeletonRows with specified columns and rows", () => {
+      const { container } = render(
+        <Table>
+          <TableBody>
+            <TableSkeletonRows columns={4} rows={3} />
+          </TableBody>
+        </Table>
+      );
+
+      const trs = container.querySelectorAll("tbody tr");
+      expect(trs.length).toBe(3);
+      const cells = container.querySelectorAll("tbody td");
+      expect(cells.length).toBe(12);
+    });
+
+    it("renders TableError state with retry button", () => {
+      const handleRetry = vi.fn();
+      render(
+        <Table>
+          <TableBody>
+            <TableError
+              colSpan={4}
+              title="Network Error"
+              message="Failed to fetch records from registry."
+              onRetry={handleRetry}
+              retryLabel="Retry loading"
+            />
+          </TableBody>
+        </Table>
+      );
+
+      expect(screen.getByRole("alert")).toBeInTheDocument();
+      expect(screen.getByText("Network Error")).toBeInTheDocument();
+      expect(screen.getByText("Failed to fetch records from registry.")).toBeInTheDocument();
+
+      const retryBtn = screen.getByRole("button", { name: "Retry loading" });
+      fireEvent.click(retryBtn);
+      expect(handleRetry).toHaveBeenCalledTimes(1);
+    });
+
+    it("renders TablePagination with record counts, page size, and page navigation", () => {
+      const handlePageChange = vi.fn();
+      const handlePageSizeChange = vi.fn();
+
+      render(
+        <TablePagination
+          currentPage={2}
+          totalPages={5}
+          totalItems={100}
+          pageSize={20}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          ariaLabel="Test table pagination"
+        />
+      );
+
+      expect(screen.getByText(/Showing/i)).toBeInTheDocument();
+      expect(screen.getByText("21")).toBeInTheDocument();
+      expect(screen.getByText("40")).toBeInTheDocument();
+      expect(screen.getAllByText("100").length).toBeGreaterThanOrEqual(1);
+
+      const sizeSelect = screen.getByLabelText("Rows per page:");
+      fireEvent.change(sizeSelect, { target: { value: "50" } });
+      expect(handlePageSizeChange).toHaveBeenCalledWith(50);
+
+      const nextBtn = screen.getByRole("button", { name: "Next page" });
+      fireEvent.click(nextBtn);
+      expect(handlePageChange).toHaveBeenCalledWith(3);
     });
   });
 
