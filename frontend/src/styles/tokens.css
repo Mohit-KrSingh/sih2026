@@ -196,3 +196,40 @@ textarea,
     min-height: 44px;
   }
 }
+
+/* ==========================================================================
+   Badge Accessibility & Contrast Overrides (WCAG 2.1 AA 4.5:1)
+   Ensures status badges meet minimum contrast thresholds using UX4G tokens.
+   ========================================================================== */
+.ux4g-badge {
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
+}
+
+.ux4g-badge-digit-warning,
+.ux4g-badge-warning {
+  background-color: var(--ux4g-color-orange-50) !important;
+  color: var(--ux4g-text-status-warning, var(--ux4g-color-orange-900)) !important;
+  border: 1px solid var(--ux4g-color-orange-300) !important;
+}
+
+.ux4g-badge-digit-success,
+.ux4g-badge-success {
+  background-color: var(--ux4g-color-green-50) !important;
+  color: var(--ux4g-text-status-success, var(--ux4g-color-green-900)) !important;
+  border: 1px solid var(--ux4g-color-green-300) !important;
+}
+
+[data-theme="dark"] .ux4g-badge-digit-warning,
+[data-theme="dark"] .ux4g-badge-warning {
+  background-color: var(--ux4g-color-neutral-800) !important;
+  color: var(--ux4g-color-orange-300) !important;
+  border: 1px solid var(--ux4g-color-orange-700) !important;
+}
+
+[data-theme="dark"] .ux4g-badge-digit-success,
+[data-theme="dark"] .ux4g-badge-success {
+  background-color: var(--ux4g-color-neutral-800) !important;
+  color: var(--ux4g-color-green-300) !important;
+  border: 1px solid var(--ux4g-color-green-700) !important;
+}
