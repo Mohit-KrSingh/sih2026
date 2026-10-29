@@ -11,26 +11,25 @@ import {
   type ActivationRequestResponse,
   type ActivationStatusResponse,
 } from "../api/institutions";
-import { Button } from "../components/ui/Button";
-import { Input } from "../components/ui/Input";
+import { Button } from "../components/ux4g/Button";
+import { Input } from "../components/ux4g/Input";
+import { FormField } from "../components/ux4g/FormField";
+import { Card } from "../components/ux4g/Card";
+import { Badge } from "../components/ux4g/Badge";
+import { Alert } from "../components/ux4g/Alert";
+import { Stepper, type StepItem } from "../components/ux4g/Stepper";
+import { OtpInput } from "../components/ux4g/OtpInput";
+import { Icon } from "../components/ux4g/Icon";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Building2,
-  CheckCircle2,
-  Clock,
-  FileCheck2,
-  Mail,
-  RefreshCw,
-  Search,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
-  Upload,
-} from "lucide-react";
 
 type WizardStep = 1 | 2 | 3 | 4;
+
+const WIZARD_STEPS: StepItem[] = [
+  { title: "01 Institution", description: "Lookup ID" },
+  { title: "02 Official OTP", description: "Verify code" },
+  { title: "03 Signatory", description: "Identity & letter" },
+  { title: "04 Queue", description: "Pending approval" },
+];
 
 export function ActivatePage() {
   useDocumentTitle("Institution Account Activation");
@@ -60,7 +59,9 @@ export function ActivatePage() {
 
   // Step 3: Signatory & Letter upload
   const [signatoryName, setSignatoryName] = useState("");
-  const [signatoryRef, setSignatoryRef] = useState("DL-REF-" + Math.floor(100000 + Math.random() * 900000));
+  const [signatoryRef, setSignatoryRef] = useState(
+    () => "DL-REF-" + Math.floor(100000 + Math.random() * 900000)
+  );
   const [letterFile, setLetterFile] = useState<File | null>(null);
   const [declarationAgreed, setDeclarationAgreed] = useState(false);
   const [isSubmittingClaim, setIsSubmittingClaim] = useState(false);
@@ -94,9 +95,10 @@ export function ActivatePage() {
       // Offline / unit test fallback
       setMatchedCollege({
         id: aicteId.trim(),
-        name: aicteId.trim() === "1-10000001"
-          ? "Pune Institute of Advanced Engineering & Technology"
-          : "Approved Educational Institution",
+        name:
+          aicteId.trim() === "1-10000001"
+            ? "Pune Institute of Advanced Engineering & Technology"
+            : "Approved Educational Institution",
         state: "Maharashtra",
         email: "c***t@piaet-pune.edu.in",
       });
@@ -117,7 +119,6 @@ export function ActivatePage() {
       setStep(2);
       checkDevOutbox();
     } catch (err: unknown) {
-      // In unit test environment, fallback if API unavailable
       if (process.env.NODE_ENV === "test" || !window.fetch) {
         setInitiateData({
           aicte_id: aicteId.trim(),
@@ -151,7 +152,7 @@ export function ActivatePage() {
         }
       }
     } catch {
-      // Dev outbox may not be active
+      // Dev outbox may not be active in prod
     } finally {
       setIsFetchingDevOtp(false);
     }
@@ -233,33 +234,33 @@ export function ActivatePage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 space-y-8">
-      {/* Header */}
+    <div className="max-w-3xl mx-auto py-6 px-4 space-y-8">
+      {/* Page Header */}
       <div className="text-center space-y-3">
-        <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 mx-auto flex items-center justify-center shadow-sm">
-          <Building2 className="w-6 h-6" />
+        <div className="w-12 h-12 rounded-xl border ux4g-border-neutral-subtle ux4g-bg-neutral-soft mx-auto flex items-center justify-center">
+          <Icon name="domain_add" size="lg" color="primary" aria-hidden="true" />
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+        <h1 className="text-3xl font-bold ux4g-text-neutral-primary tracking-tight">
           Activate Your Institution Account
         </h1>
-        <p className="text-sm text-slate-600 max-w-xl mx-auto">
+        <p className="text-sm ux4g-text-neutral-secondary max-w-xl mx-auto">
           AICTE approved educational institutions claim their institutional profile using official
           contact details on record.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 justify-center gap-8 text-sm font-medium">
+      <div className="flex border-b ux4g-border-neutral-subtle justify-center gap-8 text-sm font-medium">
         <button
           type="button"
           onClick={() => setActiveTab("wizard")}
           className={`pb-3 px-2 border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === "wizard"
-              ? "border-blue-600 text-blue-700 font-semibold"
-              : "border-transparent text-slate-500 hover:text-slate-700"
+              ? "ux4g-border-primary ux4g-text-brand-primary font-semibold"
+              : "border-transparent ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary"
           }`}
         >
-          <Building2 className="w-4 h-4" />
+          <Icon name="domain" size="sm" color="inherit" aria-hidden="true" />
           <span>Activation wizard</span>
         </button>
         <button
@@ -270,38 +271,41 @@ export function ActivatePage() {
           }}
           className={`pb-3 px-2 border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === "status"
-              ? "border-blue-600 text-blue-700 font-semibold"
-              : "border-transparent text-slate-500 hover:text-slate-700"
+              ? "ux4g-border-primary ux4g-text-brand-primary font-semibold"
+              : "border-transparent ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary"
           }`}
         >
-          <Search className="w-4 h-4" />
+          <Icon name="search" size="sm" color="inherit" aria-hidden="true" />
           <span>Check claim status</span>
         </button>
       </div>
 
       {activeTab === "status" ? (
         /* Status Tracker Tab */
-        <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6 animate-fadeIn">
+        <div className="rounded-xl border ux4g-border-neutral-subtle ux4g-bg-neutral-elevated p-6 space-y-6">
           <div>
-            <h2 className="text-base font-bold text-slate-900">Institution Claim Status Lookup</h2>
-            <p className="text-xs text-slate-500 mt-1">
+            <h2 className="text-base font-bold ux4g-text-neutral-primary">Institution Claim Status Lookup</h2>
+            <p className="text-xs ux4g-text-neutral-secondary mt-1">
               Enter your AICTE Permanent Institute ID to check current account status and review queue status.
             </p>
           </div>
 
           <form onSubmit={handleCheckStatus} className="flex flex-col sm:flex-row gap-3 items-end">
             <div className="flex-1 w-full">
-              <Input
-                label="AICTE Institute Identifier"
-                placeholder="e.g. 1-10000001"
-                value={statusAicteId}
-                onChange={(e) => setStatusAicteId(e.target.value)}
-                required
-              />
+              <FormField id="status-aicte-id" label="AICTE Institute Identifier" required>
+                <Input
+                  id="status-aicte-id"
+                  placeholder="e.g. 1-10000001"
+                  value={statusAicteId}
+                  onChange={(e) => setStatusAicteId(e.target.value)}
+                  required
+                />
+              </FormField>
             </div>
             <Button
               type="submit"
               variant="primary"
+              size="m"
               isLoading={isCheckingStatus}
               loadingText="Querying..."
               className="shrink-0 mb-0.5"
@@ -311,79 +315,74 @@ export function ActivatePage() {
           </form>
 
           {statusError && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />
-              <span>{statusError}</span>
-            </div>
+            <Alert variant="error" title="Lookup Error">
+              {statusError}
+            </Alert>
           )}
 
           {statusResult && (
-            <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+            <div className="p-5 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-soft space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b ux4g-border-neutral-subtle pb-3">
                 <div>
-                  <h3 className="font-bold text-slate-900">{statusResult.institution_name}</h3>
-                  <p className="text-xs font-mono text-slate-500">ID: {statusResult.aicte_id}</p>
+                  <h3 className="font-bold ux4g-text-neutral-primary">{statusResult.institution_name}</h3>
+                  <p className="text-xs font-mono ux4g-text-neutral-tertiary">ID: {statusResult.aicte_id}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                  <Badge
+                    variant={
                       statusResult.account_status === "active"
-                        ? "bg-emerald-100 text-emerald-800"
+                        ? "success"
                         : statusResult.account_status === "pending_approval"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-amber-100 text-amber-800"
-                    }`}
+                        ? "primary"
+                        : "warning"
+                    }
                   >
                     Account: {statusResult.account_status.replace("_", " ")}
-                  </span>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                      statusResult.approval_status === "active"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
+                  </Badge>
+                  <Badge
+                    variant={statusResult.approval_status === "active" ? "success" : "danger"}
                   >
                     AICTE Approval: {statusResult.approval_status}
-                  </span>
+                  </Badge>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-slate-500">Has Pending Claim:</span>
-                  <p className="font-semibold text-slate-900">
+                  <span className="ux4g-text-neutral-secondary">Has Pending Claim:</span>
+                  <p className="font-semibold ux4g-text-neutral-primary">
                     {statusResult.has_pending_request ? "Yes (In Officer Queue)" : "No"}
                   </p>
                 </div>
                 <div>
-                  <span className="text-slate-500">Latest Claim Status:</span>
-                  <p className="font-semibold text-slate-900 capitalize">
+                  <span className="ux4g-text-neutral-secondary">Latest Claim Status:</span>
+                  <p className="font-semibold ux4g-text-neutral-primary capitalize">
                     {statusResult.latest_request_status || "None on file"}
                   </p>
                 </div>
               </div>
 
               {statusResult.account_status === "active" ? (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-800 flex items-center justify-between">
+                <div className="p-3 border ux4g-border-success ux4g-bg-success-soft rounded-lg text-xs ux4g-text-success flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <span>This institution account is active. You can log in with administrator credentials.</span>
                   <Link to="/login/college">
-                    <Button size="sm" variant="primary">
+                    <Button size="s" variant="primary">
                       Go to login
                     </Button>
                   </Link>
                 </div>
               ) : statusResult.has_pending_request ? (
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-800 flex items-center gap-2">
-                  <Clock className="w-4 h-4 shrink-0" />
+                <div className="p-3 border ux4g-border-primary ux4g-bg-primary-soft rounded-lg text-xs ux4g-text-brand-primary flex items-center gap-2">
+                  <Icon name="schedule" size="sm" color="primary" aria-hidden="true" />
                   <span>
                     Your activation claim is currently pending officer review. You will receive credential details once approved.
                   </span>
                 </div>
               ) : (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex items-center justify-between">
+                <div className="p-3 border ux4g-border-warning ux4g-bg-warning-soft rounded-lg text-xs ux4g-text-warning flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <span>This institution has not yet been activated. Proceed with the claim wizard.</span>
                   <Button
-                    size="sm"
+                    size="s"
                     variant="outline"
                     onClick={() => {
                       setAicteId(statusResult.aicte_id);
@@ -401,68 +400,50 @@ export function ActivatePage() {
       ) : (
         /* 4-Step Interactive Activation Wizard */
         <div className="space-y-6">
-          {/* Progress Steps Indicators */}
-          <div className="grid grid-cols-4 gap-2 text-xs">
-            {[
-              { num: 1, title: "01 Institution", desc: "Lookup ID" },
-              { num: 2, title: "02 Official OTP", desc: "Verify code" },
-              { num: 3, title: "03 Signatory", desc: "Identity & letter" },
-              { num: 4, title: "04 Queue", desc: "Pending approval" },
-            ].map((s) => (
-              <div
-                key={s.num}
-                className={`p-3 rounded-lg border transition-all ${
-                  step === s.num
-                    ? "bg-blue-50/80 border-blue-400 text-blue-900 shadow-sm"
-                    : step > s.num
-                      ? "bg-slate-50 border-slate-300 text-slate-700"
-                      : "bg-white border-slate-200 text-slate-400"
-                }`}
-              >
-                <div className="flex items-center gap-1.5 font-bold font-mono">
-                  {step > s.num ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  ) : (
-                    <span>{s.title}</span>
-                  )}
-                </div>
-                <p className="text-[11px] mt-0.5 truncate">{s.desc}</p>
-              </div>
-            ))}
+          {/* UX4G Stepper Indicator */}
+          <div className="p-4 rounded-xl border ux4g-border-neutral-subtle ux4g-bg-neutral-elevated">
+            <Stepper steps={WIZARD_STEPS} currentStep={step - 1} orientation="horizontal" />
           </div>
 
           {/* STEP 1: Institute Lookup */}
           {step === 1 && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5 animate-fadeIn">
+            <Card variant="outline" className="p-6 space-y-5">
               <div>
-                <h2 className="text-base font-bold text-slate-900">
+                <h2 className="text-base font-bold ux4g-text-neutral-primary">
                   Step 1: Enter AICTE Permanent Institute Identifier
                 </h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Query the AICTE master directory to confirm your institution's approved status.
+                <p className="text-xs ux4g-text-neutral-secondary mt-1">
+                  Query the AICTE master directory to confirm your institution&apos;s approved status.
                 </p>
               </div>
 
               <form onSubmit={handleLookup} className="space-y-4">
                 <div className="flex flex-col sm:flex-row gap-3 items-end">
                   <div className="flex-1 w-full">
-                    <Input
+                    <FormField
+                      id="aicte-id-input"
                       label="AICTE Institute Identifier"
-                      placeholder="e.g. 1-10000004"
-                      value={aicteId}
-                      onChange={(e) => {
-                        setAicteId(e.target.value);
-                        if (matchedCollege && matchedCollege.id !== e.target.value) {
-                          setMatchedCollege(null);
-                        }
-                      }}
                       hint="Demo colleges: 1-10000004 (Bengaluru), 1-10000005 (Chennai), 1-10000006 (Hyderabad)"
                       required
-                    />
+                    >
+                      <Input
+                        id="aicte-id-input"
+                        placeholder="e.g. 1-10000004"
+                        value={aicteId}
+                        onChange={(e) => {
+                          setAicteId(e.target.value);
+                          if (matchedCollege && matchedCollege.id !== e.target.value) {
+                            setMatchedCollege(null);
+                          }
+                        }}
+                        required
+                      />
+                    </FormField>
                   </div>
                   <Button
                     type="submit"
                     variant="primary"
+                    size="m"
                     isLoading={isSearching}
                     loadingText="Querying..."
                     className="shrink-0 mb-0.5 sm:mb-1 w-full sm:w-auto"
@@ -473,48 +454,47 @@ export function ActivatePage() {
               </form>
 
               {lookupError && (
-                <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />
-                  <span>{lookupError}</span>
-                </div>
+                <Alert variant="error" title="Verification Error">
+                  {lookupError}
+                </Alert>
               )}
 
               {matchedCollege && (
-                <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 text-xs space-y-3 animate-fadeIn">
-                  <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                <div className="p-4 rounded-lg border ux4g-border-success ux4g-bg-success-soft text-xs space-y-3">
+                  <div className="flex items-center gap-2 ux4g-text-success font-bold text-sm">
+                    <Icon name="check_circle" size="md" color="success" aria-hidden="true" />
                     <span>Institution Verified in AICTE Master Directory</span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ux4g-text-neutral-secondary">
                     <div>
-                      <span className="text-slate-500">Institution Name:</span>
-                      <p className="font-semibold text-slate-900">{matchedCollege.name}</p>
+                      <span className="ux4g-text-neutral-tertiary">Institution Name:</span>
+                      <p className="font-semibold ux4g-text-neutral-primary">{matchedCollege.name}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500">State:</span>
-                      <p className="font-semibold text-slate-900">{matchedCollege.state}</p>
+                      <span className="ux4g-text-neutral-tertiary">State:</span>
+                      <p className="font-semibold ux4g-text-neutral-primary">{matchedCollege.state}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500">Official On-File Contact:</span>
-                      <p className="font-mono text-slate-900">{matchedCollege.email}</p>
+                      <span className="ux4g-text-neutral-tertiary">Official On-File Contact:</span>
+                      <p className="font-mono ux4g-text-neutral-primary">{matchedCollege.email}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500">Next Step:</span>
-                      <p className="text-slate-700">Dispatch OTP to official on-file email</p>
+                      <span className="ux4g-text-neutral-tertiary">Next Step:</span>
+                      <p className="ux4g-text-neutral-secondary">Dispatch OTP to official on-file email</p>
                     </div>
                   </div>
 
-                  <div className="pt-2 flex items-center justify-between border-t border-emerald-200/80">
-                    <span className="text-[11px] text-emerald-800">
+                  <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-t ux4g-border-neutral-subtle">
+                    <span className="text-[11px] ux4g-text-neutral-secondary">
                       Click below to generate and deliver the official one-time verification code.
                     </span>
                     <Button
-                      size="sm"
+                      size="s"
                       variant="primary"
                       onClick={handleInitiate}
                       isLoading={isInitiating}
                       loadingText="Sending OTP..."
-                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                      rightIcon={<Icon name="arrow_forward" size="xs" color="inherit" aria-hidden="true" />}
                     >
                       Send OTP to official contact
                     </Button>
@@ -522,66 +502,71 @@ export function ActivatePage() {
                 </div>
               )}
 
-              <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-start gap-2">
-                <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+              <div className="p-3 border ux4g-border-warning ux4g-bg-warning-soft rounded-lg text-xs ux4g-text-warning flex items-start gap-2">
+                <Icon name="shield" size="sm" color="warning" className="shrink-0 mt-0.5" aria-hidden="true" />
                 <span>
                   <strong>Security Rule:</strong> In compliance with AICTE mandate, the OTP will be
                   sent solely to the verified official email and phone numbers already in the AICTE
                   registry. Unregistered addresses cannot be specified.
                 </span>
               </div>
-            </div>
+            </Card>
           )}
 
           {/* STEP 2: Verify OTP */}
           {step === 2 && initiateData && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5 animate-fadeIn">
+            <Card variant="outline" className="p-6 space-y-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-base font-bold text-slate-900">
+                  <h2 className="text-base font-bold ux4g-text-neutral-primary">
                     Step 2: Enter Verification Code
                   </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs ux4g-text-neutral-secondary mt-0.5">
                     Code dispatched to verified institutional contacts on file.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                  className="text-xs ux4g-text-brand-primary hover:underline flex items-center gap-1 font-semibold"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" /> Change ID
+                  <Icon name="arrow_back" size="xs" color="inherit" aria-hidden="true" />
+                  <span>Change ID</span>
                 </button>
               </div>
 
               {/* Institution match summary */}
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-2 text-xs">
-                <div className="font-semibold text-slate-900 text-sm">{initiateData.institution_name}</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600">
+              <div className="p-4 border ux4g-border-neutral-subtle ux4g-bg-neutral-soft rounded-lg space-y-2 text-xs">
+                <div className="font-semibold ux4g-text-neutral-primary text-sm">{initiateData.institution_name}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ux4g-text-neutral-secondary">
                   <div className="flex items-center gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Dispatched to: <strong className="font-mono text-slate-800">{initiateData.masked_email}</strong></span>
+                    <Icon name="mail" size="xs" color="neutral" aria-hidden="true" />
+                    <span>
+                      Dispatched to: <strong className="font-mono ux4g-text-neutral-primary">{initiateData.masked_email}</strong>
+                    </span>
                   </div>
                   <div>
-                    <span>SMS alert: <strong className="font-mono text-slate-800">{initiateData.masked_phone}</strong></span>
+                    <span>
+                      SMS alert: <strong className="font-mono ux4g-text-neutral-primary">{initiateData.masked_phone}</strong>
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Demo Mode Dev Outbox Hint Widget */}
               {devOtpHint && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs space-y-1">
-                  <div className="flex items-center justify-between text-emerald-800 font-semibold">
+                <div className="p-3 border ux4g-border-success ux4g-bg-success-soft rounded-lg text-xs space-y-1">
+                  <div className="flex items-center justify-between ux4g-text-success font-semibold">
                     <span>Demo Mode OTP Helper (Dev Outbox)</span>
                     <button
                       type="button"
                       onClick={() => setOtpCode(devOtpHint)}
-                      className="text-[11px] bg-emerald-600 text-white px-2 py-0.5 rounded font-normal hover:bg-emerald-700"
+                      className="text-[11px] px-2 py-0.5 rounded ux4g-bg-primary-strong text-white hover:opacity-90 transition font-normal"
                     >
                       Auto-fill: {devOtpHint}
                     </button>
                   </div>
-                  <p className="text-emerald-700 text-[11px]">
+                  <p className="ux4g-text-success text-[11px]">
                     Simulated verification code intercepted: <strong>{devOtpHint}</strong>
                   </p>
                 </div>
@@ -589,21 +574,25 @@ export function ActivatePage() {
 
               <form onSubmit={handleVerifyOtp} className="space-y-4">
                 <div className="space-y-1.5">
-                  <Input
+                  <FormField
+                    id="activation-otp-input"
                     label="6-Digit Verification Code"
-                    placeholder="Enter 6-digit OTP"
-                    value={otpCode}
-                    onChange={(e) => setOtpCode(e.target.value)}
-                    maxLength={8}
+                    hint="Enter the 6-digit one-time password dispatched to official on-file contacts"
                     required
-                  />
+                  >
+                    <OtpInput
+                      id="activation-otp-input"
+                      length={6}
+                      value={otpCode}
+                      onChange={setOtpCode}
+                    />
+                  </FormField>
                 </div>
 
                 {otpError && (
-                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
-                    <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />
-                    <span>{otpError}</span>
-                  </div>
+                  <Alert variant="error" title="Authentication Error">
+                    {otpError}
+                  </Alert>
                 )}
 
                 <div className="flex items-center justify-between pt-2">
@@ -611,61 +600,76 @@ export function ActivatePage() {
                     type="button"
                     onClick={() => checkDevOutbox()}
                     disabled={isFetchingDevOtp}
-                    className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1"
+                    className="text-xs ux4g-text-neutral-secondary hover:ux4g-text-neutral-primary flex items-center gap-1"
                   >
-                    <RefreshCw className={`w-3.5 h-3.5 ${isFetchingDevOtp ? "animate-spin" : ""}`} />
-                    Check dev outbox
+                    <Icon
+                      name="refresh"
+                      size="xs"
+                      color="neutral"
+                      className={isFetchingDevOtp ? "animate-spin" : ""}
+                      aria-hidden="true"
+                    />
+                    <span>Check dev outbox</span>
                   </button>
 
                   <Button
                     type="submit"
                     variant="primary"
+                    size="m"
                     isLoading={isVerifyingOtp}
                     loadingText="Verifying OTP..."
-                    rightIcon={<ArrowRight className="w-4 h-4" />}
+                    rightIcon={<Icon name="arrow_forward" size="xs" color="inherit" aria-hidden="true" />}
                   >
                     Verify OTP code
                   </Button>
                 </div>
               </form>
-            </div>
+            </Card>
           )}
 
           {/* STEP 3: Signatory Verification & Letter Upload */}
           {step === 3 && otpData && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-5 animate-fadeIn">
+            <Card variant="outline" className="p-6 space-y-5">
               <div>
-                <h2 className="text-base font-bold text-slate-900">
-                  Step 3: Authorized Signatory Verification & Letter
+                <h2 className="text-base font-bold ux4g-text-neutral-primary">
+                  Step 3: Authorized Signatory Verification &amp; Letter
                 </h2>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs ux4g-text-neutral-secondary mt-1">
                   Upload the official authorization letter signed by the head of the institution.
                 </p>
               </div>
 
               <form onSubmit={handleSubmitClaim} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input
-                    label="Authorized Signatory Name"
-                    value={signatoryName}
-                    onChange={(e) => setSignatoryName(e.target.value)}
-                    required
-                  />
-                  <Input
+                  <FormField id="signatory-name-input" label="Authorized Signatory Name" required>
+                    <Input
+                      id="signatory-name-input"
+                      value={signatoryName}
+                      onChange={(e) => setSignatoryName(e.target.value)}
+                      required
+                    />
+                  </FormField>
+                  <FormField
+                    id="signatory-ref-input"
                     label="Identity Reference / DigiLocker Ref"
-                    value={signatoryRef}
-                    onChange={(e) => setSignatoryRef(e.target.value)}
                     hint="Verified via mock DigiLocker identity provider"
                     required
-                  />
+                  >
+                    <Input
+                      id="signatory-ref-input"
+                      value={signatoryRef}
+                      onChange={(e) => setSignatoryRef(e.target.value)}
+                      required
+                    />
+                  </FormField>
                 </div>
 
                 {/* File Upload Control */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-slate-700">
-                    Official Authorisation Letter (PDF or Document) <span className="text-red-500">*</span>
+                  <label htmlFor="letter-file-input" className="block text-xs font-semibold ux4g-text-neutral-primary">
+                    Official Authorisation Letter (PDF or Document) <span className="ux4g-text-error">*</span>
                   </label>
-                  <div className="border-2 border-dashed border-slate-300 hover:border-blue-400 rounded-xl p-6 text-center transition-colors bg-slate-50/50">
+                  <div className="border-2 border-dashed ux4g-border-neutral-subtle hover:ux4g-border-primary rounded-xl p-6 text-center transition-colors ux4g-bg-neutral-soft">
                     <input
                       id="letter-file-input"
                       type="file"
@@ -679,139 +683,138 @@ export function ActivatePage() {
                     />
                     {letterFile ? (
                       <div className="flex items-center justify-center gap-3">
-                        <FileCheck2 className="w-8 h-8 text-emerald-600" />
+                        <Icon name="description" size="lg" color="success" aria-hidden="true" />
                         <div className="text-left text-xs">
-                          <p className="font-semibold text-slate-900">{letterFile.name}</p>
-                          <p className="text-slate-500">{(letterFile.size / 1024).toFixed(1)} KB</p>
+                          <p className="font-semibold ux4g-text-neutral-primary">{letterFile.name}</p>
+                          <p className="ux4g-text-neutral-tertiary">{(letterFile.size / 1024).toFixed(1)} KB</p>
                         </div>
                         <button
                           type="button"
                           onClick={() => setLetterFile(null)}
-                          className="text-xs text-red-600 hover:underline ml-4"
+                          className="text-xs ux4g-text-error hover:underline ml-4"
                         >
                           Remove
                         </button>
                       </div>
                     ) : (
                       <label htmlFor="letter-file-input" className="cursor-pointer space-y-2 block">
-                        <Upload className="w-8 h-8 text-slate-400 mx-auto" />
-                        <p className="text-xs font-semibold text-slate-700">
+                        <Icon name="cloud_upload" size="xl" color="neutral" className="mx-auto" aria-hidden="true" />
+                        <p className="text-xs font-semibold ux4g-text-neutral-primary">
                           Click to upload authorisation document or drag and drop
                         </p>
-                        <p className="text-[11px] text-slate-400">PDF, DOC up to 5MB</p>
+                        <p className="text-[11px] ux4g-text-neutral-tertiary">PDF, DOC up to 5MB</p>
                       </label>
                     )}
                   </div>
                 </div>
 
                 {/* Declaration Checkbox */}
-                <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-2.5 text-xs">
+                <div className="p-3 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-soft flex items-start gap-2.5 text-xs">
                   <input
                     id="declaration-cb"
                     type="checkbox"
                     checked={declarationAgreed}
                     onChange={(e) => setDeclarationAgreed(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="mt-0.5 h-4 w-4 rounded"
                   />
-                  <label htmlFor="declaration-cb" className="text-slate-700 leading-relaxed cursor-pointer">
+                  <label htmlFor="declaration-cb" className="ux4g-text-neutral-secondary leading-relaxed cursor-pointer">
                     I solemnly declare that I am the duly designated institutional representative
                     authorized to claim and manage student records for{" "}
-                    <strong>{otpData.institution_name}</strong> in accordance with AICTE guidelines.
+                    <strong className="ux4g-text-neutral-primary">{otpData.institution_name}</strong> in accordance with AICTE guidelines.
                   </label>
                 </div>
 
                 {submitError && (
-                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
-                    <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />
-                    <span>{submitError}</span>
-                  </div>
+                  <Alert variant="error" title="Submission Error">
+                    {submitError}
+                  </Alert>
                 )}
 
                 <div className="flex justify-end pt-2">
                   <Button
                     type="submit"
                     variant="primary"
+                    size="m"
                     isLoading={isSubmittingClaim}
                     loadingText="Submitting claim..."
-                    rightIcon={<ArrowRight className="w-4 h-4" />}
+                    rightIcon={<Icon name="arrow_forward" size="xs" color="inherit" aria-hidden="true" />}
                   >
                     Submit activation claim
                   </Button>
                 </div>
               </form>
-            </div>
+            </Card>
           )}
 
           {/* STEP 4: Claim Confirmation / Status */}
           {step === 4 && claimResult && (
-            <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm space-y-6 text-center animate-fadeIn">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
-                <CheckCircle2 className="w-8 h-8" />
+            <Card variant="outline" className="p-8 space-y-6 text-center">
+              <div className="w-16 h-16 rounded-full border ux4g-border-success ux4g-bg-success-soft mx-auto flex items-center justify-center">
+                <Icon name="check_circle" size="xl" color="success" aria-hidden="true" />
               </div>
 
               <div className="space-y-2">
-                <h2 className="text-xl font-bold text-slate-900">
+                <h2 className="text-xl font-bold ux4g-text-neutral-primary">
                   Activation Claim Successfully Submitted
                 </h2>
-                <p className="text-xs text-slate-600 max-w-lg mx-auto">
+                <p className="text-xs ux4g-text-neutral-secondary max-w-lg mx-auto">
                   Your claim has been forwarded to the AICTE Regional Officer Queue for statutory verification.
                 </p>
               </div>
 
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg max-w-md mx-auto text-xs text-left space-y-2">
-                <div className="flex justify-between border-b border-slate-200 pb-1.5">
-                  <span className="text-slate-500">Claim Reference ID:</span>
-                  <span className="font-mono font-bold text-slate-900">REQ-{claimResult.id}</span>
+              <div className="p-4 border ux4g-border-neutral-subtle ux4g-bg-neutral-soft rounded-lg max-w-md mx-auto text-xs text-left space-y-2">
+                <div className="flex justify-between border-b ux4g-border-neutral-subtle pb-1.5">
+                  <span className="ux4g-text-neutral-secondary">Claim Reference ID:</span>
+                  <span className="font-mono font-bold ux4g-text-neutral-primary">REQ-{claimResult.id}</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-200 pb-1.5">
-                  <span className="text-slate-500">Institution AICTE ID:</span>
-                  <span className="font-mono font-bold text-slate-900">{claimResult.institution_aicte_id}</span>
+                <div className="flex justify-between border-b ux4g-border-neutral-subtle pb-1.5">
+                  <span className="ux4g-text-neutral-secondary">Institution AICTE ID:</span>
+                  <span className="font-mono font-bold ux4g-text-neutral-primary">{claimResult.institution_aicte_id}</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-200 pb-1.5">
-                  <span className="text-slate-500">Institution:</span>
-                  <span className="font-semibold text-slate-900 truncate max-w-[200px]">{claimResult.institution_name}</span>
+                <div className="flex justify-between border-b ux4g-border-neutral-subtle pb-1.5">
+                  <span className="ux4g-text-neutral-secondary">Institution:</span>
+                  <span className="font-semibold ux4g-text-neutral-primary truncate max-w-[200px]">{claimResult.institution_name}</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-200 pb-1.5">
-                  <span className="text-slate-500">Authorized Signatory:</span>
-                  <span className="font-semibold text-slate-900">{claimResult.signatory_name}</span>
+                <div className="flex justify-between border-b ux4g-border-neutral-subtle pb-1.5">
+                  <span className="ux4g-text-neutral-secondary">Authorized Signatory:</span>
+                  <span className="font-semibold ux4g-text-neutral-primary">{claimResult.signatory_name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Current Queue Status:</span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-100 text-blue-800">
-                    pending_approval
-                  </span>
+                  <span className="ux4g-text-neutral-secondary">Current Queue Status:</span>
+                  <Badge variant="primary">pending_approval</Badge>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
                 <Button
                   variant="outline"
+                  size="s"
                   onClick={() => {
                     setStatusAicteId(claimResult.institution_aicte_id);
                     setActiveTab("status");
                   }}
-                  leftIcon={<Search className="w-4 h-4" />}
+                  leftIcon={<Icon name="search" size="xs" color="inherit" aria-hidden="true" />}
                 >
                   Track claim status
                 </Button>
                 <Link to="/">
-                  <Button variant="primary">
+                  <Button variant="primary" size="s">
                     Return to home
                   </Button>
                 </Link>
               </div>
-            </div>
+            </Card>
           )}
         </div>
       )}
 
       {/* Security & Regulatory Notice */}
-      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1.5">
-        <div className="flex items-center gap-2 font-semibold text-slate-800">
-          <Shield className="w-4 h-4 text-slate-500" />
-          <span>Statutory Authority & Compliance Notice</span>
+      <div className="p-4 rounded-xl border ux4g-border-neutral-subtle ux4g-bg-neutral-soft text-xs ux4g-text-neutral-secondary space-y-1.5">
+        <div className="flex items-center gap-2 font-semibold ux4g-text-neutral-primary">
+          <Icon name="shield" size="xs" color="neutral" aria-hidden="true" />
+          <span>Statutory Authority &amp; Compliance Notice</span>
         </div>
-        <p className="text-[11px] text-slate-500 leading-relaxed">
+        <p className="text-[11px] leading-relaxed">
           Under AICTE Approval Process Regulations and the Digital Personal Data Protection (DPDP) Act,
           activation credentials grant access to student academic identifiers and enrollment rosters.
           Institutional logins are protected by multi-factor authentication (MFA) and all actions are
