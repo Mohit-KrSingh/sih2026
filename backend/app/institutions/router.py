@@ -1092,4 +1092,3 @@ def mark_all_institution_notifications_read(
     res = db.execute(stmt)
     db.commit()
     return {"status": "success", "marked_read_count": res.rowcount}
-

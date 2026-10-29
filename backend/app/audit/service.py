@@ -198,7 +198,6 @@ def verify_chain(db: Session) -> dict[str, Any]:
     expected_prev_hash: str | None = None
 
     for idx, row in enumerate(records):
-        # 1. Verify linkage to previous row's hash
         if idx == 0:
             if row.prev_hash is not None:
                 return {
@@ -227,7 +226,6 @@ def verify_chain(db: Session) -> dict[str, Any]:
                     "latest_hash": records[-1].hash,
                 }
 
-        # 2. Recompute row's hash over canonical representation
         canonical_str = serialize_canonical_row(
             ts=row.ts,
             actor_id=row.actor_id,

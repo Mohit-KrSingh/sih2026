@@ -53,14 +53,12 @@ logger = logging.getLogger(__name__)
 
 def get_academic_year_flag_ids_stmt(academic_year: str):
     """Generate SQLAlchemy select statement of distinct flag IDs belonging to an academic year."""
-    # 1. Flags linked to submissions for this academic year
     sub_flags = (
         select(ValidationFlag.id)
         .join(Submission, ValidationFlag.submission_id == Submission.id)
         .where(Submission.academic_year == academic_year)
     )
 
-    # 2. Flags linked to students enrolled in this academic year
     stu_flags = (
         select(ValidationFlag.id)
         .join(Student, ValidationFlag.student_id == Student.id)
@@ -90,7 +88,6 @@ def get_overview_metrics(
     academic_year: str = "2026-27",
 ) -> OverviewMetricsResponse:
     """Compute high-level oversight metrics matching direct database counts."""
-    # 1. Colleges
     total_colleges = db.scalar(select(func.count(Institution.id))) or 0
     active_colleges = (
         db.scalar(
@@ -102,7 +99,6 @@ def get_overview_metrics(
         or 0
     )
 
-    # 2. Students & Enrolment
     total_students = (
         db.scalar(
             select(func.count(Student.id)).where(
@@ -113,7 +109,6 @@ def get_overview_metrics(
         or 0
     )
 
-    # 3. Quotas & Intakes
     approved_intake_total = (
         db.scalar(
             select(func.coalesce(func.sum(CourseIntake.approved_intake), 0)).where(
@@ -132,7 +127,6 @@ def get_overview_metrics(
     )
     total_courses = db.scalar(select(func.count(Course.id))) or 0
 
-    # 4. Flags for this academic year
     year_flags_union = get_academic_year_flag_ids_stmt(academic_year)
 
     exceptions_count = (
@@ -168,7 +162,6 @@ def get_overview_metrics(
         or 0
     )
 
-    # 5. Duplicates & Anomalies
     dup_records = duplicate_service.get_duplicate_records(db=db, academic_year=academic_year)
     duplicates_count = len(dup_records)
 

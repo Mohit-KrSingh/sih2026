@@ -50,14 +50,10 @@ class RateLimiter:
 
         # Redis pipeline for atomic sliding window operations
         pipe = redis_client.pipeline()
-        # 1. Purge requests older than sliding window
         pipe.zremrangebyscore(key, 0, window_start)
-        # 2. Add current request timestamp with a unique member key
         member = f"{now}-{uuid.uuid4().hex[:8]}"
         pipe.zadd(key, {member: now})
-        # 3. Count remaining requests within current sliding window
         pipe.zcard(key)
-        # 4. Set key expiration to window duration + safety buffer
         pipe.expire(key, self.seconds + 5)
 
         results = pipe.execute()

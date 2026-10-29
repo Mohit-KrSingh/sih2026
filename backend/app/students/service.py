@@ -382,7 +382,6 @@ def create_student(
     else:
         student.status = "valid"
 
-    # 7. Hash-chained audit logging
     audit_service.record(
         db=db,
         actor_id=user.id,

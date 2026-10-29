@@ -42,17 +42,14 @@ def publish_sse_event(
         "timestamp": datetime.now(UTC).isoformat(),
     }
 
-    # 1. Store in local circular buffer
     _recent_events.append(payload)
 
-    # 2. Dispatch to local asyncio queues if any
     for q in list(_local_subscribers):
         try:
             q.put_nowait(payload)
         except Exception:
             _local_subscribers.discard(q)
 
-    # 3. Publish to Redis channel if client is provided
     if redis_client is not None:
         try:
             redis_client.publish(SSE_REDIS_CHANNEL, json.dumps(payload))

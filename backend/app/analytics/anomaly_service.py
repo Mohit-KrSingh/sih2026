@@ -291,10 +291,8 @@ def evaluate_and_store_anomalies(
         feature_records.append((inst_id, c_id, feats))
         feature_vectors.append(feature_dict_to_vector(feats))
 
-    # 3. Fit IsolationForest model
     model = fit_isolation_forest(feature_vectors, contamination=contamination)
 
-    # 4. Evaluate scores and persist into anomaly_scores table
     saved_scores: list[AnomalyScore] = []
 
     for inst_id, c_id, feats in feature_records:

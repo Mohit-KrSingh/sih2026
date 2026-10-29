@@ -30,11 +30,9 @@ def _normalize_overrides(
     """Resolve and normalize rule overrides from DB, parameter, or context."""
     resolved: dict[str, RuleConfigOverride] = {}
 
-    # 1. Base from database if session provided
     if db_session is not None:
         resolved.update(load_rule_config_overrides(db_session))
 
-    # 2. Layer context rule_configs if present
     if context_configs:
         for code, item in context_configs.items():
             if isinstance(item, RuleConfigOverride):
@@ -44,7 +42,6 @@ def _normalize_overrides(
             elif isinstance(item, dict):
                 resolved[code] = RuleConfigOverride.from_dict({**item, "rule_code": code})
 
-    # 3. Layer explicit overrides parameter if provided
     if overrides:
         for code, item in overrides.items():
             if isinstance(item, RuleConfigOverride):

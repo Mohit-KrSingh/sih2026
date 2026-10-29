@@ -1290,7 +1290,6 @@ def submit_activation_claim(
     inst.account_status = "pending_approval"
     db.flush()
 
-    # 4. Hash-chained audit log
     audit_service.record(
         db=db,
         action="institution.activation_requested",
@@ -1391,12 +1390,10 @@ def approve_activation_request(
     before_req = {"status": req.status}
     before_inst = {"account_status": inst.account_status}
 
-    # 1. Update activation request
     req.status = "approved"
     req.decided_by = current_user.id
     req.decided_at = datetime.now(UTC)
 
-    # 2. Activate institution account
     inst.account_status = "active"
 
     # 3. Create or promote primary admin account (Role.COLLEGE_ADMIN)
@@ -1426,7 +1423,6 @@ def approve_activation_request(
         admin_user.password_hash = hash_password(initial_password)
         db.flush()
 
-    # 4. Hash-chained audit logging
     audit_service.record(
         db=db,
         action="institution.activation_approved",
@@ -1500,15 +1496,12 @@ def reject_activation_request(
     before_req = {"status": req.status}
     before_inst = {"account_status": inst.account_status}
 
-    # 1. Update request status
     req.status = "rejected"
     req.decided_by = current_user.id
     req.decided_at = datetime.now(UTC)
 
-    # 2. Reset institution account status
     inst.account_status = "not_activated"
 
-    # 3. Hash-chained audit logging
     audit_service.record(
         db=db,
         action="institution.activation_rejected",

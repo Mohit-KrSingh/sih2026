@@ -56,7 +56,6 @@ class RequestBodySizeLimiterMiddleware:
             await self.app(scope, receive, send)
             return
 
-        # 1. Fast path: check declared Content-Length header
         content_length_raw = None
         for name, value in scope.get("headers", []):
             if name.lower() == b"content-length":
@@ -81,7 +80,6 @@ class RequestBodySizeLimiterMiddleware:
             except ValueError:
                 pass
 
-        # 2. Streaming path: count accumulated request bytes dynamically
         bytes_received = 0
 
         async def receive_with_limit() -> dict:
