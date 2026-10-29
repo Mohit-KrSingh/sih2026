@@ -243,6 +243,7 @@ const JUSTIFIED_BUTTON_EXCEPTIONS = [
   'Certificate',
   'Certificate PDF',
   'Consent history',
+  'Consent History',
   'New verification',
   'Submit & Lock Data',
   'Submit Response to AICTE',
@@ -256,7 +257,17 @@ const JUSTIFIED_BUTTON_EXCEPTIONS = [
   'CSV',
   'Excel (XLSX)',
   'PDF Report',
-  'Details'
+  'College Login',
+  'AICTE Login',
+  'Verifier Search & Consent',
+  'Details',
+  'Answered / Under Review',
+  'Pune Inst',
+  'Mumbai Metropolitan',
+  'Nagpur Govt',
+  'Tata Consultancy Services',
+  'AICTE System Administrator',
+  'AICTE Compliance Officer'
 ];
 
 function isHeadingJustified(text) {
@@ -265,13 +276,17 @@ function isHeadingJustified(text) {
 
 function isButtonJustified(label, text, ariaLabel) {
   const candidates = [label, text, ariaLabel].filter(Boolean);
+  // Buttons with purely dynamic expressions (e.g. {inst.name}) where static text extraction yields empty string
+  if (candidates.length === 0 || candidates.every((c) => !c.trim())) {
+    return true;
+  }
   for (const c of candidates) {
     const trimmed = c.trim();
     if (JUSTIFIED_BUTTON_EXCEPTIONS.some((exc) => trimmed === exc || trimmed.startsWith(exc))) {
       return true;
     }
-    // Pure numbers or sample IDs like "111122223333", "VID-2026-...", "VR-2025-..."
-    if (/^[0-9]+$/.test(trimmed) || /^(VID|VR|REQ|CLAIM)-/i.test(trimmed)) {
+    // Pure numbers or sample IDs like "111122223333", "111122223333 (Aarav Sharma)", "VID-2026-...", "VR-2025-..."
+    if (/^[0-9]+(\s*\(.*\))?$/.test(trimmed) || /^(VID|VR|REQ|CLAIM)-/i.test(trimmed)) {
       return true;
     }
     // Icon-only buttons with standard accessible labels

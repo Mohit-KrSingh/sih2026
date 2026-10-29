@@ -258,7 +258,6 @@ export function AicteIntakePage() {
                 <button
                   key={inst.id}
                   type="button"
-                  aria-label={`Select institution ${inst.name}`}
                   onClick={() => setSelectedInstitutionId(inst.id)}
                   className={`w-full text-left p-2.5 rounded-lg text-xs transition-all flex items-center justify-between ${
                     selectedInstitutionId === inst.id

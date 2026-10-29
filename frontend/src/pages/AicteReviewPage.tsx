@@ -225,6 +225,7 @@ export function AicteReviewPage() {
           <select
             value={academicYear}
             onChange={(e) => setAcademicYear(e.target.value)}
+            aria-label="Filter by academic year"
             className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="2026-27">AY 2026-27 (Current)</option>
@@ -677,6 +678,7 @@ export function AicteReviewPage() {
                     {/* Action Selector */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <label
+                        htmlFor="decision-radio-accept"
                         className={`cursor-pointer rounded-lg p-3 border flex flex-col gap-1 transition-all ${
                           decisionType === "accept"
                             ? "bg-emerald-50 border-emerald-500 shadow-sm"
@@ -685,6 +687,8 @@ export function AicteReviewPage() {
                       >
                         <div className="flex items-center gap-2">
                           <input
+                            id="decision-radio-accept"
+                            aria-label="Accept Exception"
                             type="radio"
                             name="decisionType"
                             value="accept"
@@ -702,6 +706,7 @@ export function AicteReviewPage() {
                       </label>
 
                       <label
+                        htmlFor="decision-radio-query"
                         className={`cursor-pointer rounded-lg p-3 border flex flex-col gap-1 transition-all ${
                           decisionType === "query"
                             ? "bg-amber-50 border-amber-500 shadow-sm"
@@ -710,6 +715,8 @@ export function AicteReviewPage() {
                       >
                         <div className="flex items-center gap-2">
                           <input
+                            id="decision-radio-query"
+                            aria-label="Raise Clarification Query"
                             type="radio"
                             name="decisionType"
                             value="query"
@@ -727,6 +734,7 @@ export function AicteReviewPage() {
                       </label>
 
                       <label
+                        htmlFor="decision-radio-escalate"
                         className={`cursor-pointer rounded-lg p-3 border flex flex-col gap-1 transition-all ${
                           decisionType === "escalate"
                             ? "bg-purple-50 border-purple-500 shadow-sm"
@@ -735,6 +743,8 @@ export function AicteReviewPage() {
                       >
                         <div className="flex items-center gap-2">
                           <input
+                            id="decision-radio-escalate"
+                            aria-label="Escalate to Committee"
                             type="radio"
                             name="decisionType"
                             value="escalate"
@@ -754,7 +764,7 @@ export function AicteReviewPage() {
 
                     {/* Decision Note Textarea */}
                     <div>
-                      <label className="block text-xs font-medium text-slate-700 mb-1">
+                      <label htmlFor="review-decision-note" className="block text-xs font-medium text-slate-700 mb-1">
                         {decisionType === "accept"
                           ? "Approval Rationale Note"
                           : decisionType === "query"
@@ -763,6 +773,8 @@ export function AicteReviewPage() {
                         <span className="text-red-500 ml-1">*</span>
                       </label>
                       <textarea
+                        id="review-decision-note"
+                        aria-label="Officer Decision Note & Statutory Rationale"
                         rows={3}
                         required
                         value={decisionNote}

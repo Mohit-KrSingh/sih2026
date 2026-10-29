@@ -201,6 +201,7 @@ export function AicteRulesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by rule code or meaning..."
+            aria-label="Search rules"
             className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
@@ -210,6 +211,7 @@ export function AicteRulesPage() {
           <select
             value={scopeFilter}
             onChange={(e) => setScopeFilter(e.target.value)}
+            aria-label="Filter rules by scope"
             className="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:outline-none"
           >
             <option value="">All Scopes (file, row, course, cross, anomaly)</option>

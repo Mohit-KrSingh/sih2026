@@ -193,6 +193,7 @@ export function AicteAuditPage() {
               setPage(0);
             }}
             placeholder="Action (e.g. auth.login, submit)"
+            aria-label="Filter by action"
             className="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs focus:outline-none w-48"
           />
 
@@ -202,6 +203,7 @@ export function AicteAuditPage() {
               setRoleFilter(e.target.value);
               setPage(0);
             }}
+            aria-label="Filter by actor role"
             className="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:outline-none"
           >
             <option value="">All Roles</option>
@@ -220,6 +222,7 @@ export function AicteAuditPage() {
               setPage(0);
             }}
             placeholder="Entity (e.g. user, student)"
+            aria-label="Filter by entity"
             className="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs focus:outline-none w-40"
           />
         </div>
