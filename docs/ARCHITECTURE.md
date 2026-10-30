@@ -1,4 +1,4 @@
-# System Architecture
+# EduTrace System Architecture
 
 System topology, data lifecycle, validation pipeline, anomaly detection, API endpoints, and DPDP privacy architecture.
 
@@ -70,7 +70,7 @@ flowchart TD
 sequenceDiagram
     autonumber
     actor College as College Admin
-    participant Frontend as Web Portal (React)
+    participant Frontend as Web Portal (React + UX4G)
     participant API as FastAPI Backend
     participant Engine as Validation Engine
     participant DB as PostgreSQL 16

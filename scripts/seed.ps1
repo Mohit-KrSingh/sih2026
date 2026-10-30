@@ -1,7 +1,7 @@
-# scripts/seed.ps1 - Seed database with demo data (T03)
+# scripts/seed.ps1 - Seed database with demo data
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Seeding Database and Generating Demo Data (T03) ==="
+Write-Host "=== Seeding Database and Generating Demo Data ==="
 $backendDir = (Resolve-Path "backend").Path
 $env:PYTHONPATH = $backendDir
 $py = if (Test-Path ".venv\Scripts\python.exe") { (Resolve-Path ".venv\Scripts\python.exe").Path } else { "python" }

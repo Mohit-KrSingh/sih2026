@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== Running Brand Check (R01) ==="
+echo "=== Running Brand Check ==="
 
 FORBIDDEN_REGEX="APAAR Platform|apaar-platform|APAAR Central Portal|APAAR Verification Engine|apaar-frontend|apaar-backend|APAAR Student Data Management|AICTE APAAR Platform|AICTE APAAR System|AICTE APAAR"
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Sample ERP Integration Client for AICTE EduTrace System.
+"""Sample ERP Integration Client for EduTrace.
 
-SPEC.md Section 17 & TASKS.md T36:
+Features:
 - Authenticates with scoped API keys (X-API-Key or Authorization: Bearer).
 - Pushes student data batches formatted as JSON.
 - Uses Idempotency-Key header to prevent duplicate submissions.
-- Evaluates records using the unified pure validation engine.
+- Evaluates records using the validation engine.
 """
 
 from __future__ import annotations
@@ -183,7 +183,7 @@ def run_erp_demo(
 ) -> None:
     """Execute end-to-end ERP synchronization demonstration."""
     print("=" * 70)
-    print("AICTE EduTrace - External ERP Integration Client (SPEC 17 / T36)")
+    print("EduTrace - External ERP Integration Client")
     print("=" * 70)
 
     # 1. Acquire API key if not supplied

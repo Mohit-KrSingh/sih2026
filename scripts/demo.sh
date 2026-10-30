@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# scripts/demo.sh - Reset to scripted demo state (T40)
+# scripts/demo.sh - Reset to scripted demo state
 # Usage: make demo  (or: bash scripts/demo.sh)
 set -euo pipefail
 
 echo ""
 echo "================================================================"
-echo "  EduTrace Platform - Resetting to Scripted Demo State (T40)      "
+echo "  EduTrace Platform - Resetting to Scripted Demo State            "
 echo "================================================================"
 echo ""
 
