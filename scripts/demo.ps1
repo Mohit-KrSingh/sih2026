@@ -1,10 +1,10 @@
-# scripts/demo.ps1 - Reset to scripted demo state (T40)
+# scripts/demo.ps1 - Reset to scripted demo state
 # Usage: make demo  (or: powershell -ExecutionPolicy Bypass -File scripts/demo.ps1)
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
-Write-Host "  EduTrace Platform - Resetting to Scripted Demo State (T40)      " -ForegroundColor Cyan
+Write-Host "  EduTrace Platform - Resetting to Scripted Demo State            " -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host ""
 

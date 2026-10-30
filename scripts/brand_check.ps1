@@ -1,7 +1,7 @@
 # scripts/brand_check.ps1 - Verify no old product brand names remain in the codebase
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Running Brand Check (R01) ===" -ForegroundColor Cyan
+Write-Host "=== Running Brand Check ===" -ForegroundColor Cyan
 
 $forbiddenPatterns = @(
     "APAAR Platform",

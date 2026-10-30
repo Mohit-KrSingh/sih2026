@@ -1,6 +1,6 @@
 """Reset database to the scripted demo state for make demo.
 
-TASKS.md T40 / SPEC.md Section 18:
+Features:
 - Truncates ALL transactional tables in dependency order.
 - Preserves the Alembic migration version table.
 - Re-runs the idempotent seed script to rebuild demo data.

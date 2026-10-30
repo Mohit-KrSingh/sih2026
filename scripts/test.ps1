@@ -25,7 +25,7 @@ try {
 Write-Host "`n=== Running E2E & Accessibility Tests (playwright) ==="
 Push-Location frontend
 try {
-    & cmd.exe /c npx playwright test e2e/all_routes_axe.spec.ts e2e/lighthouse.spec.ts e2e/keyboard_only_journeys.spec.ts
+    & cmd.exe /c npx playwright test e2e/all_routes_axe.spec.ts e2e/lighthouse.spec.ts e2e/keyboard_only_journeys.spec.ts e2e/presentation_screenshots.spec.ts
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Playwright tests failed!"
         exit $LASTEXITCODE

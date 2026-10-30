@@ -1,4 +1,4 @@
-# scripts/check_microcopy.ps1 - Audit microcopy compliance (Task R12)
+# scripts/check_microcopy.ps1 - Audit microcopy compliance
 $ErrorActionPreference = "Stop"
 
 Write-Host "=== Microcopy Compliance Check ==="

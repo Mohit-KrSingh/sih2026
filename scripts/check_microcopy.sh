@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# scripts/check_microcopy.sh - Audit microcopy compliance (Task R12)
+# scripts/check_microcopy.sh - Audit microcopy compliance
 set -e
 
 echo "=== Microcopy Compliance Check ==="

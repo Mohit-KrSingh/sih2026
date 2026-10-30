@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# scripts/seed.sh - Seed database with demo data (T03)
+# scripts/seed.sh - Seed database with demo data
 set -e
 
-echo "=== Seeding Database and Generating Demo Data (T03) ==="
+echo "=== Seeding Database and Generating Demo Data ==="
 export PYTHONPATH="$(cd backend && pwd)"
 
 if [ -f ".venv/bin/python" ]; then

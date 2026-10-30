@@ -1,4 +1,4 @@
-# scripts/down.ps1 - Stop the APAAR stack
+# scripts/down.ps1 - Stop the EduTrace stack
 $ErrorActionPreference = "SilentlyContinue"
 
 # Check if Docker is running
