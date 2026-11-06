@@ -1,0 +1,88 @@
+name: edutrace-prod
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: apaar_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-apaar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apaar_password}
+      POSTGRES_DB: ${POSTGRES_DB:-apaar_db}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apaar -d apaar_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: apaar_redis
+    restart: always
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: apaar_backend
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER:-apaar}:${POSTGRES_PASSWORD:-apaar_password}@db:5432/${POSTGRES_DB:-apaar_db}
+      - REDIS_URL=redis://redis:6379/0
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost}
+      - DEMO_MODE=${DEMO_MODE:-true}
+      - AUTO_SEED=${AUTO_SEED:-true}
+      - JWT_SECRET=${JWT_SECRET:-super-secret-production-jwt-key-minimum-32-chars}
+      - FERNET_KEY=${FERNET_KEY:-0123456789abcdef0123456789abcdef0123456789a=}
+      - ED25519_PRIVATE_KEY=${ED25519_PRIVATE_KEY:-production-ed25519-private-seed-32bytes-len!!}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./storage/uploads:/app/storage/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: apaar_frontend
+    restart: always
+    depends_on:
+      - backend
+
+  caddy:
+    image: caddy:alpine
+    container_name: apaar_caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+
+volumes:
+  pgdata:
+  redisdata:
+  caddy_data:
+  caddy_config:

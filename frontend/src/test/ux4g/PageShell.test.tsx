@@ -48,6 +48,11 @@ describe("UX4G Page Shell Architecture (R04)", () => {
           login: vi.fn(),
           logout: mockLogout,
           refreshUser: vi.fn(),
+          pendingMfa: null,
+          verifyMfa: vi.fn(),
+          cancelMfa: vi.fn(),
+          hasRole: () => false,
+          isAdmin: false,
         }}
       >
         <MemoryRouter initialEntries={[initialPath]}>{ui}</MemoryRouter>

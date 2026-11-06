@@ -1,6 +1,6 @@
 import React from "react";
 
-export interface RadioProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   label: React.ReactNode;
   size?: "sm" | "md" | "lg";
   isError?: boolean;

@@ -54,7 +54,7 @@ export const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={modalRef}
-        className={`ux4g-modal-box ux4g-modal-${size} w-full max-w-lg bg-white rounded-xl shadow-xl overflow-hidden flex flex-col ${className}`.trim()}
+        className={`ux4g-modal-box ux4g-modal-${size} w-full max-w-lg ux4g-bg-neutral-elevated rounded-xl shadow-xl overflow-hidden flex flex-col ${className}`.trim()}
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between p-4 border-b ux4g-border-neutral-subtle">

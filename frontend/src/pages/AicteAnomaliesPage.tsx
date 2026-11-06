@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAnomalies } from "../api/analytics";
 import type { AnomalyScoreItem } from "../types/analytics";
 import { NoticeModal } from "../components/action/NoticeModal";
@@ -214,12 +214,12 @@ export function AicteAnomaliesPage() {
       <div className="ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl shadow-sm p-4">
         {loading ? (
           <div className="py-16 flex flex-col items-center justify-center space-y-3">
-            <Spinner size="m" />
+            <Spinner size="md" />
             <p className="text-xs ux4g-text-neutral-secondary">Computing multidimensional anomaly vectors...</p>
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="py-16 text-center ux4g-text-neutral-secondary text-xs">
-            <Icon name="verified_user" size="l" color="success" className="mx-auto mb-2" />
+            <Icon name="verified_user" size="lg" color="success" className="mx-auto mb-2" />
             <p className="font-bold ux4g-text-neutral-primary text-sm">No Statistical Anomalies Detected</p>
             <p className="ux4g-text-neutral-secondary mt-1">
               All student cohorts conform to standard baseline admission distributions.

@@ -563,7 +563,7 @@ export function ActivatePage() {
                     <button
                       type="button"
                       onClick={() => setOtpCode(devOtpHint)}
-                      className="text-[11px] px-2 py-0.5 rounded ux4g-bg-primary-strong text-white hover:opacity-90 transition font-normal"
+                      className="text-[11px] px-2 py-0.5 rounded ux4g-bg-primary-strong ux4g-text-neutral-inverse hover:opacity-90 transition font-normal"
                     >
                       Auto-fill: {devOtpHint}
                     </button>

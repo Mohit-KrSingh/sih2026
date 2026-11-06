@@ -154,7 +154,7 @@ html[data-contrast="high"] {
   --edutrace-focus-outline: var(--ux4g-color-neutral-950);
 }
 
-html[data-contrast="high"][data-theme="dark"] {
+html[data-contrast="high"][data-theme="dark"], html[data-contrast="high"][data-mode="dark"], html[data-contrast="high"].dark {
   --edutrace-border-subtle: var(--ux4g-color-neutral-200);
   --edutrace-border-default: var(--ux4g-color-neutral-0);
   --edutrace-border-strong: var(--ux4g-color-neutral-0);
@@ -283,47 +283,47 @@ textarea,
 }
 
 /* Dark mode alert text overrides (> 5.25:1 contrast) */
-[data-theme="dark"] .ux4g-alert-info {
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-info {
   --ux4g-alert-text: var(--ux4g-color-cyan-100);
   color: var(--ux4g-color-cyan-100) !important;
 }
 
-[data-theme="dark"] .ux4g-alert-info p,
-[data-theme="dark"] .ux4g-alert-info span,
-[data-theme="dark"] .ux4g-alert-info div {
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-info p,
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-info span,
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-info div {
   color: var(--ux4g-color-cyan-100);
 }
 
-[data-theme="dark"] .ux4g-alert-success {
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-success {
   --ux4g-alert-text: var(--ux4g-color-green-100);
   color: var(--ux4g-color-green-100) !important;
 }
 
-[data-theme="dark"] .ux4g-alert-success p,
-[data-theme="dark"] .ux4g-alert-success span,
-[data-theme="dark"] .ux4g-alert-success div {
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-success p,
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-success span,
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-success div {
   color: var(--ux4g-color-green-100);
 }
 
-[data-theme="dark"] .ux4g-alert-warning {
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-warning {
   --ux4g-alert-text: var(--ux4g-color-orange-100);
   color: var(--ux4g-color-orange-100) !important;
 }
 
-[data-theme="dark"] .ux4g-alert-warning p,
-[data-theme="dark"] .ux4g-alert-warning span,
-[data-theme="dark"] .ux4g-alert-warning div {
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-warning p,
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-warning span,
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-warning div {
   color: var(--ux4g-color-orange-100);
 }
 
-[data-theme="dark"] .ux4g-alert-error {
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-error {
   --ux4g-alert-text: var(--ux4g-color-red-100);
   color: var(--ux4g-color-red-100) !important;
 }
 
-[data-theme="dark"] .ux4g-alert-error p,
-[data-theme="dark"] .ux4g-alert-error span,
-[data-theme="dark"] .ux4g-alert-error div {
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-error p,
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-error span,
+[data-theme="dark"] .ux4g-alert, [data-mode="dark"] .ux4g-alert, .dark .ux4g-alert-error div {
   color: var(--ux4g-color-red-100);
 }
 
@@ -350,16 +350,79 @@ textarea,
   border: 1px solid var(--ux4g-color-green-300) !important;
 }
 
-[data-theme="dark"] .ux4g-badge-digit-warning,
-[data-theme="dark"] .ux4g-badge-warning {
+[data-theme="dark"] .ux4g-badge, [data-mode="dark"] .ux4g-badge, .dark .ux4g-badge-digit-warning,
+[data-theme="dark"] .ux4g-badge, [data-mode="dark"] .ux4g-badge, .dark .ux4g-badge-warning {
   background-color: var(--ux4g-color-neutral-800) !important;
   color: var(--ux4g-color-orange-300) !important;
   border: 1px solid var(--ux4g-color-orange-700) !important;
 }
 
-[data-theme="dark"] .ux4g-badge-digit-success,
-[data-theme="dark"] .ux4g-badge-success {
+[data-theme="dark"] .ux4g-badge, [data-mode="dark"] .ux4g-badge, .dark .ux4g-badge-digit-success,
+[data-theme="dark"] .ux4g-badge, [data-mode="dark"] .ux4g-badge, .dark .ux4g-badge-success {
   background-color: var(--ux4g-color-neutral-800) !important;
   color: var(--ux4g-color-green-300) !important;
   border: 1px solid var(--ux4g-color-green-700) !important;
+}
+
+/* ==========================================================================
+   UX4G Utility Bridge & Contrast Safeguards
+   ========================================================================== */
+.ux4g-text-brand-primary,
+.ux4g-text-brand {
+  --ux4g-text-current: var(--ux4g-text-brand-primary-default, var(--ux4g-color-primary-600));
+  color: var(--ux4g-text-current) !important;
+}
+
+.ux4g-icon-primary {
+  --ux4g-text-current: var(--ux4g-text-brand-primary-default, var(--ux4g-color-primary-600));
+  color: var(--ux4g-text-current) !important;
+}
+
+.ux4g-bg-neutral-default {
+  --ux4g-bg-current: var(--ux4g-bg-neutral, var(--ux4g-color-neutral-50));
+  background-color: var(--ux4g-bg-current) !important;
+  color: var(--ux4g-text-neutral-primary) !important;
+}
+
+.ux4g-border-neutral-default {
+  --ux4g-border-current: var(--ux4g-border-color-neutral-default, var(--ux4g-color-neutral-300));
+  border-color: var(--ux4g-border-current) !important;
+}
+
+.ux4g-text-status-error {
+  --ux4g-text-current: var(--ux4g-text-status-error, var(--ux4g-color-red-600));
+  color: var(--ux4g-text-current) !important;
+}
+
+.ux4g-text-status-success {
+  --ux4g-text-current: var(--ux4g-text-status-success, var(--ux4g-color-green-600));
+  color: var(--ux4g-text-current) !important;
+}
+
+.ux4g-text-status-warning {
+  --ux4g-text-current: var(--ux4g-text-status-warning, var(--ux4g-color-orange-600));
+  color: var(--ux4g-text-current) !important;
+}
+
+.ux4g-divide-neutral-subtle > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--ux4g-border-color-neutral-subtle, var(--ux4g-color-neutral-200));
+}
+
+/* Ensure bg-white containers adapt smoothly in dark mode */
+[data-theme="dark"] .bg-white,
+[data-mode="dark"] .bg-white,
+.dark .bg-white {
+  background-color: var(--ux4g-bg-neutral-elevated, var(--ux4g-color-neutral-950)) !important;
+}
+
+[data-theme="dark"] .border-slate-100,
+[data-theme="dark"] .border-slate-200,
+[data-theme="dark"] .border-slate-300,
+[data-mode="dark"] .border-slate-100,
+[data-mode="dark"] .border-slate-200,
+[data-mode="dark"] .border-slate-300,
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300 {
+  border-color: var(--ux4g-border-color-neutral-subtle, var(--ux4g-color-neutral-700)) !important;
 }

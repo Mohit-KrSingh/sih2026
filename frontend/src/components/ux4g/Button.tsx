@@ -114,7 +114,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span className="inline-flex items-center gap-2">
             <Spinner
               size="xs"
-              variant={isPrimaryFilled ? "inverse" : variant === "danger" ? "danger" : "primary"}
+              variant={isPrimaryFilled ? "inverse" : "primary"}
             />
             <span>{loadingText || children}</span>
           </span>

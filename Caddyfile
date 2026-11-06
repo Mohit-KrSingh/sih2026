@@ -1,0 +1,7 @@
+{$DOMAIN_NAME:localhost} {
+    # Reverse proxy all traffic to frontend Nginx container
+    reverse_proxy frontend:80 {
+        # Streaming and SSE support
+        flush_interval -1
+    }
+}

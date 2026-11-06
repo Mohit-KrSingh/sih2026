@@ -208,7 +208,7 @@ export const PortalSidebar: React.FC<PortalSidebarProps> = ({ className = "" }) 
           {user && (
             <div className="p-3 rounded-lg border ux4g-border-neutral-subtle ux4g-bg-neutral-soft">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 ux4g-bg-primary-strong">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ux4g-text-neutral-inverse shrink-0 ux4g-bg-primary-strong">
                   {user.email.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1 leading-tight">

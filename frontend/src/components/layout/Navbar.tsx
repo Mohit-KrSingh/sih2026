@@ -225,7 +225,7 @@ export const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 <Link
                   to={dashboardPath}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-center w-full py-2 rounded font-medium text-sm text-white ux4g-bg-primary-strong"
+                  className="block text-center w-full py-2 rounded font-medium text-sm ux4g-text-neutral-inverse ux4g-bg-primary-strong"
                 >
                   Go to Dashboard
                 </Link>
@@ -252,7 +252,7 @@ export const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
                 <Link
                   to="/login/aicte"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2 px-3 rounded text-xs font-semibold text-white ux4g-bg-primary-strong"
+                  className="text-center py-2 px-3 rounded text-xs font-semibold ux4g-text-neutral-inverse ux4g-bg-primary-strong"
                 >
                   AICTE Login
                 </Link>
