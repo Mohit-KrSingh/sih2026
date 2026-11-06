@@ -1,6 +1,6 @@
 import React from "react";
 
-export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "size"> {
   label: React.ReactNode;
   size?: "sm" | "md" | "lg";
 }

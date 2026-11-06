@@ -1064,7 +1064,7 @@ export function BulkUploadPage() {
                                   <Link to={`/college/students/${r.student_id}/edit`}>
                                     <Button
                                       size="sm"
-                                      variant="tertiary"
+                                      variant="outline"
                                       title="Open full edit form"
                                       aria-label="Open edit form"
                                     >
@@ -1237,7 +1237,7 @@ export function BulkUploadPage() {
                         </Button>
                         <Button
                           size="sm"
-                          variant="tertiary"
+                          variant="outline"
                           onClick={() => handleDownloadErrors(h.id)}
                           title="Download error file for this upload"
                         >

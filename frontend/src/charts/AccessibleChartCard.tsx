@@ -54,7 +54,7 @@ export const AccessibleChartCard: React.FC<AccessibleChartCardProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b ux4g-border-neutral-subtle pb-3">
         <div className="min-w-0">
           <h3 className="font-bold text-sm ux4g-text-neutral-primary flex items-center gap-2">
-            <Icon name={icon} size="s" color="primary" />
+            <Icon name={icon} size="sm" color="primary" />
             <span className="truncate">{title}</span>
           </h3>
           {subtitle && (

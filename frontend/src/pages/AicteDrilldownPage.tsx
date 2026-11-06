@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getDrilldown } from "../api/analytics";
 import type { DrilldownResponse } from "../types/analytics";
@@ -192,7 +192,7 @@ export function AicteDrilldownPage() {
 
       {loading ? (
         <div className="py-20 flex flex-col items-center justify-center space-y-3 ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl shadow-sm">
-          <Spinner size="m" />
+          <Spinner size="md" />
           <p className="text-xs ux4g-text-neutral-secondary">Querying hierarchy level: {currentLevel}...</p>
         </div>
       ) : (
@@ -245,7 +245,7 @@ export function AicteDrilldownPage() {
                           {st.total_enrolled?.toLocaleString()}
                         </TableCell>
                         <TableCell className="text-center">
-                          {st.over_intake_colleges_count > 0 ? (
+                          {(st.over_intake_colleges ?? st.over_intake_colleges_count ?? 0) > 0 ? (
                             <span
                               className="px-2 py-0.5 rounded-full font-bold text-xs border"
                               style={{
@@ -254,7 +254,7 @@ export function AicteDrilldownPage() {
                                 borderColor: "var(--ux4g-color-red-300)",
                               }}
                             >
-                              {st.over_intake_colleges_count} Over Limit
+                              {st.over_intake_colleges ?? st.over_intake_colleges_count} Over Limit
                             </span>
                           ) : (
                             <span
@@ -287,7 +287,7 @@ export function AicteDrilldownPage() {
                     Institutions in {stateParam}
                   </h3>
                   <p className="text-[11px] ux4g-text-neutral-secondary">
-                    {data?.institutions?.length || 0} AICTE approved colleges
+                    {(data?.colleges || data?.institutions || []).length} AICTE approved colleges
                   </p>
                 </div>
                 <Button
@@ -319,12 +319,12 @@ export function AicteDrilldownPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data?.institutions?.map((inst) => {
+                    {(data?.colleges || data?.institutions || []).map((inst: any) => {
                       const isOver = inst.overshoot > 0;
                       return (
                         <TableRow
-                          key={inst.id}
-                          onClick={() => navigateTo({ institution_id: inst.id })}
+                          key={inst.institution_id || inst.id}
+                          onClick={() => navigateTo({ institution_id: inst.institution_id || inst.id })}
                           className="cursor-pointer"
                         >
                           <TableCell>
@@ -395,7 +395,7 @@ export function AicteDrilldownPage() {
                     variant="danger"
                     onClick={() =>
                       setSelectedNoticeCollege({
-                        id: data.institution!.id,
+                        id: data.institution!.institution_id || data.institution!.id || 0,
                         name: data.institution!.name,
                         aicteId: data.institution!.aicte_id,
                       })
@@ -446,8 +446,8 @@ export function AicteDrilldownPage() {
                         const overshoot = c.regular_admitted - c.approved_intake;
                         return (
                           <TableRow
-                            key={c.id}
-                            onClick={() => navigateTo({ course_id: c.id })}
+                            key={c.course_id || c.id}
+                            onClick={() => navigateTo({ course_id: c.course_id || c.id })}
                             className="cursor-pointer"
                           >
                             <TableCell>
@@ -479,8 +479,8 @@ export function AicteDrilldownPage() {
                               <span> / {c.supernumerary_allowed}</span>
                             </TableCell>
                             <TableCell className="text-center">
-                              {c.flags_count > 0 ? (
-                                <FlagBadge level="warning" label={`${c.flags_count} Flags`} />
+                              {(c.flagged_students_count ?? c.flags_count ?? 0) > 0 ? (
+                                <FlagBadge level="warning" label={`${c.flagged_students_count ?? c.flags_count} Flags`} />
                               ) : (
                                 <span className="text-xs ux4g-text-neutral-secondary">Clean</span>
                               )}

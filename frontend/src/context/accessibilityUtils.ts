@@ -101,6 +101,12 @@ export function applyDomSettings(settings: AccessibilitySettings): void {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
   root.setAttribute("data-theme", settings.theme);
+  root.setAttribute("data-mode", settings.theme);
+  if (settings.theme === "dark") {
+    root.classList.add("dark");
+  } else {
+    root.classList.remove("dark");
+  }
   root.setAttribute("data-text-size", settings.textSize);
   root.setAttribute("data-contrast", settings.highContrast ? "high" : "normal");
   root.setAttribute("data-underline-links", settings.underlineLinks ? "true" : "false");

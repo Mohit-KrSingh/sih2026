@@ -16,6 +16,11 @@ import "ux4g-web-components/styles.css";
 import "./styles/tokens.css";
 import "ux4g-web-components/design-system";
 
+import { applyDomSettings, loadInitialSettings } from "./context/accessibilityUtils";
+
+// Initialize UX4G theme and DOM settings immediately before mount
+applyDomSettings(loadInitialSettings());
+
 import App from "./App";
 import "./index.css";
 

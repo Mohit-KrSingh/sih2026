@@ -27,6 +27,7 @@ export function SubmissionProgressChart({
     accepted: counts?.accepted || 0,
     escalated: counts?.escalated || 0,
     not_started: counts?.not_started || 0,
+    total_eligible: counts?.total_eligible || 0,
   };
 
   const rawData = [

@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon } from "./Icon";
 
-export interface DatePickerProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+export interface DatePickerProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "size"> {
   size?: "sm" | "md" | "lg";
   state?: "default" | "error" | "success" | "warning";
   fullWidth?: boolean;

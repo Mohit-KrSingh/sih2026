@@ -306,7 +306,7 @@ export const TableError: React.FC<TableErrorProps> = ({
       className="p-4 rounded-lg ux4g-border ux4g-border-error ux4g-bg-neutral-soft flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
     >
       <div className="flex items-start gap-3">
-        <Icon name="error" size="md" color="danger" aria-hidden="true" />
+        <Icon name="error" size="md" color="error" aria-hidden="true" />
         <div>
           <h4 className="text-sm font-semibold ux4g-text-status-error">{title}</h4>
           <p className="text-xs ux4g-text-neutral-secondary mt-0.5">{message}</p>

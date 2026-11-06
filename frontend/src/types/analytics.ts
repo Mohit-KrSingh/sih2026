@@ -155,48 +155,67 @@ export interface DrilldownStudent {
 }
 
 export interface DrilldownCourse {
+  id?: number;
   course_id: number;
   name: string;
+  course_name?: string;
   level: string;
   branch: string;
   approved_intake: number;
   regular_admitted: number;
   supernumerary_allowed: number;
   supernumerary_admitted: number;
-  overshoot: number;
+  overshoot?: number;
+  overshoot_amount?: number;
+  flags_count?: number;
   flagged_students_count: number;
 }
 
 export interface DrilldownCollege {
+  id?: number;
   institution_id: number;
   name: string;
+  institution_name?: string;
   aicte_id: string;
   state: string;
   district: string | null;
+  address?: string | null;
+  official_email?: string | null;
+  approval_status?: string | null;
+  courses_count?: number;
   approved_intake: number;
-  regular_admitted: number;
-  overshoot: number;
-  total_flags: number;
+  regular_admitted?: number;
+  actual_enrolment?: number;
+  total_enrolled?: number;
+  overshoot?: number;
+  overshoot_amount?: number;
+  total_flags?: number;
   submission_status: string | null;
 }
 
 export interface DrilldownState {
   state: string;
   colleges_count: number;
-  total_enrolled: number;
+  total_enrolled?: number;
+  actual_enrolment?: number;
   approved_intake: number;
-  overshoot: number;
+  overshoot?: number;
   over_intake_colleges: number;
+  over_intake_colleges_count?: number;
 }
 
 export interface DrilldownResponse {
   academic_year: string;
   level: "national" | "state" | "college" | "course";
   state: string | null;
+  selected_state?: string | null;
   institution: DrilldownCollege | null;
+  selected_institution?: any;
   course: DrilldownCourse | null;
+  selected_course?: any;
   states: DrilldownState[];
   colleges: DrilldownCollege[];
+  institutions?: DrilldownCollege[];
   courses: DrilldownCourse[];
   students: DrilldownStudent[];
 }

@@ -139,14 +139,14 @@ export const FlagBadge: React.FC<FlagBadgeProps> = ({
 };
 
 export interface RoleBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  role: Role;
+  role: Role | "student";
 }
 
 /**
  * Human-readable role badge for accounts using UX4G tokens.
  */
 export const RoleBadge: React.FC<RoleBadgeProps> = ({ role, className = "", style, ...props }) => {
-  const roleLabels: Record<Role, string> = {
+  const roleLabels: Record<Role | "student", string> = {
     college_admin: "College Admin",
     college_staff: "College Staff",
     college_viewer: "College Viewer",

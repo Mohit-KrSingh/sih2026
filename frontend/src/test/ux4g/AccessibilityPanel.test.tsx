@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import React from "react";
+
 import {
   AccessibilityProvider,
 } from "../../context/AccessibilityContext";

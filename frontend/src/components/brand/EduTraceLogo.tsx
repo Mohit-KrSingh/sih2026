@@ -39,14 +39,14 @@ export const EduTraceLogo: React.FC<EduTraceLogoProps> = ({
   }
 
   return (
-    <div className={`inline-flex items-center gap-2.5 ${className}`}>
-      <div className="w-8 h-8 rounded-lg bg-blue-700 flex items-center justify-center text-white shadow-sm shrink-0">
-        <EduTraceIcon size={18} className="text-amber-300" />
+    <div className={`inline-flex items-center gap-2.5 ${className}`.trim()}>
+      <div className="w-8 h-8 rounded-lg ux4g-bg-primary-strong flex items-center justify-center shadow-sm shrink-0">
+        <EduTraceIcon size={18} className="ux4g-text-neutral-inverse" />
       </div>
       <div className="leading-tight">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-lg tracking-tight text-white">{PRODUCT_NAME}</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-800/80 text-blue-200 border border-blue-700 font-medium">
+          <span className="font-bold text-lg tracking-tight ux4g-text-neutral-primary">{PRODUCT_NAME}</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded font-medium ux4g-bg-primary-soft ux4g-text-brand-primary border ux4g-border-neutral-subtle">
             Central Portal
           </span>
         </div>

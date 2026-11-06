@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getComplianceList } from "../api/analytics";
 import { downloadReportFile } from "../api/reports";
@@ -184,7 +184,7 @@ export function AicteCompliancePage() {
             className="p-2 rounded-xl text-white shrink-0 mt-0.5"
             style={{ backgroundColor: "var(--ux4g-color-red-700)" }}
           >
-            <Icon name="warning" size="s" color="inherit" />
+            <Icon name="warning" size="sm" color="inherit" />
           </span>
           <div>
             <h3 className="font-bold text-sm" style={{ color: "var(--ux4g-color-red-950)" }}>
@@ -267,12 +267,12 @@ export function AicteCompliancePage() {
       <div className="ux4g-bg-neutral-elevated border ux4g-border-neutral-subtle rounded-xl shadow-sm overflow-hidden">
         {loading ? (
           <div className="py-16 flex flex-col items-center justify-center space-y-3">
-            <Spinner size="m" />
+            <Spinner size="md" />
             <p className="text-xs ux4g-text-neutral-secondary">Scanning institutional student databases...</p>
           </div>
         ) : filteredViolations.length === 0 ? (
           <div className="py-16 text-center ux4g-text-neutral-secondary text-xs">
-            <Icon name="verified_user" size="l" color="success" className="mx-auto mb-2" />
+            <Icon name="verified_user" size="lg" color="success" className="mx-auto mb-2" />
             <p className="font-bold ux4g-text-neutral-primary text-sm">No Compliance Violations Found</p>
             <p className="ux4g-text-neutral-secondary mt-1">
               All institutions match approved intake limits matching your filter criteria.

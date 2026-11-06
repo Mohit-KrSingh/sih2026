@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import {
@@ -101,7 +101,7 @@ export function AicteOverviewPage() {
   if (loading && !overview) {
     return (
       <div className="py-24 flex flex-col items-center justify-center space-y-4">
-        <Spinner size="l" />
+        <Spinner size="lg" />
         <p className="text-sm font-medium ux4g-text-neutral-secondary">
           Aggregating national student enrolment and compliance metrics...
         </p>
@@ -371,7 +371,7 @@ export function AicteOverviewPage() {
           <div className="p-4 flex-1">
             {redListColleges.length === 0 ? (
               <div className="py-12 text-center text-xs ux4g-text-neutral-secondary">
-                <Icon name="verified_user" size="l" color="success" className="mx-auto mb-2" />
+                <Icon name="verified_user" size="lg" color="success" className="mx-auto mb-2" />
                 <p className="font-semibold ux4g-text-neutral-primary">No Over-Intake Violations</p>
                 <p className="ux4g-text-neutral-secondary">
                   All institutions currently within approved intake limits for {academicYear}.
@@ -496,7 +496,7 @@ export function AicteOverviewPage() {
           >
             {liveEvents.length === 0 ? (
               <div className="py-12 text-center text-xs ux4g-text-neutral-secondary">
-                <Icon name="notifications" size="m" color="inherit" className="mx-auto mb-2 opacity-50" />
+                <Icon name="notifications" size="md" color="inherit" className="mx-auto mb-2 opacity-50" />
                 <p>Waiting for real-time submission or flag events...</p>
               </div>
             ) : (
