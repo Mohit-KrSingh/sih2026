@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apaar_password}
       POSTGRES_DB: ${POSTGRES_DB:-apaar_db}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -24,7 +24,7 @@ services:
     container_name: apaar_redis
     restart: always
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redisdata:/data
     healthcheck:
@@ -40,12 +40,16 @@ services:
     container_name: apaar_backend
     restart: always
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
-      - DATABASE_URL=postgresql+psycopg://apaar:apaar_password@db:5432/apaar_db
+      - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER:-apaar}:${POSTGRES_PASSWORD:-apaar_password}@db:5432/${POSTGRES_DB:-apaar_db}
       - REDIS_URL=redis://redis:6379/0
-      - FRONTEND_URL=http://localhost:5173
-      - DEMO_MODE=true
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost}
+      - DEMO_MODE=${DEMO_MODE:-true}
+      - AUTO_SEED=${AUTO_SEED:-true}
+      - JWT_SECRET=${JWT_SECRET:-super-secret-development-jwt-key-minimum-32-chars}
+      - FERNET_KEY=${FERNET_KEY:-0123456789abcdef0123456789abcdef0123456789a=}
+      - ED25519_PRIVATE_KEY=${ED25519_PRIVATE_KEY:-development-ed25519-private-seed-32bytes-len!!}
     depends_on:
       db:
         condition: service_healthy
@@ -61,7 +65,7 @@ services:
     container_name: apaar_frontend
     restart: always
     ports:
-      - "5173:80"
+      - "${PORT:-80}:80"
     depends_on:
       - backend
 
