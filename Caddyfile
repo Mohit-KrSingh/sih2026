@@ -1,7 +1,5 @@
-{$DOMAIN_NAME:localhost} {
-    # Reverse proxy all traffic to frontend Nginx container
+{$DOMAIN_NAME:edutrace.me}, www.{$DOMAIN_NAME:edutrace.me} {
     reverse_proxy frontend:80 {
-        # Streaming and SSE support
         flush_interval -1
     }
 }
